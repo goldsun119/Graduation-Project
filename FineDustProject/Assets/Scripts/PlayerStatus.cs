@@ -6,7 +6,7 @@ public class PlayerStatus : MonoBehaviour
 {
     public float speedT = 5.0f;
     public float speedR = 2.0f;
-    public float JumpP = 4.0f;
+    public float JumpP = 0.5f;
 
     public bool isMove = false, isRun = false, isJump = false;
     public bool isPick = false;
@@ -44,7 +44,7 @@ public class PlayerStatus : MonoBehaviour
         { isRun = false; speedT = 5.0f; }
 
         // 점프
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space)&&!isJump)
             isJump = true;
 
     }
@@ -55,6 +55,7 @@ public class PlayerStatus : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isJump = false;
+            Debug.Log("땅임~");
         }
 
         // 아이템 충돌
@@ -63,7 +64,10 @@ public class PlayerStatus : MonoBehaviour
             isItem = true;
 
             if (Input.GetKey(KeyCode.F))
+            {
                 isPick = true;
+                isItem = false;
+            }
         }
 
         // 몬스터 충돌
