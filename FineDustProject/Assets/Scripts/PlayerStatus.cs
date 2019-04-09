@@ -6,18 +6,18 @@ public class PlayerStatus : MonoBehaviour
 {
     public float speedT = 5.0f;
     public float speedR = 2.0f;
-    public float JumpP = 0.5f;
+    public float JumpP = 4.0f;
 
-    public bool isMove = false, isRun = false, isJump = false;
+    public bool isMove = false, isRun = false, isJump = false, reJump = false;
     public bool isPick = false;
 
     // 상호작용
     public bool isItem = false;
     public bool isMon = false;
 
-    public int bagSize = 5;
+    //public int bagSize = 5;
 
-    public int itemCount = 0;
+    //public int itemCount = 0;
 
     void Start()
     {
@@ -34,7 +34,7 @@ public class PlayerStatus : MonoBehaviour
     {
         // 걷기
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) isMove = true;
-        if (Input.GetKeyUp(KeyCode.W) || Input.GetKey(KeyCode.S)) isMove = false;
+        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S)) isMove = false;
 
         // 뛰기
         if (Input.GetKeyDown(KeyCode.LeftShift) && isMove)
@@ -44,7 +44,7 @@ public class PlayerStatus : MonoBehaviour
         { isRun = false; speedT = 5.0f; }
 
         // 점프
-        if (Input.GetKey(KeyCode.Space)&&!isJump)
+        if (Input.GetKeyDown(KeyCode.Space) && !reJump)
             isJump = true;
 
     }
@@ -54,7 +54,7 @@ public class PlayerStatus : MonoBehaviour
         // 점프 해제
         if (collision.gameObject.CompareTag("Ground"))
         {
-            isJump = false;
+            reJump = false;
             Debug.Log("땅임~");
         }
 

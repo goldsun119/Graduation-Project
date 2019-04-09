@@ -23,22 +23,24 @@ public class PlayerMove : MonoBehaviour
     void Move()
     {
         // 걷기
-        if (player.isMove)
-        {
-            float ver = Input.GetAxis("Vertical");          //앞, 뒤 키
+        float ver = Input.GetAxis("Vertical");          //앞, 뒤 키
 
-            transform.Translate(Vector3.forward * player.speedT * ver * Time.deltaTime);      //이동
-            Debug.Log("이동중");
-        }
+        transform.Translate(Vector3.forward * player.speedT * ver * Time.deltaTime);      //이동
+        Debug.Log("이동중");
+
         // 회전
         float hor = Input.GetAxis("Horizontal");        //왼쪽, 오른쪽 키 
         transform.Rotate(Vector3.up * player.speedR * hor);    // 회전
+
+        // float hor = Input.GetAxis("Horizontal");  
+        //transform.Translate(Vector3.right * player.speedT * hor * Time.deltaTime);   
 
         // 점프
         if (player.isJump)
         {
             rigid.AddForce(Vector3.up * player.JumpP, ForceMode.Impulse);
             player.isJump = false;
+            player.reJump = true;
         }
 
         // 충돌 - 아이템
