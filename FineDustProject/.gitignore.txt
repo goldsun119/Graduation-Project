@@ -12,36 +12,55 @@ UnityGenerated/
  
 Library/
  
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
  
- 
+# Never ignore Asset meta data 
+![Aa]ssets/**/*.meta
+
 # ===================================== #
  
 # Visual Studio / MonoDevelop generated #
  
 # ===================================== #
- 
+
+# Visual Studio cache directory 
+.vs/
+
+# Gradle cache directory 
+.gradle/
+
+
 ExportedObj/
- 
+.consulo/
 *.svd
- 
 *.userprefs
- 
 *.csproj
- 
 *.pidb
- 
 *.suo
- 
+*.tmp
 *.sln
- 
 *.user
- 
+*.userprefs
 *.unityproj
- 
+*.pdb
+*.mdb
 *.booproj
+*.opendb
+*.VC.db
  
+# Unity3D generated meta files 
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
  
- 
+# Unity3D generated file on crash reports 
+sysinfo.txt
+
 # ============ #
  
 # OS generated #
@@ -69,8 +88,3 @@ GraphicsSettings.asset
 ProjectSettings.asset
  
 ProjectVersion.txt
-
-
-출처: https://minhyeokism.tistory.com/67 [programmer-dominic.kim]
-
-출처: https://minhyeokism.tistory.com/67 [programmer-dominic.kim]
