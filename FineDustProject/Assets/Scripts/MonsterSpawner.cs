@@ -9,7 +9,6 @@ public class MonsterSpawner : MonoBehaviour
     public int monCnt = 1;
     public int monMaxCnt = 10;
 
-    public Vector3 spawnPos;
 
     // Start is called before the first frame update
     void Start()
@@ -30,6 +29,8 @@ public class MonsterSpawner : MonoBehaviour
 
     void Spawn()
     {
+        Vector3 spawnPos;
+
         spawnPos = RandomPosition();
 
         if ((spawnPos.x * spawnPos.x) + (spawnPos.z * spawnPos.z) <= (350 * 350))

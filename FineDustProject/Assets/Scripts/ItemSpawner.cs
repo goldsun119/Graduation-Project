@@ -9,7 +9,6 @@ public class ItemSpawner : MonoBehaviour
     public int itemCnt = 1;
     public int itemMaxCnt = 100;
 
-    public Vector3 spawnPos;
 
     // Start is called before the first frame update
     void Start()
@@ -30,6 +29,8 @@ public class ItemSpawner : MonoBehaviour
 
     void Spawn()
     {
+        Vector3 spawnPos;
+
         spawnPos = RandomPosition();
 
         if((spawnPos.x * spawnPos.x) + (spawnPos.z * spawnPos.z) <= (350*350))
