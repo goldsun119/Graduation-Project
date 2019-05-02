@@ -282,6 +282,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 809788508}
+  - {fileID: 472131540}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -399,17 +400,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 472131539}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1065874752}
-  m_Father: {fileID: 809788508}
-  m_RootOrder: 2
+  m_Father: {fileID: 34140383}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 467, y: -0.000012398}
+  m_AnchoredPosition: {x: 374, y: 208.99998}
   m_SizeDelta: {x: 188.3, y: 50.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &472131541
@@ -465,8 +466,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 472131541}
-        m_MethodName: SceneChange
+      - m_Target: {fileID: 809788512}
+        m_MethodName: Login
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -548,13 +549,12 @@ RectTransform:
   m_Children:
   - {fileID: 1880756016}
   - {fileID: 13328167}
-  - {fileID: 472131540}
   m_Father: {fileID: 34140383}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -93, y: 0}
+  m_AnchoredPosition: {x: -93, y: 209}
   m_SizeDelta: {x: 579.7, y: 50.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &809788509
@@ -608,7 +608,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 809788512}
-        m_MethodName: login
+        m_MethodName: Inputfield_update
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -616,7 +616,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
     m_TypeName: UnityEngine.UI.InputField+SubmitEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
@@ -681,7 +681,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db7ae3ee1efd0b648926231fa9874576, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  input_field: {fileID: 0}
+  input_field: {fileID: 809788509}
 --- !u!1 &1065874751
 GameObject:
   m_ObjectHideFlags: 0

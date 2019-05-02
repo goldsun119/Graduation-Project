@@ -19,7 +19,7 @@ public class Login_Button : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        input_field = GetComponent<InputField>();
+        
     }
 
     // Update is called once per frame
@@ -28,20 +28,21 @@ public class Login_Button : MonoBehaviour
         Debug.Log(server_ip_text);
     }
 
-    public void SceneChange()
+    public void Inputfield_update()
     {
+        //server_ip_text = input_field.text;
+    }
+
+    public void Login()
+    {
+        input_field = gameObject.GetComponent<InputField>();
+        server_ip_text = input_field.text;
+        server_ip = IPAddress.Parse(server_ip_text);
+        transferSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
+        transferSock.Connect(new IPEndPoint(server_ip, 9000));
+
         SceneManager.LoadScene(1);
     }
 
-    public void login()
-    {
-        server_ip_text = input_field.text;
-        Debug.Log(server_ip_text);
-        server_ip = IPAddress.Parse(server_ip_text);
-        transferSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
-        transferSock.Connect(new IPEndPoint(server_ip, 10801));
-
-        SceneChange();
-    }
-
+    
 }
