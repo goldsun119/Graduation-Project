@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class PlayerStatus : MonoBehaviour
 {
+    public int ID;
+
     public float speedT = 5.0f;
     public float speedR = 2.0f;
     public float JumpP = 4.0f;
