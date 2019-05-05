@@ -1,0 +1,19 @@
+namespace MyGame.Monster;
+
+struct Vec3 {
+
+  x:float;
+
+  y:float;
+
+  z:float;
+
+}
+
+table Monster {
+  pos:Vec3;
+
+  hp:short;
+}
+
+root_type Monster;

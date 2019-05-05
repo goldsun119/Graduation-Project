@@ -1,0 +1,2 @@
+flatc --cpp -o ./cpp/ ./파일이름
+flatc --csharp -o ./csharp/ ./파일이름
