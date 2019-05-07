@@ -12,7 +12,8 @@ public class PlayerStatus : MonoBehaviour
     public float speedR = 2.0f;
     public float JumpP = 4.0f;
 
-    public bool isMove = false, isRun = false, isJump = false, reJump = false;
+    public int key_on_num = 0;
+    public bool is_Walk = false, isRun = false, isJump = false, reJump = false;
     public bool isPick = false;
 
     // 상호작용
@@ -37,14 +38,20 @@ public class PlayerStatus : MonoBehaviour
     void MoveStatus()
     {
         // 걷기
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) isMove = true;
-        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S)) isMove = false;
-
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+        {
+            if (!is_Walk) is_Walk = true;
+        }
+        else is_Walk = false;
+       // if (Input.GetKeyUp(KeyCode.W) && Input.GetKeyUp(KeyCode.A) && Input.GetKeyUp(KeyCode.S) && Input.GetKeyUp(KeyCode.D))
+       // {
+       //     is_Walk = false;
+       // }
         // 뛰기
-        if (Input.GetKeyDown(KeyCode.LeftShift) && isMove)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && is_Walk)
         { isRun = true; speedT = 10.0f; }
 
-        if (Input.GetKeyUp(KeyCode.LeftShift) || !isMove)
+        if (Input.GetKeyUp(KeyCode.LeftShift) || !is_Walk)
         { isRun = false; speedT = 5.0f; }
 
         // 점프

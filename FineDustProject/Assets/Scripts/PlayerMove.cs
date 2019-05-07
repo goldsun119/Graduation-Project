@@ -8,6 +8,8 @@ public class PlayerMove : MonoBehaviour
 
     Rigidbody rigid;
 
+    //public Camera CamT;
+
     void Start()
     {
         player = GetComponent<PlayerStatus>();
@@ -22,19 +24,25 @@ public class PlayerMove : MonoBehaviour
 
     void Move()
     {
-        // 걷기
-        float ver = Input.GetAxis("Vertical");          //앞, 뒤 키
-
-        transform.Translate(Vector3.forward * player.speedT * ver * Time.deltaTime);      //이동
+        // 앞뒤 이동
+        float ver_move = Input.GetAxis("Vertical");          // W, S 키
+        transform.Translate(Vector3.forward * player.speedT * ver_move * Time.deltaTime);
         Debug.Log("이동중");
 
         // 회전
-        float hor = Input.GetAxis("Horizontal");        //왼쪽, 오른쪽 키 
-        transform.Rotate(Vector3.up * player.speedR * hor);    // 회전
+        //if (CamT.enabled == true)
+        //if(transform.Find("Cam3").gameObject)
+        {
+            float hor_rotate = Input.GetAxis("Horizontal");        // Q, E 키 
+            transform.Rotate(Vector3.up * player.speedR * hor_rotate);    // 회전
+        }
 
-        // float hor = Input.GetAxis("Horizontal");  
-        //transform.Translate(Vector3.right * player.speedT * hor * Time.deltaTime);   
-
+        // 좌우 이동
+        if (Input.GetKey(KeyCode.A))
+            transform.Translate(Vector3.left * player.speedT * Time.deltaTime);
+        if (Input.GetKey(KeyCode.D))
+            transform.Translate(Vector3.right * player.speedT * Time.deltaTime);      //이동
+        
         // 점프
         if (player.isJump)
         {

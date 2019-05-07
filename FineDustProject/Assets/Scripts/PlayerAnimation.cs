@@ -23,7 +23,7 @@ public class PlayerAnimation : MonoBehaviour
     void MoveAni()
     {
         // 걷기
-        if (player.isMove) animator.SetBool("walk", true);
+        if (player.is_Walk) animator.SetBool("walk", true);
         else animator.SetBool("walk", false);
 
         //뛰기
