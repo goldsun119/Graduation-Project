@@ -1027,7 +1027,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1046176304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1040,7 +1040,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3227960265e2d554689cfa52f8fd9360, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monObj: {fileID: 1142937776}
+  monObj: {fileID: 1592288360}
   monCnt: 1
   monMaxCnt: 10
 --- !u!4 &1046176305
@@ -1210,9 +1210,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 595008d1734c8fd48a2693334bd58f59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player_tf: {fileID: 0}
   HP: 0
   isCollision: 0
+  is_KnockBack: 0
+  is_Wait: 0
   targetRange: 5
+  KnockBack_Time: 0
+  Waiting_Time: 0
 --- !u!195 &1142937782
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1732,22 +1737,6 @@ CapsuleCollider:
   m_Height: 1.7742519
   m_Direction: 1
   m_Center: {x: 0, y: 1.5, z: 0}
---- !u!54 &1592288362
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1592288360}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
 --- !u!195 &1592288363
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1757,19 +1746,19 @@ NavMeshAgent:
   m_GameObject: {fileID: 1592288360}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 1
   m_Speed: 3.5
   m_Acceleration: 8
-  avoidancePriority: 50
+  avoidancePriority: 1
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 1.5
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 1
-  m_BaseOffset: 0.5
+  m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 0
 --- !u!114 &1592288364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1782,9 +1771,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 595008d1734c8fd48a2693334bd58f59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player_tf: {fileID: 0}
   HP: 0
   isCollision: 0
+  is_KnockBack: 0
+  is_Wait: 0
   targetRange: 5
+  KnockBack_Time: 0
+  Waiting_Time: 0
 --- !u!1 &1644847484
 GameObject:
   m_ObjectHideFlags: 0
