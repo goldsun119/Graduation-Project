@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class CameraMgr : MonoBehaviour
 {
-    public Camera Isometric_Cam;
+    PlayerStatus player;
+    
     public Camera Third_Cam;
     public Camera First_Cam;
+    public Camera Isometric_Cam;
 
     // player 넣고 플레이어 받아와서 카메라주기?
-    
+
     public float mouseSensitivity = 3f;
     public float upDownRange = 90;
 
@@ -17,6 +19,7 @@ public class CameraMgr : MonoBehaviour
 
     void Start()
     {
+        player = GetComponent<PlayerStatus>();
         ThirdCamOn();
         Camera_Num = 0;
 
@@ -71,11 +74,15 @@ public class CameraMgr : MonoBehaviour
         Third_Cam.enabled = false;
         First_Cam.enabled = false;
         Isometric_Cam.enabled = true;
+
+        IsometricCamMove();
     }
 
     void IsometricCamMove()
     {
-        transform.position = transform.parent.position;
+        Isometric_Cam.transform.position = new Vector3(transform.position.x - 10, Isometric_Cam.transform.position.y, transform.position.z - 10);
+        //Debug.Log(transform.position.x);
+        //Debug.Log(Isometric_Cam.transform.position.x);
     }
 
     void FirstCamMouseMove()
@@ -83,7 +90,7 @@ public class CameraMgr : MonoBehaviour
         //좌우 회전
         float hor = Input.GetAxis("Mouse X");
         Debug.Log("move mouse");
-        transform.parent.Rotate(Vector3.up * mouseSensitivity * hor);
+        transform.Rotate(Vector3.up * mouseSensitivity * hor);
 
         //상하 회전
 

@@ -417,6 +417,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2435ae26c76ccb44ad455ce4a290ec9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
 --- !u!54 &506760853
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -554,9 +555,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d670317c42dba346a70c90bf23f4085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Isometric_Cam: {fileID: 0}
   Third_Cam: {fileID: 0}
   First_Cam: {fileID: 0}
+  Isometric_Cam: {fileID: 0}
   mouseSensitivity: 2
   upDownRange: 90
   Camera_Num: 0
@@ -737,9 +738,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d670317c42dba346a70c90bf23f4085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Isometric_Cam: {fileID: 648797873}
   Third_Cam: {fileID: 294118741}
   First_Cam: {fileID: 548808337}
+  Isometric_Cam: {fileID: 648797873}
   mouseSensitivity: 3
   upDownRange: 90
   Camera_Num: 0
@@ -1113,9 +1114,10 @@ GameObject:
   - component: {fileID: 1142937780}
   - component: {fileID: 1142937779}
   - component: {fileID: 1142937778}
-  - component: {fileID: 1142937777}
   - component: {fileID: 1142937781}
   - component: {fileID: 1142937782}
+  - component: {fileID: 1142937783}
+  - component: {fileID: 1142937777}
   m_Layer: 0
   m_Name: Monster
   m_TagString: Monster
@@ -1123,8 +1125,8 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!135 &1142937777
-SphereCollider:
+--- !u!136 &1142937777
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1133,9 +1135,10 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
   m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Height: 1.75
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.75, z: 0}
 --- !u!23 &1142937778
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1180,7 +1183,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1142937776}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 4300000, guid: 9ce616f508c1a5c47a43f8a11309e4a1, type: 3}
 --- !u!4 &1142937780
 Transform:
   m_ObjectHideFlags: 0
@@ -1232,6 +1235,22 @@ NavMeshAgent:
   m_BaseOffset: 0.5
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!54 &1142937783
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142937776}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
 --- !u!1 &1212359737
 GameObject:
   m_ObjectHideFlags: 0
@@ -1693,6 +1712,79 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1592288360 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100066, guid: 05ece67478245df4ba45e047cbb37622,
+    type: 3}
+  m_PrefabInstance: {fileID: 1682106263}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1592288361
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1592288360}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.6931606
+  m_Height: 1.7742519
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.5, z: 0}
+--- !u!54 &1592288362
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1592288360}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!195 &1592288363
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1592288360}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1
+  m_BaseOffset: 0.5
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &1592288364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1592288360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 595008d1734c8fd48a2693334bd58f59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HP: 0
+  isCollision: 0
+  targetRange: 5
 --- !u!1 &1644847484
 GameObject:
   m_ObjectHideFlags: 0
@@ -1775,6 +1867,67 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!1001 &1682106263
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 100066, guid: 05ece67478245df4ba45e047cbb37622, type: 3}
+      propertyPath: m_Name
+      value: Wild_boar_stand
+      objectReference: {fileID: 0}
+    - target: {fileID: 100066, guid: 05ece67478245df4ba45e047cbb37622, type: 3}
+      propertyPath: m_TagString
+      value: Monster
+      objectReference: {fileID: 0}
+    - target: {fileID: 400066, guid: 05ece67478245df4ba45e047cbb37622, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400066, guid: 05ece67478245df4ba45e047cbb37622, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400066, guid: 05ece67478245df4ba45e047cbb37622, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 400066, guid: 05ece67478245df4ba45e047cbb37622, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400066, guid: 05ece67478245df4ba45e047cbb37622, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400066, guid: 05ece67478245df4ba45e047cbb37622, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400066, guid: 05ece67478245df4ba45e047cbb37622, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400066, guid: 05ece67478245df4ba45e047cbb37622, type: 3}
+      propertyPath: m_RootOrder
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 400066, guid: 05ece67478245df4ba45e047cbb37622, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400066, guid: 05ece67478245df4ba45e047cbb37622, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400066, guid: 05ece67478245df4ba45e047cbb37622, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 05ece67478245df4ba45e047cbb37622, type: 3}
 --- !u!1 &1831231561
 GameObject:
   m_ObjectHideFlags: 0
@@ -2083,6 +2236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2435ae26c76ccb44ad455ce4a290ec9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
 --- !u!114 &1952965415
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2155,9 +2309,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d670317c42dba346a70c90bf23f4085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Isometric_Cam: {fileID: 1644847488}
   Third_Cam: {fileID: 294118741}
   First_Cam: {fileID: 548808337}
+  Isometric_Cam: {fileID: 1644847488}
   mouseSensitivity: 3
   upDownRange: 90
   Camera_Num: 0

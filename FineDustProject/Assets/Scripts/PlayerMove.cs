@@ -5,8 +5,11 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     PlayerStatus player;
-
+    CameraMgr CMgr;
     Rigidbody rigid;
+
+    public Transform target;
+    Vector3 relativePos;
 
     //public Camera CamT;
 
@@ -14,6 +17,7 @@ public class PlayerMove : MonoBehaviour
     {
         player = GetComponent<PlayerStatus>();
         rigid = GetComponent<Rigidbody>();
+        CMgr = GetComponent<CameraMgr>();
     }
 
     // Update is called once per frame
@@ -24,25 +28,48 @@ public class PlayerMove : MonoBehaviour
 
     void Move()
     {
-        // 앞뒤 이동
-        float ver_move = Input.GetAxis("Vertical");          // W, S 키
-        transform.Translate(Vector3.forward * player.speedT * ver_move * Time.deltaTime);
-        Debug.Log("이동중");
-
-        // 회전
-        //if (CamT.enabled == true)
-        //if(transform.Find("Cam3").gameObject)
+        if (CMgr.Camera_Num == 2)
         {
-            float hor_rotate = Input.GetAxis("Horizontal");        // Q, E 키 
-            transform.Rotate(Vector3.up * player.speedR * hor_rotate);    // 회전
+            if (player.is_Walk)
+            {
+                if (Input.GetKey(KeyCode.W)) relativePos = Vector3.forward + Vector3.right - Vector3.zero;
+                if (Input.GetKey(KeyCode.A)) relativePos = Vector3.forward + Vector3.left - Vector3.zero;
+                if (Input.GetKey(KeyCode.S)) relativePos = Vector3.back + Vector3.left - Vector3.zero;
+                if (Input.GetKey(KeyCode.D)) relativePos = Vector3.back + Vector3.right - Vector3.zero;
+
+                if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A)) relativePos = Vector3.forward - Vector3.zero;
+                if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D)) relativePos = Vector3.right - Vector3.zero;
+                if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A)) relativePos = Vector3.left - Vector3.zero;
+                if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D)) relativePos = Vector3.back - Vector3.zero;
+
+                Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
+                transform.rotation = rotation;
+
+                transform.Translate((Vector3.forward) * player.speedT * Time.deltaTime);
+            }
+        }
+        else
+        {
+            // 앞뒤 이동
+            float ver_move = Input.GetAxis("Vertical");          // W, S 키
+            transform.Translate(Vector3.forward * player.speedT * ver_move * Time.deltaTime);
+            Debug.Log("이동중");
+
+            // 회전
+            //if (CamT.enabled == true)
+            //if(transform.Find("Cam3").gameObject)
+            {
+                float hor_rotate = Input.GetAxis("Horizontal");        // Q, E 키 
+                transform.Rotate(Vector3.up * player.speedR * hor_rotate);    // 회전
+            }
+
+            // 좌우 이동
+            if (Input.GetKey(KeyCode.A))
+                transform.Translate(Vector3.left * player.speedT * Time.deltaTime);
+            if (Input.GetKey(KeyCode.D))
+                transform.Translate(Vector3.right * player.speedT * Time.deltaTime);      //이동
         }
 
-        // 좌우 이동
-        if (Input.GetKey(KeyCode.A))
-            transform.Translate(Vector3.left * player.speedT * Time.deltaTime);
-        if (Input.GetKey(KeyCode.D))
-            transform.Translate(Vector3.right * player.speedT * Time.deltaTime);      //이동
-        
         // 점프
         if (player.isJump)
         {
