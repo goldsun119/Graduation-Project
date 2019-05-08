@@ -311,6 +311,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 0
+  hp: 0
+  animator: 0
+  vertical: 0
+  horizontal: 0
+  rotation: {x: 0, y: 0, z: 0}
+  position: {x: 0, y: 0, z: 0}
+  connect: 0
+  draw: 0
   speedT: 5
   speedR: 2
   JumpP: 4
@@ -319,6 +327,7 @@ MonoBehaviour:
   isJump: 0
   reJump: 0
   isPick: 0
+  Die: 0
   isItem: 0
   isMon: 0
 --- !u!114 &506760852
@@ -733,7 +742,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2011289762}
-        m_MethodName: spawn
+        m_MethodName: Spawn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1845,6 +1854,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerObj: {fileID: 506760848}
+  players: []
   playerStatus: {fileID: 0}
   num: 1
 --- !u!114 &2011289763

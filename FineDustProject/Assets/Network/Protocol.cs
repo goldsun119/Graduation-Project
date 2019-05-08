@@ -5,19 +5,24 @@ namespace Game.Protocol
 {
     public class Protocol
     {
-        public int SC_ID;
-        public int SC_PUT_PLAYER;
-        public int SC_REMOVE_PLAYER;
-        public int SC_ALL_PLAYER_DATA;
-        public int SC_PUT_MONSTER;
-        public int SC_REMOVE_MONSTER;
+        public static int SC_ID = 1;
+        public static int 	SC_PUT_PLAER =				2;
+        public static int  SC_REMOVE_PLAYER =		3;
+        public static int  SC_PLAYER_STATUS	 =	4;
+        public static int  SC_ALL_PLAYER_DATA =	5;
+        public static int  SC_PUT_MONSTER =			6;
+        public static int  SC_REMOVE_MONSTER = 7;
 
-        public int CS_INFO;
-        public int CS_GET_ITEM;
-        public int CS_MONSTER_HP;
+        public static int CS_INFO = 1;
+        public static int CS_GET_ITEM = 2;
+        public static int CS_MONSTER_HP = 3;
+
+        public static int MAX_USER = 5;   // 0번째는 버림
 
         public Protocol()
         {
+            MAX_USER = 5;   // 0번째는 버림
+
             SC_ID = 1;
             SC_PUT_PLAYER = 2;
             SC_REMOVE_PLAYER = 3;
@@ -28,6 +33,7 @@ namespace Game.Protocol
             CS_INFO = 1;
             CS_GET_ITEM = 2;
             CS_MONSTER_HP = 3;
+
         }
     }
 }

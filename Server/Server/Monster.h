@@ -3,7 +3,7 @@
 class Monster : public Obj
 {
 private:
-	Vec3 rotation;
+	vec3 rotation;
 	float vertical;
 	float horizontal;
 	int animator;

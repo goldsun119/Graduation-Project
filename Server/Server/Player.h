@@ -26,7 +26,7 @@ struct SOCKETINFO // 클라이언트 정보 - 연결이 되어있으면 무조건 소켓이 있는 것이
 class Player: public Obj
 {
 private:
-	Vec3 rotation;
+	vec3 rotation;
 	float vertical;
 	float horizontal;
 	int animator;
@@ -42,8 +42,8 @@ public:
 	int GetHp();
 	void SetHp(int a);
 
-	Vec3 GetRotation();
-	void SetRotation(Vec3 a);
+	vec3 GetRotation();
+	void SetRotation(vec3 a);
 
 	float GetVertical();
 	void SetVertical(float a);

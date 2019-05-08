@@ -230,6 +230,6 @@ inline const Game::Protocol::Client_info *GetClientView(const void *buf) {
 
 }
 }  // namespace Protocol
-}  // namespace Game
+  // namespace Game
 
 #endif  // FLATBUFFERS_GENERATED_CLIENTINFO_GAME_PROTOCOL_H_

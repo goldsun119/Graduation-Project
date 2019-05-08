@@ -14,15 +14,17 @@ constexpr int ISLAND_RADIUS =			900;
 constexpr int DUSTAREA_RADIUS =	625;
 
 
-constexpr int CS_MOVE =				1;
-constexpr int CS_ATTACK =			2;
-constexpr int CS_GET_ITEM =		3;
+constexpr int CS_INFO =					1;
+constexpr int CS_GET_ITEM =		2;
+constexpr int CS_MONSTER_HP =	3;
 
-constexpr int SC_LOGIN_OK =				1;
-constexpr int	SC_PUT_PLAER =			2;
-constexpr int SC_REMOVE_PLAYER = 3;
-constexpr int SC_POS =						4;
-constexpr int SC_ALL_PLAYER_DATA = 5;
+constexpr int SC_LOGIN_OK =					1;
+constexpr int	SC_PUT_PLAER =				2;
+constexpr int SC_REMOVE_PLAYER =		3;
+constexpr int SC_PLAYER_STATUS	 =		4;
+constexpr int SC_ALL_PLAYER_DATA =	5;
+constexpr int SC_PUT_MONSTER =			6;
+constexpr int SC_REMOVE_MONSTER =	7;
 
 #pragma pack(push, 1)
 

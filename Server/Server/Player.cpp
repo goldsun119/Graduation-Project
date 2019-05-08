@@ -40,6 +40,7 @@ void Player::init(int i)
 	default:
 		break;
 	}
+	hp = 100;
 }
 
 
@@ -53,12 +54,12 @@ void Player::SetHp(int a)
 	hp = a;
 }
 
-Vec3 Player::GetRotation()
+vec3 Player::GetRotation()
 {
 	return pos;
 }
 
-void Player::SetRotation(Vec3 a)
+void Player::SetRotation(vec3 a)
 {
 	pos = a;
 }
@@ -83,6 +84,11 @@ int Player::GetAnimator() {
 }
 void Player::SetAnimator(int a) {
 	animator = a;
+}
+
+int Player::GetId()
+{
+	return id;
 }
 
 Player::~Player()

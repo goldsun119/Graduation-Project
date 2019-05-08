@@ -50,12 +50,6 @@ namespace Game.Network
     {
         public static Socket sock;
 
-        public GameObject Player;
-        public GameObject PrefabPlayer;
-        public PlayerStatus Player_Script;
-
-        public GameObject OtherPlayerCollection;
-
         Vector3 Player_Position;
         Vector3 Player_Rotation;
 
@@ -66,7 +60,7 @@ namespace Game.Network
         Game.Protocol.Protocol recv_protocol = new Game.Protocol.Protocol();
         SendFunc sF = new SendFunc();
 
-        private static int Client_id = -1;         // 자신의 클라이언트 아이디
+        public static int Client_id = -1;         // 자신의 클라이언트 아이디
         public int get_id() { return Client_id; }
 
         float deltaTime = 0.0f;     // FPS 측정
@@ -108,6 +102,7 @@ namespace Game.Network
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = 60;
             Application.runInBackground = true;
+            NetworkInit();
         }
         public void NetworkInit()
         {
@@ -186,37 +181,38 @@ namespace Game.Network
 
         public void ProcessPacket(int size, int type, byte[] recvPacket)
         {
-            if (type == recv_protocol.SC_ID)
+            if (type == Game.Protocol.Protocol.SC_ID)
             {
                 Client_id = recvPacket[2];
+                
                 //----------------------------------------------------------------
-                // 클라이언트 아이디가 정상적으로 받은건지 확인을 한다.
+                // 클라이언트 아이디가 정상적으로 받은건지 확인을 한다. recvPacket = 타입 | 아이디
                 //----------------------------------------------------------------
                 Debug.Log("클라이언트 아이디 : " + Client_id);
             }
-            //else if (type == recv_protocol.SC_PUT_PLAYER)
-            //{
-            //    // 클라이언트 하나에 대한 데이터가 들어온다.
-            //    byte[] temp_buf = new byte[size + 1];
-            //    System.Buffer.BlockCopy(recvPacket, 8, temp_buf, 0, size); // 사이즈를 제외한 실제 패킷값을 복사한다.
-            //    ByteBuffer revc_buf = new ByteBuffer(temp_buf); // ByteBuffer로 byte[]로 복사한다.
+            else if (type == Game.Protocol.Protocol.SC_PUT_PLAYER)
+            {
+                // 클라이언트 하나에 대한 데이터가 들어온다.
+                byte[] temp_buf = new byte[size + 1];
+                System.Buffer.BlockCopy(recvPacket, 8, temp_buf, 0, size); // 사이즈를 제외한 실제 패킷값을 복사한다.
+                ByteBuffer revc_buf = new ByteBuffer(temp_buf); // ByteBuffer로 byte[]로 복사한다.
 
-            //    var Get_ServerData = Client_info.GetRootAsClient_info(revc_buf);
+                var Get_ServerData = Client_info.GetRootAsClient_info(revc_buf);
 
-            //    // 클라이언트 데이터에 서버에서 받은 데이터를 넣어준다.
-            //    if (client_data.ContainsKey(Get_ServerData.Id))
-            //    {
-            //        // 이미 값이 들어가 있는 상태라면
-            //        ClientClass iter = client_data[Get_ServerData.Id];
-            //        iter.set_pos(new Vector3(Get_ServerData.Position.Value.X, Get_ServerData.Position.Value.Y, Get_ServerData.Position.Value.Z));
-            //        iter.set_rot(new Vector3(Get_ServerData.Rotation.Value.X, Get_ServerData.Rotation.Value.Y, Get_ServerData.Rotation.Value.Z));
-            //    }
-            //    else
-            //    {
-            //        // 클라이언트가 자기 자신이 아닐경우에만 추가해준다.
-            //        client_data.Add(Get_ServerData.Id, new ClientClass(Get_ServerData.Id, Get_ServerData.Hp, Get_ServerData.Name.ToString(), new Vector3(Get_ServerData.Position.Value.X, Get_ServerData.Position.Value.Y, Get_ServerData.Position.Value.Z), new Vector3(Get_ServerData.Rotation.Value.X, Get_ServerData.Rotation.Value.Y, Get_ServerData.Rotation.Value.Z)));
-            //    }
-            //}
+                // 클라이언트 데이터에 서버에서 받은 데이터를 넣어준다.
+                if (client_data.ContainsKey(Get_ServerData.Id))
+                {
+                    // 이미 값이 들어가 있는 상태라면
+                    ClientClass iter = client_data[Get_ServerData.Id];
+                    iter.set_pos(new Vector3(Get_ServerData.Position.Value.X, Get_ServerData.Position.Value.Y, Get_ServerData.Position.Value.Z));
+                    iter.set_rot(new Vector3(Get_ServerData.Rotation.Value.X, Get_ServerData.Rotation.Value.Y, Get_ServerData.Rotation.Value.Z));
+                }
+                else
+                {
+                    // 클라이언트가 자기 자신이 아닐경우에만 추가해준다.
+                    client_data.Add(Get_ServerData.Id, new ClientClass(Get_ServerData.Id, Get_ServerData.Hp, Get_ServerData.Name.ToString(), new Vector3(Get_ServerData.Position.Value.X, Get_ServerData.Position.Value.Y, Get_ServerData.Position.Value.Z), new Vector3(Get_ServerData.Rotation.Value.X, Get_ServerData.Rotation.Value.Y, Get_ServerData.Rotation.Value.Z)));
+                }
+            }
             //else if (type == recv_protocol.SC_ALL_PLAYER_DATA)
             //{
             //    // 클라이언트 모든 데이터가 들어온다.
@@ -367,13 +363,14 @@ namespace Game.Network
 
                 PacketData size_data = Get_packet_size(msg.Receivebyte);
 
-                int psize = size_data.packet_size;
-                int ptype = msg.Receivebyte[size_data.type_Pos + 1]; // 패킷 타입
+                int recv_packet_size = size_data.packet_size;
+                int packet_type = msg.Receivebyte[size_data.type_Pos + 1]; // 패킷 타입
+                //size_data. type_Pos 가 앞에 데이터 크기|패킷 타입
 
-                if (psize == bytesRead)
+                if (recv_packet_size == bytesRead)
                 {
                     // 소켓에서 받은 데이터와 실제 패킷 사이즈가 같을 경우
-                    ProcessPacket(psize, ptype, msg.Receivebyte);
+                    ProcessPacket(recv_packet_size, packet_type, msg.Receivebyte);
 
                     // 패킷 처리가 완료 되었으니 다시 리시브 상태로 돌아간다.
                     NetworkMessage new_msg = new NetworkMessage();
@@ -393,7 +390,7 @@ namespace Game.Network
                         recv_byte[i] = msg.Receivebyte[i];
                     }
 
-                    ProcessPacket(psize, ptype, recv_byte);
+                    ProcessPacket(recv_packet_size, packet_type, recv_byte);
 
                     sock.BeginReceive(msg.Receivebyte, 0, msg.LimitReceivebyte, SocketFlags.None, new AsyncCallback(RecieveHeaderCallback), msg);
                 }

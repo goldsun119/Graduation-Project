@@ -69,7 +69,7 @@ public class PlayerStatus : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             reJump = false;
-            Debug.Log("땅임~");
+           // Debug.Log("땅임~");
         }
 
         // 아이템 충돌

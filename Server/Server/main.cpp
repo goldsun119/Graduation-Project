@@ -49,21 +49,26 @@ int get_new_id()
 	}
 	return -1;
 }
+
 void SendPacket(const int type, const int id, const void *packet, const int packet_size)
 {
+	// 창현오빠꺼에서 가져옴 이해하기
 	Player c = clients[id];
 	if (c.sock.socket != NULL) {
-		//int ptype = reinterpret_cast<unsigned char *>(packet)[1];
+		char a[MAX_BUFFER] = { 0 };
+		memcpy(a, packet, packet_size);
 		OVER_EX *over = new OVER_EX;
 		ZeroMemory(&over->overlapped, sizeof(over->overlapped));
+		over->is_recv = false;
 		char p_size[MAX_BUFFER]{ 0 };
+		
+		// 클라이언트에게 패킷 전송시 <패킷크기 | 패킷 타입 8바이트 부터 데이터> 으로 전송을 한다.
+		itoa(packet_size, p_size, 10);// 10진수로 첫 파라미터를 2번째 파라미터에 문자열로 변환하여 저장
+		int buf_len = (int)strlen(p_size);// 저장한 사이즈 읽기 만약 4바이트면 4
+		p_size[buf_len] = '|';// 저장한거 뒤에 | 넣기 4|
+		p_size[buf_len + 1] = int(type);// 그 뒤에 타입 넣기 4|\x1 
 
-		// 클라이언트에게 패킷 전송시 <패킷크기 | 패킷 타입> 으로 전송을 한다.
-		itoa(packet_size + 8, p_size, 10);
-		int buf_len = (int)strlen(p_size);
-		p_size[buf_len] = '|';
-		p_size[buf_len + 1] = int(type);
-
+		cout << (int)strlen(p_size) << endl;
 		// 패킷 사이즈를 미리 합쳐서 보내줘야한다.
 		memcpy(over->messageBuffer, packet, packet_size);
 
@@ -80,6 +85,26 @@ void SendPacket(const int type, const int id, const void *packet, const int pack
 				//err_display((char *)"SendPacket:WSASend", error_no);
 			}
 		}
+	}
+}
+
+void send_my_status_to_all_packet(int id)
+{
+	flatbuffers::FlatBufferBuilder builder;
+	int id = clients[id].GetId();
+	int hp = clients[id].GetHp();
+	int ani = clients[id].GetAnimator();
+	auto name = builder.CreateString(clients[id].GetName());
+	float h = clients[id].GetHorizontal();
+	float v = clients[id].GetVertical();
+	auto pos = clients[id].GetPos();
+	auto rot = clients[id].GetRotation();
+	auto data = CreateClient_info(builder, id, hp, ani, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
+	builder.Finish(data);
+	for (int i = 0; i < MAX_USER; ++i)
+	{
+		if(clients[i].sock.connected == true)
+			SendPacket(SC_PLAYER_STATUS, i, builder.GetBufferPointer(), builder.GetSize());
 	}
 }
 
@@ -103,8 +128,9 @@ rotation:Vec3;
 */
 	for (auto c : clients)
 	{
-		if (c.sock.connected == false||c.GetHp == 0)
+		if (c.sock.connected == false||c.GetHp() == 0)
 			continue;
+		if (c.GetId() == id) continue;
 		int id = c.GetId();
 		int hp = c.GetHp();
 		int ani = c.GetAnimator();
@@ -114,7 +140,7 @@ rotation:Vec3;
 		auto pos = c.GetPos();
 		auto rot = c.GetRotation();
 
-		auto data = CreateClient_info(builder, id, hp, ani, h, v, name, pos, rot);
+		auto data = CreateClient_info(builder, id, hp, ani, h, v, name, &Vec3(pos.x,pos.y,pos.z), &Vec3(rot.x,rot.y,rot.z));
 		clients_data.emplace_back(data);
 	}
 	auto full_data = builder.CreateVector(clients_data);
@@ -140,24 +166,31 @@ rotation:Vec3;
 	}*/
 }
 
-void send_login_ok_packet(char id)
+void send_login_ok_packet(int id)
 {
-	//sc_packet_login_ok packet;
-	//packet.id = id;
-	//packet.size = sizeof(packet);
-	//packet.type = SC_LOGIN_OK;
-
-	//send_packet(id, reinterpret_cast<char *>(&packet));
+	int i = id;
+	SendPacket(SC_LOGIN_OK, i, &i, sizeof(int));
 }
 
-void send_pos_packet(char to, char obj)
+void disconnect(int id)
 {
-	//sc_packet_pos packet;
-	//packet.id = obj;
-	//packet.size = sizeof(packet);
-	//packet.type = SC_POS;
-
-	//send_packet(to, reinterpret_cast<char *>(&packet));
+	//for (int i = 0; i < MAX_USER; ++i) {
+	//	if (false == clients[i].sock.connected) continue;
+	//	clients[i].access_lock.lock();
+	//	if (0 != clients[i].viewlist.count(id))	// 접속유저 전체 돌면서 뷰리스트 안에 id 있을때
+	//	{
+	//		clients[i].viewlist.erase(id);
+	//		clients[i].access_lock.unlock();
+	//		send_remove_player_packet(i, id);
+	//	}
+	//	else
+	//	{
+	//		clients[i].access_lock.unlock();
+	//	}
+	//}
+	//closesocket(clients[id].socket);
+	//clients[id].viewlist.clear();
+	//clients[id].connected = false;
 }
 
 void process_packet(const char id,const int packet_size, const char * buf)
@@ -168,17 +201,29 @@ void process_packet(const char id,const int packet_size, const char * buf)
 
 	switch (get_packet[1])
 	{
-	case CS_MOVE:
+	case CS_INFO:
+	{
 		auto client_Check_info = Game::Protocol::GetClientView(get_packet);
-		clients[id].SetPos(client_Check_info->position);
-		break;
-	case CS_ATTACK:
+		vec3 p = { client_Check_info->position()->x(), client_Check_info->position()->y(), client_Check_info->position()->z() };
+		vec3 r = { client_Check_info->rotation()->x(), client_Check_info->rotation()->y(), client_Check_info->rotation()->z() };
+		clients[id].SetPos(p);
+		clients[id].SetRotation(r);
+	}
 		break;
 	case CS_GET_ITEM:
+	{
+
+	}
+		break;
+	case CS_MONSTER_HP:
+	{
+
+	}
 		break;
 	default:
 		break;
 	}
+	send_my_status_to_all_packet(id);
 
 }
 
@@ -211,26 +256,40 @@ void worker_thread()
 		OVER_EX *lpover_ex;
 
 		bool is_error = GetQueuedCompletionStatus(g_iocp, &io_byte, &key, reinterpret_cast<LPWSAOVERLAPPED*>(&lpover_ex), INFINITE);
-
+		if (FALSE == is_error)
+		{
+			int err_no = WSAGetLastError();
+			if (64 != err_no)
+				error_display("GQCS ", err_no);
+			else {
+				disconnect(key);
+				continue;
+			}
+		}
+		if (0 == io_byte) {
+			disconnect(key);
+			continue;
+		}
 		if (lpover_ex->is_recv) {
 			int rest_size = io_byte;
 			char *ptr = lpover_ex->messageBuffer;
 			char packet_size = 0;
-			if (0 < clients[key].sock.prev_size) packet_size = clients[key].sock.packet_buf[0];
-			while (rest_size > 0)
-			{
-				if (0 == packet_size) packet_size = ptr[0];
+			if (0 < clients[key].sock.prev_size)
+				packet_size = clients[key].sock.packet_buf[0];
+			while (rest_size > 0) {
+				if (0 == packet_size)
+					packet_size = ptr[0];
 				int required = packet_size - clients[key].sock.prev_size;
 				if (rest_size >= required) {
 					memcpy(clients[key].sock.packet_buf + clients[key].sock.prev_size, ptr, required);
-					process_packet(key,clients[key].sock.packet_buf.len, clients[key].sock.packet_buf);
+					process_packet(key,sizeof(clients[key].sock.packet_buf),clients[key].sock.packet_buf);
 					rest_size -= required;
 					ptr += required;
 					packet_size = 0;
 				}
-				else
-				{
-					memcpy(clients[key].sock.packet_buf + clients[key].sock.prev_size, ptr, rest_size);
+				else {
+					memcpy(clients[key].sock.packet_buf + clients[key].sock.prev_size,
+						ptr, rest_size);
 					rest_size = 0;
 				}
 			}
@@ -322,9 +381,10 @@ void do_accept()
 		//iocp연결 후 트루로 켜야함 그래서 이거 아래에
 		clients[new_id].sock.connected = true;
 
-		send_login_ok_packet(new_id);
+		send_login_ok_packet(new_id);	// 내 아이디 클라에게 알려주기
 
 		// 처음 연결 시 다른 캐릭터, 몬스터 정보 나에게 보내고 내 정보 다른 캐릭터에게 보내기
+		send_all_player_packet(new_id);
 
 		do_recv(new_id);
 	}
