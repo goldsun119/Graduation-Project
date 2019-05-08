@@ -8,12 +8,22 @@ public class PlayerStatus : MonoBehaviour
 {
     public int ID;
 
+    public int hp;
+    public int animator;
+    public float vertical;
+    public float horizontal;
+    public Vector3 rotation;
+    public Vector3 position;
+    public bool connect;
+    public bool draw;
+
     public float speedT = 5.0f;
     public float speedR = 2.0f;
     public float JumpP = 4.0f;
 
     public bool isMove = false, isRun = false, isJump = false, reJump = false;
     public bool isPick = false;
+    public bool Die = false;
 
     // 상호작용
     public bool isItem = false;
