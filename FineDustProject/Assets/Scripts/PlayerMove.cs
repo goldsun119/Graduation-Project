@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Game.Network;
+
 public class PlayerMove : MonoBehaviour
 {
     PlayerStatus player;
@@ -61,6 +63,8 @@ public class PlayerMove : MonoBehaviour
         player.horizontal = Input.GetAxis("Horizontal");        //왼쪽, 오른쪽 키 
         player.rotation = Vector3.up * player.speedR * player.horizontal;
         transform.Rotate(player.rotation);    // 회전
+        if(player.draw == true&&player.connect==true)
+            NetWork.SendPlayerInfo(player.position, player.animator, player.horizontal, player.vertical, player.rotation, player.name);
 
         // float hor = Input.GetAxis("Horizontal");  
         //transform.Translate(Vector3.right * player.speedT * hor * Time.deltaTime);   

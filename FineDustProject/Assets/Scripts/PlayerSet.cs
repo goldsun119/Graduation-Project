@@ -10,7 +10,7 @@ public class PlayerSet : MonoBehaviour
     private InputField ip;
     public GameObject playerObj;
     public GameObject[] players;
-    public PlayerStatus playerStatus;
+    public PlayerStatus[] playerStatus;
 
     public int num = 1;
 
@@ -22,8 +22,9 @@ public class PlayerSet : MonoBehaviour
     void CreateAllPlayer()
     {
         players = new GameObject[Game.Protocol.Protocol.MAX_USER];
+        playerStatus = new PlayerStatus[Game.Protocol.Protocol.MAX_USER];
 
-        for(int i = 0; i<Game.Protocol.Protocol.MAX_USER; ++i)
+        for (int i = 0; i<Game.Protocol.Protocol.MAX_USER; ++i)
         {
             Vector3 spawnPos = Vector3.zero;
             if (i == 1)
@@ -44,6 +45,8 @@ public class PlayerSet : MonoBehaviour
             }
             players[i] = GameObject.Instantiate(playerObj, spawnPos, Quaternion.identity) as GameObject;
             players[i].SetActive(false);
+            playerStatus[i] = FindObjectOfType<PlayerStatus>();
+
         }
     }
 
@@ -61,7 +64,8 @@ public class PlayerSet : MonoBehaviour
         {
             //if (i != 0 && i != Game.Network.NetWork.Client_id)
             {
-                players[i].SetActive(true);
+                if(playerStatus[i].connect==true)
+                    players[i].SetActive(true);
             }
         }
         //playerStatus = FindObjectOfType<PlayerStatus>();

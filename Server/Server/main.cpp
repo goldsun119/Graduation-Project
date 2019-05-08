@@ -91,7 +91,7 @@ void SendPacket(const int type, const int id, const void *packet, const int pack
 void send_my_status_to_all_packet(int id)
 {
 	flatbuffers::FlatBufferBuilder builder;
-	int id = clients[id].GetId();
+	int i = clients[id].GetId();
 	int hp = clients[id].GetHp();
 	int ani = clients[id].GetAnimator();
 	auto name = builder.CreateString(clients[id].GetName());

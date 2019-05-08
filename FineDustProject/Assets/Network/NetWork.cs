@@ -53,12 +53,12 @@ namespace Game.Network
         Vector3 Player_Position;
         Vector3 Player_Rotation;
 
-        private byte[] Sendbyte = new byte[1024];
+        private static byte[] Sendbyte = new byte[1024];
 
         public static Dictionary<int, ClientClass> client_data = new Dictionary<int, ClientClass>();
 
         Game.Protocol.Protocol recv_protocol = new Game.Protocol.Protocol();
-        SendFunc sF = new SendFunc();
+        static SendFunc sF = new SendFunc();
 
         public static int Client_id = -1;         // 자신의 클라이언트 아이디
         public int get_id() { return Client_id; }
@@ -69,6 +69,8 @@ namespace Game.Network
         private static ManualResetEvent connectDone = new ManualResetEvent(false);
         private string playerIP = "";   // 플레이어 아이피
         private static NetWork instance_S= null; // 정적 변수
+
+        public static PlayerSet playerSet;
 
         public static NetWork Instance_S  // 인스턴스 접근 프로퍼티
         {
@@ -184,7 +186,8 @@ namespace Game.Network
             if (type == Game.Protocol.Protocol.SC_ID)
             {
                 Client_id = recvPacket[2];
-                
+                playerSet.playerStatus[Client_id].connect = true;
+                playerSet.playerStatus[Client_id].draw = true;
                 //----------------------------------------------------------------
                 // 클라이언트 아이디가 정상적으로 받은건지 확인을 한다. recvPacket = 타입 | 아이디
                 //----------------------------------------------------------------
@@ -266,7 +269,7 @@ namespace Game.Network
             //}
         }
 
-        public void Send_Packet(byte[] packet)
+        public static void Send_Packet(byte[] packet)
         {
             if (serverConnect == true)
             {
@@ -421,6 +424,12 @@ namespace Game.Network
         {
             sock.Close();
             sock = null;
+        }
+
+        public static void SendPlayerInfo(Vector3 p, int ani, float h, float v, Vector3 rot, string nick)
+        {
+            Sendbyte = sF.makeClient_PacketInfo(p, ani, h, v, rot, nick);
+            Send_Packet(Sendbyte);
         }
     }
 }
