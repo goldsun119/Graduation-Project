@@ -80,7 +80,7 @@ public class CameraMgr : MonoBehaviour
 
     void IsometricCamMove()
     {
-        Isometric_Cam.transform.position = new Vector3(transform.position.x - 10, Isometric_Cam.transform.position.y, transform.position.z - 10);
+        Isometric_Cam.transform.position = new Vector3(transform.position.x - 10, transform.position.y + 10, transform.position.z - 10);
         //Debug.Log(transform.position.x);
         //Debug.Log(Isometric_Cam.transform.position.x);
     }
