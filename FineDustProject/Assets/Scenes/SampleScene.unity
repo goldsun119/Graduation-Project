@@ -587,7 +587,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 548808333}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.4, z: -0.7}
+  m_LocalPosition: {x: 0, y: 1.4, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1952965419}
@@ -623,7 +623,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 1
+  near clip plane: 1.1
   far clip plane: 1000
   field of view: 60
   orthographic: 0
@@ -1211,10 +1211,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player_tf: {fileID: 0}
+  player_st: {fileID: 0}
   HP: 0
   isCollision: 0
   is_KnockBack: 0
   is_Wait: 0
+  is_Tracking: 0
   targetRange: 5
   KnockBack_Time: 0
   Waiting_Time: 0
@@ -1732,7 +1734,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 1592288360}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.6931606
   m_Height: 1.7742519
   m_Direction: 1
@@ -1747,11 +1749,11 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 1
-  m_Speed: 3.5
-  m_Acceleration: 8
+  m_Speed: 20
+  m_Acceleration: 20
   avoidancePriority: 1
-  m_AngularSpeed: 120
-  m_StoppingDistance: 1.5
+  m_AngularSpeed: 100
+  m_StoppingDistance: 5
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -1772,10 +1774,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player_tf: {fileID: 0}
+  player_st: {fileID: 0}
   HP: 0
   isCollision: 0
   is_KnockBack: 0
   is_Wait: 0
+  is_Tracking: 0
   targetRange: 5
   KnockBack_Time: 0
   Waiting_Time: 0
