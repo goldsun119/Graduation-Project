@@ -70,7 +70,7 @@ namespace Game.Network
         private string playerIP = "";   // 플레이어 아이피
         private static NetWork instance_S= null; // 정적 변수
 
-        public static PlayerSet playerSet;
+        public static int new_player_id = 0;
 
         public static NetWork Instance_S  // 인스턴스 접근 프로퍼티
         {
@@ -185,36 +185,19 @@ namespace Game.Network
         {
             if (type == Game.Protocol.Protocol.SC_ID)
             {
-                Client_id = recvPacket[2];
-                playerSet.playerStatus[Client_id].connect = true;
-                playerSet.playerStatus[Client_id].draw = true;
+                Client_id = recvPacket[0];
+                new_player_id = recvPacket[0];
                 //----------------------------------------------------------------
-                // 클라이언트 아이디가 정상적으로 받은건지 확인을 한다. recvPacket = 타입 | 아이디
+                // 클라이언트 아이디가 정상적으로 받은건지 확인을 한다. 
                 //----------------------------------------------------------------
                 Debug.Log("클라이언트 아이디 : " + Client_id);
             }
             else if (type == Game.Protocol.Protocol.SC_PUT_PLAYER)
             {
-                // 클라이언트 하나에 대한 데이터가 들어온다.
-                byte[] temp_buf = new byte[size + 1];
-                System.Buffer.BlockCopy(recvPacket, 8, temp_buf, 0, size); // 사이즈를 제외한 실제 패킷값을 복사한다.
-                ByteBuffer revc_buf = new ByteBuffer(temp_buf); // ByteBuffer로 byte[]로 복사한다.
+                new_player_id = recvPacket[0];
 
-                var Get_ServerData = Client_info.GetRootAsClient_info(revc_buf);
+                Debug.Log("새로 접속한 아이디 : " + new_player_id);
 
-                // 클라이언트 데이터에 서버에서 받은 데이터를 넣어준다.
-                if (client_data.ContainsKey(Get_ServerData.Id))
-                {
-                    // 이미 값이 들어가 있는 상태라면
-                    ClientClass iter = client_data[Get_ServerData.Id];
-                    iter.set_pos(new Vector3(Get_ServerData.Position.Value.X, Get_ServerData.Position.Value.Y, Get_ServerData.Position.Value.Z));
-                    iter.set_rot(new Vector3(Get_ServerData.Rotation.Value.X, Get_ServerData.Rotation.Value.Y, Get_ServerData.Rotation.Value.Z));
-                }
-                else
-                {
-                    // 클라이언트가 자기 자신이 아닐경우에만 추가해준다.
-                    client_data.Add(Get_ServerData.Id, new ClientClass(Get_ServerData.Id, Get_ServerData.Hp, Get_ServerData.Name.ToString(), new Vector3(Get_ServerData.Position.Value.X, Get_ServerData.Position.Value.Y, Get_ServerData.Position.Value.Z), new Vector3(Get_ServerData.Rotation.Value.X, Get_ServerData.Rotation.Value.Y, Get_ServerData.Rotation.Value.Z)));
-                }
             }
             //else if (type == recv_protocol.SC_ALL_PLAYER_DATA)
             //{
@@ -373,7 +356,13 @@ namespace Game.Network
                 if (recv_packet_size == bytesRead)
                 {
                     // 소켓에서 받은 데이터와 실제 패킷 사이즈가 같을 경우
-                    ProcessPacket(recv_packet_size, packet_type, msg.Receivebyte);
+                    byte[] recv_byte = new byte[recv_packet_size];
+
+                    for (int i = 8; i < recv_packet_size + 8; ++i)
+                    {
+                        recv_byte[i - 8] = msg.Receivebyte[i];
+                    }
+                    ProcessPacket(recv_packet_size, packet_type, recv_byte);
 
                     // 패킷 처리가 완료 되었으니 다시 리시브 상태로 돌아간다.
                     NetworkMessage new_msg = new NetworkMessage();
@@ -386,11 +375,13 @@ namespace Game.Network
                     msg.set_prev(bytesRead);
                     // 소켓에서 받은 데이터가 안맞는 경우 패킷이 뒤에 붙어서 오는거 같은 느낌이 든다...
                     size_data = Get_packet_size(msg.Receivebyte);
-                    byte[] recv_byte = new byte[size_data.packet_size + 9];
+                    recv_packet_size = size_data.packet_size;
+                    packet_type = msg.Receivebyte[size_data.type_Pos + 1]; // 패킷 타입
+                    byte[] recv_byte = new byte[recv_packet_size];
 
-                    for (int i = 0; i < size_data.packet_size; ++i)
+                    for (int i = 8; i < recv_packet_size + 8; ++i)
                     {
-                        recv_byte[i] = msg.Receivebyte[i];
+                        recv_byte[i - 8] = msg.Receivebyte[i];
                     }
 
                     ProcessPacket(recv_packet_size, packet_type, recv_byte);

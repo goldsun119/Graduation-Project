@@ -47,8 +47,8 @@ public class PlayerStatus : MonoBehaviour
     void MoveStatus()
     {
         // 걷기
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) isMove = true;
-        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S)) isMove = false;
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) isMove = true;
+        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S)||Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D)) isMove = false;
 
         // 뛰기
         if (Input.GetKeyDown(KeyCode.LeftShift) && isMove)

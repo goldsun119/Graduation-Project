@@ -54,16 +54,21 @@ public class PlayerMove : MonoBehaviour
 
         // 걷기
         player.vertical = Input.GetAxis("Vertical");          //앞, 뒤 키
-        player.position = Vector3.forward * player.speedT * player.vertical * Time.deltaTime;
-        transform.Translate(player.position);      //이동
+        Vector3 a= Vector3.forward * player.speedT * player.vertical * Time.deltaTime;
+        transform.Translate(a);      //이동
 
+        
         //Debug.Log("이동중");
 
         // 회전
         player.horizontal = Input.GetAxis("Horizontal");        //왼쪽, 오른쪽 키 
         player.rotation = Vector3.up * player.speedR * player.horizontal;
         transform.Rotate(player.rotation);    // 회전
-        if(player.draw == true&&player.connect==true)
+                                              // if(player.draw == true&&player.connect==true)
+
+        player.position = transform.position;
+
+        if(player.isMove == true)
             NetWork.SendPlayerInfo(player.position, player.animator, player.horizontal, player.vertical, player.rotation, player.name);
 
         // float hor = Input.GetAxis("Horizontal");  

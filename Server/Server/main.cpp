@@ -17,7 +17,7 @@ using namespace Game::Protocol;
 
 #define MAX_BUFFER        1024
 
-Player clients[MAX_USER]; // SOCKET이 어떤 SOCKETINFO 인지 알아야한다!!
+Player clients[MAX_USER+1]; // SOCKET이 어떤 SOCKETINFO 인지 알아야한다!!
 
 HANDLE g_iocp;
 
@@ -55,8 +55,6 @@ void SendPacket(const int type, const int id, const void *packet, const int pack
 	// 창현오빠꺼에서 가져옴 이해하기
 	Player c = clients[id];
 	if (c.sock.socket != NULL) {
-		char a[MAX_BUFFER] = { 0 };
-		memcpy(a, packet, packet_size);
 		OVER_EX *over = new OVER_EX;
 		ZeroMemory(&over->overlapped, sizeof(over->overlapped));
 		over->is_recv = false;
@@ -68,7 +66,6 @@ void SendPacket(const int type, const int id, const void *packet, const int pack
 		p_size[buf_len] = '|';// 저장한거 뒤에 | 넣기 4|
 		p_size[buf_len + 1] = int(type);// 그 뒤에 타입 넣기 4|\x1 
 
-		cout << (int)strlen(p_size) << endl;
 		// 패킷 사이즈를 미리 합쳐서 보내줘야한다.
 		memcpy(over->messageBuffer, packet, packet_size);
 
@@ -88,9 +85,18 @@ void SendPacket(const int type, const int id, const void *packet, const int pack
 	}
 }
 
+void send_put_player_packet(int id)
+{
+	int i = id;
+	for(int player = 0; player< MAX_USER;++player)
+		if(clients[player].sock.connected == true)
+			SendPacket(SC_PUT_PLAER, player, &i, sizeof(int));
+}
+
 void send_my_status_to_all_packet(int id)
 {
 	flatbuffers::FlatBufferBuilder builder;
+	builder.Clear();
 	int i = clients[id].GetId();
 	int hp = clients[id].GetHp();
 	int ani = clients[id].GetAnimator();
@@ -111,6 +117,7 @@ void send_my_status_to_all_packet(int id)
 void send_all_player_packet(int id)
 {
 	flatbuffers::FlatBufferBuilder builder;
+	builder.Clear();
 	std::vector<flatbuffers::Offset<Client_info>> clients_data;
 
 	/*
@@ -143,27 +150,13 @@ rotation:Vec3;
 		auto data = CreateClient_info(builder, id, hp, ani, h, v, name, &Vec3(pos.x,pos.y,pos.z), &Vec3(rot.x,rot.y,rot.z));
 		clients_data.emplace_back(data);
 	}
+	if (clients_data.size() == 0)
+		return;
 	auto full_data = builder.CreateVector(clients_data);
 	auto p = CreateClient_Collection(builder, full_data);
 	builder.Finish(p);
 
 	SendPacket(SC_ALL_PLAYER_DATA, id, builder.GetBufferPointer(), builder.GetSize());
-
-	/*SOCKET client_s = clients[key].sock.socket;
-
-	OVER_EX *over = new OVER_EX;
-
-	over->dataBuffer.len = packet[0];
-	over->dataBuffer.buf = over->messageBuffer;
-	memcpy(over->messageBuffer, packet, packet[0]);
-	ZeroMemory(&(over->overlapped), sizeof(WSAOVERLAPPED));
-	if (WSASend(client_s, &over->dataBuffer, 1, NULL, 0, &(over->overlapped), NULL) == SOCKET_ERROR)
-	{
-		if (WSAGetLastError() != WSA_IO_PENDING)
-		{
-			cout << "Error - Fail WSASend(error_code : " << WSAGetLastError << ")" << endl;
-		}
-	}*/
 }
 
 void send_login_ok_packet(int id)
@@ -188,18 +181,25 @@ void disconnect(int id)
 	//		clients[i].access_lock.unlock();
 	//	}
 	//}
-	//closesocket(clients[id].socket);
+	closesocket(clients[id].sock.socket);
 	//clients[id].viewlist.clear();
-	//clients[id].connected = false;
+	clients[id].sock.connected = false;
 }
 
 void process_packet(const char id,const int packet_size, const char * buf)
 {
+	//패킷크기 | 타입 까지 8바이트 그뒤에 데이터
+	int Ipos = 0;
+	for (Ipos = 0; Ipos < 8; ++Ipos)
+	{
+		if (buf[Ipos] == 124)
+			break;
+	}
 	char *get_packet = new char[packet_size] {0};	
-	for (int i = 0; i < packet_size; ++i)
-		get_packet[i] = buf[i];
+	for (int i = 8; i < packet_size; ++i)
+		get_packet[i - 8] = buf[i];
 
-	switch (get_packet[1])
+	switch (buf[Ipos+1])
 	{
 	case CS_INFO:
 	{
@@ -208,6 +208,7 @@ void process_packet(const char id,const int packet_size, const char * buf)
 		vec3 r = { client_Check_info->rotation()->x(), client_Check_info->rotation()->y(), client_Check_info->rotation()->z() };
 		clients[id].SetPos(p);
 		clients[id].SetRotation(r);
+		cout << "pos: " << p.x << "," << p.y << "," << p.z << endl;
 	}
 		break;
 	case CS_GET_ITEM:
@@ -223,7 +224,7 @@ void process_packet(const char id,const int packet_size, const char * buf)
 	default:
 		break;
 	}
-	send_my_status_to_all_packet(id);
+	//send_my_status_to_all_packet(id);
 
 }
 
@@ -275,14 +276,42 @@ void worker_thread()
 			char *ptr = lpover_ex->messageBuffer;
 			char packet_size = 0;
 			if (0 < clients[key].sock.prev_size)
-				packet_size = clients[key].sock.packet_buf[0];
+			{
+				char packet_data[8] = { 0 };
+				int Ipos = 0;
+				for (Ipos = 0; Ipos < 8; ++Ipos)
+				{
+					if (clients[key].sock.packet_buf[Ipos] != 124)
+						packet_data[Ipos] = clients[key].sock.packet_buf[Ipos];
+					else
+					{
+						break;
+					}
+				}
+				
+				packet_size = atoi(packet_data) + 8;
+			}
 			while (rest_size > 0) {
 				if (0 == packet_size)
-					packet_size = ptr[0];
+				{
+					char packet_data[8] = { 0 };
+					int Ipos = 0;
+					for (Ipos = 0; Ipos < 8; ++Ipos)
+					{
+						if (ptr[Ipos] != 124)
+							packet_data[Ipos] = ptr[Ipos];
+						else
+						{
+							break;
+						}
+					}
+
+					packet_size = atoi(packet_data) + 8;
+				}
 				int required = packet_size - clients[key].sock.prev_size;
 				if (rest_size >= required) {
 					memcpy(clients[key].sock.packet_buf + clients[key].sock.prev_size, ptr, required);
-					process_packet(key,sizeof(clients[key].sock.packet_buf),clients[key].sock.packet_buf);
+					process_packet(key,packet_size,clients[key].sock.packet_buf);
 					rest_size -= required;
 					ptr += required;
 					packet_size = 0;
@@ -363,7 +392,7 @@ void do_accept()
 		}
 
 		int new_id = get_new_id();
-
+		cout << "접속 아이디: " << new_id << endl;
 		clients[new_id].init(new_id);
 
 		clients[new_id].sock.connected = false;
@@ -383,8 +412,12 @@ void do_accept()
 
 		send_login_ok_packet(new_id);	// 내 아이디 클라에게 알려주기
 
-		// 처음 연결 시 다른 캐릭터, 몬스터 정보 나에게 보내고 내 정보 다른 캐릭터에게 보내기
-		send_all_player_packet(new_id);
+		// 처음 연결 시 다른 캐릭터, 몬스터 정보 나에게 보내고 
+		//send_all_player_packet(new_id);
+
+		//new_id 접속을 이미 들어와있는 플레이어들에게 알리기
+		send_put_player_packet(new_id);
+
 
 		do_recv(new_id);
 	}
