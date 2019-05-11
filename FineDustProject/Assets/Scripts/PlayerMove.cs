@@ -28,9 +28,12 @@ public class PlayerMove : MonoBehaviour
 
     void Move()
     {
-        if (CMgr.Camera_Num == 2)
+        if (player.Ani_State_Walk_Run >= PlayerStatus.ANI_TYPE.WALK)
         {
-            
+
+            if (CMgr.Camera_Num == 2)
+            {
+
                 if (Input.GetKey(KeyCode.W)) relativePos = Vector3.forward + Vector3.right - Vector3.zero;
                 if (Input.GetKey(KeyCode.A)) relativePos = Vector3.forward + Vector3.left - Vector3.zero;
                 if (Input.GetKey(KeyCode.S)) relativePos = Vector3.back + Vector3.left - Vector3.zero;
@@ -45,28 +48,24 @@ public class PlayerMove : MonoBehaviour
                 transform.rotation = rotation;
 
                 transform.Translate((Vector3.forward) * player.speedT * Time.deltaTime);
-            
-        }
-        else
-        {
-            // 앞뒤 이동
-            float ver_move = Input.GetAxis("Vertical");          // W, S 키
-            transform.Translate(Vector3.forward * player.speedT * ver_move * Time.deltaTime);
-            Debug.Log("이동중");
 
-            // 회전
-            //if (CamT.enabled == true)
-            //if(transform.Find("Cam3").gameObject)
+            }
+            else
             {
+                // 앞뒤 이동
+
+                float ver_move = Input.GetAxis("Vertical");          // W, S 키
+                transform.Translate(Vector3.forward * player.speedT * ver_move * Time.deltaTime);
+
+                // 회전
                 float hor_rotate = Input.GetAxis("Horizontal");        // Q, E 키 
                 transform.Rotate(Vector3.up * player.speedR * hor_rotate);    // 회전
-            }
+                
+                if (Input.GetKey(KeyCode.A)) transform.Translate(Vector3.left * player.speedT * Time.deltaTime);
+                if (Input.GetKey(KeyCode.D)) transform.Translate(Vector3.right * player.speedT * Time.deltaTime);
 
-            // 좌우 이동
-            if (Input.GetKey(KeyCode.A))
-                transform.Translate(Vector3.left * player.speedT * Time.deltaTime);
-            if (Input.GetKey(KeyCode.D))
-                transform.Translate(Vector3.right * player.speedT * Time.deltaTime);      //이동
+                Debug.Log(player.Direction_X);
+            }
         }
 
         // 점프

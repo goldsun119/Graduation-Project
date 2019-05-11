@@ -540,6 +540,8 @@ MonoBehaviour:
   speedR: 2
   JumpP: 4
   key_on_num: 0
+  Direction_X: 0
+  Direction_Z: 0
   Ani_State_Walk_Run: 0
   Ani_State_Jump: 0
   isPick: 0
@@ -2791,6 +2793,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_UpdateMode
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7665532897788908204, guid: b1d9524817c402044a449537f9b728cb,
+        type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1952965415, guid: b1d9524817c402044a449537f9b728cb, type: 3}
       propertyPath: speedT
