@@ -540,10 +540,8 @@ MonoBehaviour:
   speedR: 2
   JumpP: 4
   key_on_num: 0
-  is_Walk: 0
-  isRun: 0
-  isJump: 0
-  reJump: 0
+  Ani_State_Walk_Run: 0
+  Ani_State_Jump: 0
   isPick: 0
   isItem: 0
   isMon: 0
@@ -2784,5 +2782,32 @@ PrefabInstance:
       propertyPath: Isometric_Cam
       value: 
       objectReference: {fileID: 1644847488}
+    - target: {fileID: 7665532897788908204, guid: b1d9524817c402044a449537f9b728cb,
+        type: 3}
+      propertyPath: m_CullingMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7665532897788908204, guid: b1d9524817c402044a449537f9b728cb,
+        type: 3}
+      propertyPath: m_UpdateMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1952965415, guid: b1d9524817c402044a449537f9b728cb, type: 3}
+      propertyPath: speedT
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1952965415, guid: b1d9524817c402044a449537f9b728cb, type: 3}
+      propertyPath: speedR
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1952965415, guid: b1d9524817c402044a449537f9b728cb, type: 3}
+      propertyPath: JumpP
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7665532897784671340, guid: b1d9524817c402044a449537f9b728cb,
+        type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b1d9524817c402044a449537f9b728cb, type: 3}

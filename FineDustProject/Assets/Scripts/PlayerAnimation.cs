@@ -23,12 +23,11 @@ public class PlayerAnimation : MonoBehaviour
     void MoveAni()
     {
         // 걷기
-        if (player.is_Walk) animator.SetBool("walk", true);
-        else animator.SetBool("walk", false);
+        if (player.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.IDEL) animator.SetInteger("anitype", 0);
+        else if (player.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.WALK) animator.SetInteger("anitype", 1);
+        else if (player.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.RUN) animator.SetInteger("anitype", 2);
+        else animator.SetInteger("anitype", 0);
 
-        //뛰기
-        if (player.isRun) animator.SetBool("run", true);
-        else animator.SetBool("run", false);
 
     }
 }

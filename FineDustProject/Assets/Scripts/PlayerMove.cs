@@ -30,8 +30,7 @@ public class PlayerMove : MonoBehaviour
     {
         if (CMgr.Camera_Num == 2)
         {
-            if (player.is_Walk)
-            {
+            
                 if (Input.GetKey(KeyCode.W)) relativePos = Vector3.forward + Vector3.right - Vector3.zero;
                 if (Input.GetKey(KeyCode.A)) relativePos = Vector3.forward + Vector3.left - Vector3.zero;
                 if (Input.GetKey(KeyCode.S)) relativePos = Vector3.back + Vector3.left - Vector3.zero;
@@ -46,7 +45,7 @@ public class PlayerMove : MonoBehaviour
                 transform.rotation = rotation;
 
                 transform.Translate((Vector3.forward) * player.speedT * Time.deltaTime);
-            }
+            
         }
         else
         {
@@ -71,11 +70,10 @@ public class PlayerMove : MonoBehaviour
         }
 
         // 점프
-        if (player.isJump)
+        if (player.Ani_State_Jump == PlayerStatus.ANI_TYPE.IDEL)
         {
             rigid.AddForce(Vector3.up * player.JumpP, ForceMode.Impulse);
-            player.isJump = false;
-            player.reJump = true;
+            player.Ani_State_Jump = PlayerStatus.ANI_TYPE.JUMP;
         }
 
         // 충돌 - 아이템

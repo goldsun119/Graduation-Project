@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
 public class PlayerStatus : MonoBehaviour
 {
+    float Player_Max_Walk_Speed = 2.7f;
+
     public int ID;
 
-    public float speedT = 5.0f;
-    public float speedR = 2.0f;
-    public float JumpP = 4.0f;
+    public float speedT=0;
+    public float speedR;
+    public float JumpP;
 
     public int key_on_num = 0;
-    public bool is_Walk = false, isRun = false, isJump = false, reJump = false;
+    public enum ANI_TYPE { IDEL, WALK, RUN, JUMP, REJUMP };
+    public ANI_TYPE Ani_State_Walk_Run = (int)ANI_TYPE.IDEL;
+    public ANI_TYPE Ani_State_Jump = (int)ANI_TYPE.IDEL;
     public bool isPick = false;
 
     // 상호작용
@@ -40,23 +42,35 @@ public class PlayerStatus : MonoBehaviour
         // 걷기
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
         {
-            if (!is_Walk) is_Walk = true;
-        }
-        else is_Walk = false;
-       // if (Input.GetKeyUp(KeyCode.W) && Input.GetKeyUp(KeyCode.A) && Input.GetKeyUp(KeyCode.S) && Input.GetKeyUp(KeyCode.D))
-       // {
-       //     is_Walk = false;
-       // }
-        // 뛰기
-        if (Input.GetKeyDown(KeyCode.LeftShift) && is_Walk)
-        { isRun = true; speedT = 10.0f; }
+            // idle 상태일때 키를 누르면 walk 상태로 전환
+            if (Ani_State_Walk_Run == ANI_TYPE.IDEL) Ani_State_Walk_Run = ANI_TYPE.WALK;
 
-        if (Input.GetKeyUp(KeyCode.LeftShift) || !is_Walk)
-        { isRun = false; speedT = 5.0f; }
+            // walk인지 run인지에 따라 속도 변화
+            if ((Ani_State_Walk_Run == ANI_TYPE.WALK) && speedT < Player_Max_Walk_Speed)
+                speedT += 0.2f;
+            else if (Ani_State_Walk_Run == ANI_TYPE.RUN)
+                speedT = 8f;
+            else speedT = Player_Max_Walk_Speed;
+        }
+        else
+        {
+            Ani_State_Walk_Run = ANI_TYPE.IDEL;
+            speedT = 0;
+        }
+
+        if ((Input.GetKeyDown(KeyCode.LeftShift)) && (Ani_State_Walk_Run <= ANI_TYPE.WALK))
+        {
+            Ani_State_Walk_Run = ANI_TYPE.RUN;
+        }
+
+        if ((Input.GetKeyUp(KeyCode.LeftShift)) && (Ani_State_Walk_Run == ANI_TYPE.RUN))
+        {
+            Ani_State_Walk_Run = ANI_TYPE.WALK;
+        }
 
         // 점프
-        if (Input.GetKeyDown(KeyCode.Space) && !reJump)
-            isJump = true;
+        if ((Input.GetKeyDown(KeyCode.Space)) && (Ani_State_Jump == ANI_TYPE.IDEL))
+            Ani_State_Jump = ANI_TYPE.JUMP;
 
     }
 
@@ -65,8 +79,7 @@ public class PlayerStatus : MonoBehaviour
         // 점프 해제
         if (collision.gameObject.CompareTag("Ground"))
         {
-            reJump = false;
-            Debug.Log("땅임~");
+            Ani_State_Jump = (int)ANI_TYPE.IDEL;
         }
 
         // 아이템 충돌
