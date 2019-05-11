@@ -21,18 +21,6 @@ namespace Game.Protocol
 
         public Protocol()
         {
-            MAX_USER = 5;   // 0번째는 버림
-
-            SC_ID = 1;
-            SC_PUT_PLAYER = 2;
-            SC_REMOVE_PLAYER = 3;
-            SC_ALL_PLAYER_DATA = 4;
-            SC_PUT_MONSTER = 5;
-            SC_REMOVE_MONSTER = 6;
-
-            CS_INFO = 1;
-            CS_GET_ITEM = 2;
-            CS_MONSTER_HP = 3;
 
         }
     }

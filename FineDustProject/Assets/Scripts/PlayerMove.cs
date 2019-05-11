@@ -7,12 +7,15 @@ using Game.Network;
 public class PlayerMove : MonoBehaviour
 {
     PlayerStatus player;
+    GameObject playerObj;
 
     Rigidbody rigid;
 
     void Start()
     {
-        player = GetComponent<PlayerStatus>();
+        string a = "Player(" + Game.Network.NetWork.Client_id.ToString() + ")";
+        playerObj = GameObject.Find("Players").transform.Find(a).gameObject;
+        player = playerObj.GetComponent<PlayerStatus>();
         rigid = GetComponent<Rigidbody>();
     }
 
@@ -24,55 +27,60 @@ public class PlayerMove : MonoBehaviour
 
     void Move()
     {
-        // 점프
-        if (player.isJump)
+        if (player.ID == Game.Network.NetWork.Client_id)
         {
-            rigid.AddForce(Vector3.up * player.JumpP, ForceMode.Impulse);
-            player.isJump = false;
-            player.reJump = true;
+            // 점프
+            if (player.isJump)
+            {
+                rigid.AddForce(Vector3.up * player.JumpP, ForceMode.Impulse);
+                player.isJump = false;
+                player.reJump = true;
+            }
+
+            // 충돌 - 아이템
+            if (player.isItem)
+            {
+                Debug.Log("item collision");
+            }
+            if (!player.isItem)
+            {
+
+            }
+
+            // 충돌 - 몬스터
+            if (player.isMon)
+            {
+                Debug.Log("monster collision");
+            }
+            if (!player.isMon)
+            {
+
+            }
+
+            // 걷기
+            player.vertical = Input.GetAxis("Vertical");          //앞, 뒤 키
+            Vector3 a = Vector3.forward * player.speedT * player.vertical * Time.deltaTime;
+            playerObj.transform.Translate(a);
+            //transform.Translate(a);      //이동
+
+
+            //Debug.Log("이동중");
+
+            // 회전
+            player.horizontal = Input.GetAxis("Horizontal");        //왼쪽, 오른쪽 키 
+            player.rotation = Vector3.up * player.speedR * player.horizontal;
+            playerObj.transform.Rotate(player.rotation);
+            //transform.Rotate(player.rotation);    // 회전
+                                                  // if(player.draw == true&&player.connect==true)
+
+            player.position = playerObj.transform.position;
+            player.rotation = new Vector3(playerObj.transform.eulerAngles.x, playerObj.transform.eulerAngles.y, playerObj.transform.eulerAngles.z);
+
+            if (player.isMove == true)
+                NetWork.SendPlayerInfo(player.position, player.animator, player.horizontal, player.vertical, player.rotation, player.name);
+
+            // float hor = Input.GetAxis("Horizontal");  
+            //transform.Translate(Vector3.right * player.speedT * hor * Time.deltaTime);   
         }
-
-        // 충돌 - 아이템
-        if (player.isItem)
-        {
-            Debug.Log("item collision");
-        }
-        if (!player.isItem)
-        {
-
-        }
-
-        // 충돌 - 몬스터
-        if (player.isMon)
-        {
-            Debug.Log("monster collision");
-        }
-        if (!player.isMon)
-        {
-
-        }
-
-        // 걷기
-        player.vertical = Input.GetAxis("Vertical");          //앞, 뒤 키
-        Vector3 a= Vector3.forward * player.speedT * player.vertical * Time.deltaTime;
-        transform.Translate(a);      //이동
-
-        
-        //Debug.Log("이동중");
-
-        // 회전
-        player.horizontal = Input.GetAxis("Horizontal");        //왼쪽, 오른쪽 키 
-        player.rotation = Vector3.up * player.speedR * player.horizontal;
-        transform.Rotate(player.rotation);    // 회전
-                                              // if(player.draw == true&&player.connect==true)
-
-        player.position = transform.position;
-
-        if(player.isMove == true)
-            NetWork.SendPlayerInfo(player.position, player.animator, player.horizontal, player.vertical, player.rotation, player.name);
-
-        // float hor = Input.GetAxis("Horizontal");  
-        //transform.Translate(Vector3.right * player.speedT * hor * Time.deltaTime);   
-
     }
 }

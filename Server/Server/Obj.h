@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <mutex>
 #include "vec3.h"
 
 enum OBJ_TYPE
@@ -15,6 +16,8 @@ protected:		//파생클래스의 접근은 허용 외부접근은 비허용
 	bool isDraw;
 	std::string name;
 	char type;
+	std::mutex access_lock;
+
 
 public:
 	Obj();
@@ -26,6 +29,9 @@ public:
 	bool GetDraw() const { return isDraw; }
 	std::string GetName() const { return name; }
 	char GetType() { return type; }
+	
+	void SetLock() { access_lock.lock(); }
+	void SetUnlock() { access_lock.unlock(); }
 
 
 	void SetPos(float x, float y, float z) { pos.x = x, pos.y = y, pos.z = z; }

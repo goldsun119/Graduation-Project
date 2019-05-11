@@ -17,9 +17,9 @@ namespace Game.Class
         private bool draw;
         private string name;
 
-        private bool prefab;    // 클라이언트 프리팹이 만들어졌는지 확인
-        public GameObject player;   // 프리팹을 위한 게임 오브젝트
-        private bool activePlayer;
+        //private bool prefab;    // 클라이언트 프리팹이 만들어졌는지 확인
+        //public GameObject player;   // 프리팹을 위한 게임 오브젝트
+        //private bool activePlayer;
         //public OtherPlayerCtrl script;  // 프리팹 오브젝트 안의 함수를 호출하기 위한 스크립트
 
         public float get_vertical() { return this.vertical; }
@@ -32,8 +32,8 @@ namespace Game.Class
         public bool get_connect() { return this.connect; }
         public bool get_draw() { return this.draw; }
         public string get_name() { return this.name; }
-        public bool get_prefab() { return this.prefab; }
-        public bool get_activePlayer() { return this.activePlayer; }
+        //public bool get_prefab() { return this.prefab; }
+        //public bool get_activePlayer() { return this.activePlayer; }
 
         public void set_vertical(float value) { this.vertical = value; }
         public void set_horizontal(float value) { this.horizontal = value; }
@@ -45,8 +45,8 @@ namespace Game.Class
         public void set_connect(bool value) { this.connect = value; }
         public void set_draw(bool value) { this.draw = value; }
         public void set_name(string name) { this.name = name; }
-        public void set_prefab(bool value) { this.prefab = value; }
-        public void set_activePlayer(bool value) { this.activePlayer = value; }
+        //public void set_prefab(bool value) { this.prefab = value; }
+        //public void set_activePlayer(bool value) { this.activePlayer = value; }
 
         public ClientClass(int id, int hp, string name, Vector3 pos, Vector3 rot)
         {
@@ -59,10 +59,26 @@ namespace Game.Class
             this.connect = true;
             this.vertical = 0.0f;
             this.horizontal = 0.0f;
-            this.prefab = false;
-            this.player = null;
-            //this.script = null;
-            this.activePlayer = true;
+            //this.prefab = false;
+            //this.player = null;
+            ////this.script = null;
+            //this.activePlayer = true;
+        }
+        public ClientClass(int id, int hp, int ani, float h, float v, string name, Vector3 pos, Vector3 rot)
+        {
+            this.id = id;
+            this.hp = hp;
+            this.animator = ani;
+            this.horizontal = h;
+            this.vertical = v;
+            this.name = name;
+            this.position = pos;
+            this.rotation = rot;
+            this.connect = true;
+            //this.prefab = false;
+            //this.player = null;
+            ////this.script = null;
+            //this.activePlayer = true;
         }
     }
 }

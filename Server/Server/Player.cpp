@@ -56,12 +56,12 @@ void Player::SetHp(int a)
 
 vec3 Player::GetRotation()
 {
-	return pos;
+	return rotation;
 }
 
 void Player::SetRotation(vec3 a)
 {
-	pos = a;
+	rotation = a;
 }
 
 float Player::GetVertical()

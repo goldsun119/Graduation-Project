@@ -16,14 +16,20 @@ public class players : MonoBehaviour
     {
         if(last_id != Game.Network.NetWork.new_player_id)
         {
-            string a = "Player(" + Game.Network.NetWork.new_player_id.ToString() + ")";
-            //GameObject playerObj = transform.GetChild(id-1).gameObject;
-            GameObject playerObj = transform.Find(a).gameObject;
-            PlayerStatus playerStatus = playerObj.GetComponent<PlayerStatus>();
-
-            if (Game.Network.NetWork.new_player_id == playerStatus.ID)
+            for (int i = 1; i <= Game.Network.NetWork.new_player_id; ++i)
+            {
+                string a = "Player(" + i.ToString() + ")";
+                //GameObject playerObj = transform.GetChild(id-1).gameObject;
+                GameObject playerObj = transform.Find(a).gameObject;
+                PlayerStatus playerStatus = playerObj.GetComponent<PlayerStatus>();
+                if (Game.Network.NetWork.client_data.ContainsKey(i))
+                {
+                    playerStatus.position = Game.Network.NetWork.client_data[i].get_pos();
+                    playerStatus.rotation = Game.Network.NetWork.client_data[i].get_rot();
+                }
                 playerObj.SetActive(true);
-            last_id = Game.Network.NetWork.new_player_id;
+                last_id = Game.Network.NetWork.new_player_id;
+            }
         }
     }
 

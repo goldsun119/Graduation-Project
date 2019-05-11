@@ -42,6 +42,7 @@ public class PlayerStatus : MonoBehaviour
     void Update()
     {
         MoveStatus();
+        RecvStatus();
     }
 
     void MoveStatus()
@@ -96,5 +97,21 @@ public class PlayerStatus : MonoBehaviour
         isPick = false;
         isItem = false;
         isMon = false;
+    }
+
+    void RecvStatus()
+    {
+        if(Game.Network.NetWork.client_data.ContainsKey(ID) && ID != Game.Network.NetWork.Client_id)
+        {
+            hp = Game.Network.NetWork.client_data[ID].get_hp();
+            animator = Game.Network.NetWork.client_data[ID].get_animator();
+            vertical = Game.Network.NetWork.client_data[ID].get_vertical();
+            horizontal = Game.Network.NetWork.client_data[ID].get_horizontal();
+            rotation = Game.Network.NetWork.client_data[ID].get_rot();
+            position = Game.Network.NetWork.client_data[ID].get_pos();
+
+            transform.position = position;
+            transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
+        }
     }
 }

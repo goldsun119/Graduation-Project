@@ -49,30 +49,23 @@ namespace Game.Network
     public class NetWork : MonoBehaviour
     {
         public static Socket sock;
-
-        Vector3 Player_Position;
-        Vector3 Player_Rotation;
-
+     
         private static byte[] Sendbyte = new byte[1024];
 
         public static Dictionary<int, ClientClass> client_data = new Dictionary<int, ClientClass>();
-
-        Game.Protocol.Protocol recv_protocol = new Game.Protocol.Protocol();
+        
         static SendFunc sF = new SendFunc();
 
         public static int Client_id = -1;         // 자신의 클라이언트 아이디
-        public int get_id() { return Client_id; }
 
         float deltaTime = 0.0f;     // FPS 측정
 
         private static bool serverConnect = false;  // 서버 연결을 했는지 체크
         private static ManualResetEvent connectDone = new ManualResetEvent(false);
         private string playerIP = "";   // 플레이어 아이피
-        private static NetWork instance_S= null; // 정적 변수
+        private static NetWork instance_S = null;
 
-        public static int new_player_id = 0;
-
-        public static NetWork Instance_S  // 인스턴스 접근 프로퍼티
+        public static NetWork Instance_S
         {
             get
             {
@@ -80,6 +73,9 @@ namespace Game.Network
             }
         }
 
+
+        public static int new_player_id = 0;
+        
         public string PlayerIP                 // 플레이어 IP 접근 프로퍼티
         {
             get
@@ -109,146 +105,108 @@ namespace Game.Network
         public void NetworkInit()
         {
             client_data.Clear();
-            //item_Collection.Clear();
         }
-        //IEnumerator startPrefab()
-        //{
-        //    do
-        //    {
-        //        // 플레이어 관련한 프리팹
-        //        foreach (var key in client_data.Keys.ToList())
-        //        {
-        //            if (client_data[key].get_id() == Client_id)// 나면
-        //            {
-        //                Player_Script.ID = Client_id;
-        //                Player_Script.hp = client_data[key].get_hp();
-        //               if (client_data[key].get_draw() == false)
-        //                {
-        //                    //죽었을때 (안그릴때)
-        //                    Player_Script.hp = 0;
-        //                    Player_Script.Die = true;
-        //                }
-
-        //                continue;
-        //            }
-        //            if (client_data[key].get_connect() == true && client_data[key].get_prefab() == false)
-        //            {// 내가 아닌 다른 플레이어가 연결되어 있는데 프리팹이 생성 안된 경우
-        //                client_data[key].player = Instantiate(PrefabPlayer, client_data[key].get_pos(), Quaternion.identity);
-        //                client_data[key].player.transform.SetParent(OtherPlayerCollection.transform);
-
-        //                client_data[key].script = client_data[key].player.GetComponent<OtherPlayerCtrl>();
-        //                client_data[key].script.otherPlayer_id = client_data[key].get_id();
-
-        //                // 처음 위치를 넣어 줘야 한다. 그러지 않을경우 다른 클라이언트 에서는 0,0 에서부터 천천히 올라오게 보인다
-        //                client_data[key].player.transform.position = client_data[key].get_pos();
-        //            }
-        //            else if (client_data[key].get_prefab() == true)
-        //            {
-        //                // 플레이어 프리팹이 정상적으로 생성 되었을 경우.
-        //                if (client_data[key].player.activeSelf == false && client_data[key].get_activePlayer() == true)
-        //                {
-        //                    // setActive가 꺼져 있을 경우, 코루틴이랑 같이 활성화 시킨다.
-        //                    client_data[key].player.SetActive(true);
-        //                    client_data[key].script.StartCoroutine(client_data[key].script.createPrefab());
-        //                    client_data[key].set_activePlayer(false);
-        //                }
-
-        //                if (client_data[key].get_hp() <= 0 && client_data[key].get_draw() == true)
-        //                {
-        //                    // 서버에서 해당 클라이언트 체력이 0 이고 죽는게 허가 된 경우
-        //                    client_data[key].set_hp(0);
-        //                    client_data[key].script.OtherPlayerDie();
-        //                }
-                        
-        //                else
-        //                {
-        //                    // 실제로 캐릭터를 움직이는 것은 코루틴 여기서 움직임을 진행 한다.
-        //                    client_data[key].script.set_hp(client_data[key].get_hp());
-        //                    client_data[key].script.MovePos(client_data[key].get_pos());
-        //                    client_data[key].script.collider_script.enabled = true;
-        //                    Vector3 rotation = client_data[key].get_rot();
-        //                    client_data[key].player.transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
-        //                }
-        //            }
-        //            if (client_data[key].get_draw() == false)
-        //            {
-        //                // 플레이어 삭제를 할 경우 SetActive를 꺼준다.
-        //                client_data[key].set_activePlayer(false);
-        //                client_data[key].player.SetActive(false);
-        //            }
-        //        }
-        //        yield return null;
-        //    } while (true);
-        //}
 
         public void ProcessPacket(int size, int type, byte[] recvPacket)
         {
             if (type == Game.Protocol.Protocol.SC_ID)
             {
-                Client_id = recvPacket[0];
-                new_player_id = recvPacket[0];
-                //----------------------------------------------------------------
-                // 클라이언트 아이디가 정상적으로 받은건지 확인을 한다. 
-                //----------------------------------------------------------------
+                ByteBuffer recv_buf = new ByteBuffer(recvPacket);
+                Client_info get_data = Client_info.GetRootAsClient_info(recv_buf);
+                Client_id = get_data.Id;
+                new_player_id = get_data.Id;
+                int id = get_data.Id;
+                int hp = get_data.Hp;
+                int ani = get_data.Animator;
+                float h = get_data.Horizontal;
+                float v = get_data.Vertical;
+                string n = get_data.Name;
+                Vector3 p = new Vector3(get_data.Position.Value.X, get_data.Position.Value.Y, get_data.Position.Value.Z);
+                Vector3 r = new Vector3(get_data.Rotation.Value.X, get_data.Rotation.Value.Y, get_data.Rotation.Value.Z);
+
+                client_data.Add(id, new ClientClass(id, hp, ani, h, v, n, p, r));
                 Debug.Log("클라이언트 아이디 : " + Client_id);
             }
-            else if (type == Game.Protocol.Protocol.SC_PUT_PLAYER)
+            else if (type == Game.Protocol.Protocol.SC_PUT_PLAYER)      // 다른 클라가 접속했을 때
             {
-                new_player_id = recvPacket[0];
+                ByteBuffer recv_buf = new ByteBuffer(recvPacket);
+                Client_info get_data = Client_info.GetRootAsClient_info(recv_buf);
+                new_player_id = get_data.Id; 
+                int id = get_data.Id;
+                int hp = get_data.Hp;
+                int ani = get_data.Animator;
+                float h = get_data.Horizontal;
+                float v = get_data.Vertical;
+                string n = get_data.Name;
+                Vector3 p = new Vector3(get_data.Position.Value.X, get_data.Position.Value.Y, get_data.Position.Value.Z);
+                Vector3 r = new Vector3(get_data.Rotation.Value.X, get_data.Rotation.Value.Y, get_data.Rotation.Value.Z);
 
+                client_data.Add(id, new ClientClass(id, hp, ani, h, v, n, p, r));
                 Debug.Log("새로 접속한 아이디 : " + new_player_id);
 
             }
-            //else if (type == recv_protocol.SC_ALL_PLAYER_DATA)
-            //{
-            //    // 클라이언트 모든 데이터가 들어온다.
-            //    byte[] temp_buf = new byte[size + 1];
-            //    System.Buffer.BlockCopy(recvPacket, 8, temp_buf, 0, size); // 사이즈를 제외한 실제 패킷값을 복사한다.
-            //    ByteBuffer revc_buf = new ByteBuffer(temp_buf); // ByteBuffer로 byte[]로 복사한다.
-            //    var Get_ServerData = Client_Collection.GetRootAsClient_Collection(revc_buf);
+            else if (type == Game.Protocol.Protocol.SC_ALL_PLAYER_DATA)     // 이 클라가 처음 접속했을 때 다른 모든 클라들의 데이터
+            {
+                ByteBuffer recv_buf = new ByteBuffer(recvPacket);
+                var get_all_data = Client_Collection.GetRootAsClient_Collection(recv_buf);
+                for (int i = 0; i < get_all_data.DataLength; ++i) 
+                {
+                    //데이터 접근 get_all_data.Data(i).Value.변수
+                    int id = get_all_data.Data(i).Value.Id;
+                    int hp = get_all_data.Data(i).Value.Hp;
+                    int ani = get_all_data.Data(i).Value.Animator;
+                    float h = get_all_data.Data(i).Value.Horizontal;
+                    float v = get_all_data.Data(i).Value.Vertical;
+                    string n = get_all_data.Data(i).Value.Name;
+                    Vector3 p = new Vector3(get_all_data.Data(i).Value.Position.Value.X, get_all_data.Data(i).Value.Position.Value.Y, get_all_data.Data(i).Value.Position.Value.Z );
+                    Vector3 r = new Vector3(get_all_data.Data(i).Value.Rotation.Value.X, get_all_data.Data(i).Value.Rotation.Value.Y, get_all_data.Data(i).Value.Rotation.Value.Z );
 
-            //    // 서버에서 받은 데이터 묶음을 확인하여 묶음 수 만큼 추가해준다.
-            //    for (int i = 0; i < Get_ServerData.DataLength; i++)
-            //    {
-            //        if (client_data.ContainsKey(Get_ServerData.Data(i).Value.Id))
-            //        {
-            //            // 이미 값이 들어가 있는 상태라면
-            //            ClientClass iter = client_data[Get_ServerData.Data(i).Value.Id];
-            //            if (Get_ServerData.Data(i).Value.Hp > 0)
-            //            {
-            //                // 플레이어가 죽지 않은 경우에만 위치, 회전 값을 받아온다.
-            //                iter.set_pos(new Vector3(Get_ServerData.Data(i).Value.Position.Value.X, Get_ServerData.Data(i).Value.Position.Value.Y, Get_ServerData.Data(i).Value.Position.Value.Z));
-            //                iter.set_rot(new Vector3(Get_ServerData.Data(i).Value.Rotation.Value.X, Get_ServerData.Data(i).Value.Rotation.Value.Y, Get_ServerData.Data(i).Value.Rotation.Value.Z));
-            //            }
-            //            iter.set_hp(Get_ServerData.Data(i).Value.Hp);
-            //            iter.set_horizontal(Get_ServerData.Data(i).Value.Horizontal);
-            //            iter.set_vertical(Get_ServerData.Data(i).Value.Vertical);
-            //            //if (iter.get_prefab() == true)
-            //            //{
-            //            //    // 프리팹이 만들어진 이후 부터 script를 사용할 수 있기 때문에 그 이후 애니메이션 동기화를 시작한다.
-            //            //    iter.script.get_Animator(Get_ServerData.Data(i).Value.Animator);
-            //            //    iter.script.Vertical = Get_ServerData.Data(i).Value.Vertical;
-            //            //    iter.script.Horizontal = Get_ServerData.Data(i).Value.Horizontal;
-            //            //}
-            //        }
-            //        else
-            //        {
-            //            // 클라이언트가 자기 자신이 아닐경우에만 추가해준다.
-            //            client_data.Add(Get_ServerData.Data(i).Value.Id, new ClientClass(Get_ServerData.Data(i).Value.Id, Get_ServerData.Data(i).Value.Hp, Get_ServerData.Data(i).Value.Name.ToString(), new Vector3(Get_ServerData.Data(i).Value.Position.Value.X, Get_ServerData.Data(i).Value.Position.Value.Y, Get_ServerData.Data(i).Value.Position.Value.Z), new Vector3(Get_ServerData.Data(i).Value.Rotation.Value.X, Get_ServerData.Data(i).Value.Rotation.Value.Y, Get_ServerData.Data(i).Value.Rotation.Value.Z)));
-            //        }
-            //    }
-            //}
-            //else if (type == recv_protocol.SC_REMOVE_PLAYER)
-            //{
-            //    // 서버에서 내보낸 클라이언트를 가져 온다.
-            //    byte[] temp_buf = new byte[size + 1];
-            //    System.Buffer.BlockCopy(recvPacket, 8, temp_buf, 0, size); // 사이즈를 제외한 실제 패킷값을 복사한다.
-            //    ByteBuffer revc_buf = new ByteBuffer(temp_buf); // ByteBuffer로 byte[]로 복사한다.
-            //    var Get_ServerData = Client_Id_Packet.GetRootAsClient_Id_Packet(revc_buf);
+                    if(client_data.ContainsKey(id))
+                    {
+                        ClientClass iter = client_data[id];
+                        iter.set_hp(hp);
+                        iter.set_pos(p);
+                        iter.set_rot(r);
+                        iter.set_vertical(v);
+                        iter.set_horizontal(h);
+                        iter.set_animator(ani);
+                    }
+                    else
+                    {
+                        client_data.Add(id, new ClientClass(id,hp,ani,h,v,n,p,r));
+                    }
+                }
+            }
+            else if(type == Game.Protocol.Protocol.SC_PLAYER_STATUS)        //  클라가 움직였을때 그 클라 데이터
+            {
+                ByteBuffer recv_buf = new ByteBuffer(recvPacket);
+                Client_info get_data = Client_info.GetRootAsClient_info(recv_buf);
+                int id = get_data.Id;
+                int hp = get_data.Hp;
+                int ani = get_data.Animator;
+                float h = get_data.Horizontal;
+                float v = get_data.Vertical;
+                string n = get_data.Name;
+                Vector3 p = new Vector3(get_data.Position.Value.X, get_data.Position.Value.Y, get_data.Position.Value.Z);
+                Vector3 r = new Vector3(get_data.Rotation.Value.X, get_data.Rotation.Value.Y, get_data.Rotation.Value.Z);
 
-            //    ClientClass iter = client_data[Get_ServerData.Id];
-            //    // 해당 클라이언트의 SetActive를 꺼준다.
-            //    iter.set_draw(false);
+                if (client_data.ContainsKey(id))
+                {
+                    ClientClass iter = client_data[id];
+                    iter.set_hp(hp);
+                    iter.set_pos(p);
+                    iter.set_rot(r);
+                    iter.set_vertical(v);
+                    iter.set_horizontal(h);
+                    iter.set_animator(ani);
+                }
+                else
+                {
+                    client_data.Add(id, new ClientClass(id, hp, ani, h, v, n, p, r));
+                }
+            }
+            //else if (type == Game.Protocol.Protocol.SC_REMOVE_PLAYER)
+            //{
             //}
         }
 

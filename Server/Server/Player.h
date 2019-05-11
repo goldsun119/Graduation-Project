@@ -1,6 +1,7 @@
 #pragma once
 #include "Obj.h"
 #include <winsock2.h>
+#include <mutex>
 #include "protocol.h"
 
 #define MAX_BUFFER        1024
@@ -21,6 +22,7 @@ struct SOCKETINFO // 클라이언트 정보 - 연결이 되어있으면 무조건 소켓이 있는 것이
 	SOCKET	socket;
 	char			packet_buf[MAX_BUFFER]; // 
 	int				prev_size;
+	std::mutex send_lock;
 };
 
 class Player: public Obj
