@@ -182,6 +182,18 @@ public class PlayerStatus : MonoBehaviour
             }
         }
 
+        // 문 충돌
+        if (collision.gameObject.CompareTag("Door"))
+        {
+            isItem = true;
+
+            if (Input.GetKey(KeyCode.F))
+            {
+                isPick = true;
+                isItem = false;
+            }
+        }
+
         // 몬스터 충돌
         if (collision.gameObject.CompareTag("Monster"))
         {

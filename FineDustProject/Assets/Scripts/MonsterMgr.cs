@@ -101,6 +101,12 @@ public class MonsterMgr : MonoBehaviour
         }
     }
 
+    void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+            isCollision = false;
+    }
+
     //bool CheckDistance()
     //{
     //    float distance = Vector3.Distance(player.transform.position, transform.position);
