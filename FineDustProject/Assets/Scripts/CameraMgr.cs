@@ -4,27 +4,25 @@ using UnityEngine;
 
 public class CameraMgr : MonoBehaviour
 {
-    //public Transform target;
+    PlayerStatus player;
+    
+    public Camera Third_Cam;
+    public Camera First_Cam;
+    public Camera Isometric_Cam;
 
-    //[SerializeField]
-    //private Vector3 camOffset;
+    // player 넣고 플레이어 받아와서 카메라주기?
 
-    //[Range(0.01f, 1.0f)]
-    //public float smoothFactor = 0.5f;
+    public float mouseSensitivity = 3f;
+    public float upDownRange = 90;
 
-    //public bool LookAtPlayer = false;
-
-    public Camera mainCam;
-    public Camera subCam;
-
-    public bool isCamMain = true;
-
-    //public Vector3 angleR = new Vector3(20, 0, 0);
+    public int Camera_Num;
 
     void Start()
     {
-        //camOffset = transform.position - target.position;
-        MainCamOn();
+        player = GetComponent<PlayerStatus>();
+        ThirdCamOn();
+        Camera_Num = 0;
+
     }
 
     // Update is called once per frame
@@ -32,44 +30,73 @@ public class CameraMgr : MonoBehaviour
     {
         if(Input.GetKeyUp(KeyCode.V))
         {
-            if (isCamMain) { SubCamOn(); isCamMain = false; }
-            else { MainCamOn(); isCamMain = true; }
+            Camera_Num += 1;
+            Camera_Num = Camera_Num % 3;
+            Debug.Log(Camera_Num);
+        }
+
+        switch (Camera_Num)
+        {
+            case 0:
+                ThirdCamOn();
+                break;
+            case 1:
+                FirstCamOn();
+                break;
+            case 2:
+                IsometricCamOn();
+                break;
+            default:
+                IsometricCamOn();
+                break;
         }
     }
 
-    //void LateUpdate()
-    //{
-    //    MainCamMove();
-    //    SubCamMove();
-    //}
 
-    void MainCamOn()
+    void ThirdCamOn()
     {
-        mainCam.enabled = true;
-        subCam.enabled = false;
+        Third_Cam.enabled = true;
+        First_Cam.enabled = false;
+        Isometric_Cam.enabled = false;
     }
 
-    void SubCamOn()
+    void FirstCamOn()
     {
-        mainCam.enabled = false;
-        subCam.enabled = true;
+        Third_Cam.enabled = false;
+        First_Cam.enabled = true;
+        Isometric_Cam.enabled = false;
+
+        FirstCamMouseMove();
     }
 
-    void MainCamMove()
+    void IsometricCamOn()
     {
-        //mainCam.transform.position = target.position + new Vector3(0, 2, -2.5f);
-        //mainCam.transform.rotation = Quaternion.Euler(20, 0, 0);
+        Third_Cam.enabled = false;
+        First_Cam.enabled = false;
+        Isometric_Cam.enabled = true;
 
-        //Vector3 newPos = target.position + camOffset;
-
-        //transform.position = Vector3.Slerp(transform.position, newPos, smoothFactor);
-
-        //if (LookAtPlayer)
-        //    transform.LookAt(target);
+        IsometricCamMove();
     }
 
-    void SubCamMove()
+    void IsometricCamMove()
     {
-
+        Isometric_Cam.transform.position = new Vector3(transform.position.x - 10, transform.position.y + 10, transform.position.z - 10);
+        //Debug.Log(transform.position.x);
+        //Debug.Log(Isometric_Cam.transform.position.x);
     }
+
+    void FirstCamMouseMove()
+    {
+        //좌우 회전
+        float hor = Input.GetAxis("Mouse X");
+        Debug.Log("move mouse");
+        transform.Rotate(Vector3.up * mouseSensitivity * hor);
+
+        //상하 회전
+
+        //float ver -= Input.GetAxis("Mouse Y") * mouseSensitivity;
+        //ver = Mathf.Clamp(ver, -upDownRange, upDownRange);
+        //Camera.main.transform.localRotation = Quaternion.Euler(ver, 0f, 0f);
+    }
+
 }

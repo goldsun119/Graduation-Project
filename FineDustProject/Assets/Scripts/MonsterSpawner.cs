@@ -48,7 +48,7 @@ public class MonsterSpawner : MonoBehaviour
     Vector3 RandomPosition()
     {
         Vector3 monPosXZ = Random.insideUnitCircle * 900;
-        Vector3 monPos = new Vector3(monPosXZ.x, 0f, monPosXZ.y);
+        Vector3 monPos = new Vector3(monPosXZ.x, 30f, monPosXZ.y);
 
         Debug.Log(monPos.x + ", " + monPos.y + ", " + monPos.z);
 
