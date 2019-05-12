@@ -88,7 +88,9 @@ public class CameraMgr : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.None; //: 일반 마우스 커서
         //Cursor.lockState = CursorLockMode.Confined : 창밖으로 커서가 나가지 못함
-
+        //Quaternion rotation = Quaternion.Euler(player.rotation.x, player.rotation.y + 45, player.rotation.z);
+        //player.transform.rotation = rotation;
+        //player.transform.position = rotation * player.position;
         IsometricCamMove();
     }
 

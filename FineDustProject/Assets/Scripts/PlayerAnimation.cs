@@ -35,8 +35,8 @@ public class PlayerAnimation : MonoBehaviour
             else if (player.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.RUN) player.anitype = (int)PlayerStatus.ANI_TYPE.RUN;
             else animator.SetInteger("Ani_type", 0);
 
-            if (CMgr.Camera_Num == 2 && player.anitype != 0)
-                player.anitype += 2;
+            //if (CMgr.Camera_Num == 2 && player.anitype != 0)
+            //    player.anitype += 2;
         }
 
         //if (new_anitype != player.anitype)
@@ -46,10 +46,10 @@ public class PlayerAnimation : MonoBehaviour
         animator.SetInteger("Ani_type", player.anitype);
 
         // 3인칭 카메라만 방향변화
-        if (CMgr.Camera_Num == 0)
+        //if (CMgr.Camera_Num == 0)
         {
            animator.SetFloat("DirectionX", player.Direction_X);
-            animator.SetFloat("DirectionZ", player.Direction_Z);
+           animator.SetFloat("DirectionZ", player.Direction_Z);
         }
 
 
