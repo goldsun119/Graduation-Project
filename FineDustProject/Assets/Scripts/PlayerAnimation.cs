@@ -8,7 +8,7 @@ public class PlayerAnimation : MonoBehaviour
     Animator animator;
     CameraMgr CMgr;
 
-    
+    int new_anitype;
 
     // Start is called before the first frame update
     void Start()
@@ -16,6 +16,7 @@ public class PlayerAnimation : MonoBehaviour
         player = GetComponent<PlayerStatus>();
         animator = GetComponent<Animator>();
         CMgr = GameObject.Find("Players").GetComponent<CameraMgr>();
+        new_anitype = player.anitype;
     }
 
     // Update is called once per frame
@@ -26,15 +27,21 @@ public class PlayerAnimation : MonoBehaviour
 
     void MoveAni()
     {
+        if (player.ID == Game.Network.NetWork.Client_id)
+        {
 
+            if (player.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.IDEL) player.anitype = (int)PlayerStatus.ANI_TYPE.IDEL;
+            else if (player.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.WALK) player.anitype = (int)PlayerStatus.ANI_TYPE.WALK;
+            else if (player.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.RUN) player.anitype = (int)PlayerStatus.ANI_TYPE.RUN;
+            else animator.SetInteger("Ani_type", 0);
 
-        if (player.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.IDEL) player.anitype = (int)PlayerStatus.ANI_TYPE.IDEL;
-        else if (player.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.WALK) player.anitype = (int)PlayerStatus.ANI_TYPE.WALK;
-        else if (player.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.RUN) player.anitype = (int)PlayerStatus.ANI_TYPE.RUN;
-        else animator.SetInteger("Ani_type", 0);
+            if (CMgr.Camera_Num == 2 && player.anitype != 0)
+                player.anitype += 2;
+        }
 
-        if (CMgr.Camera_Num == 2 && player.anitype != 0)
-            player.anitype += 2;
+        //if (new_anitype != player.anitype)
+        //    Game.Network.NetWork.SendPlayerInfo(player.position, player.anitype, player.Direction_X, player.Direction_Z, player.horizontal, player.vertical, player.rotation, player.name);
+
 
         animator.SetInteger("Ani_type", player.anitype);
 

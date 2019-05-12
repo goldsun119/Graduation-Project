@@ -378,7 +378,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: -0.000019625135, z: 5.1e-43, w: -0.000012823082}
+  m_BoundingSphereOverride: {x: 0, y: -4.036935e+26, z: 1.7542903e-12, w: -1.1016564e+16}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -861,7 +861,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 3
   hp: 0
-  animator: 0
   vertical: 0
   horizontal: 0
   rotation: {x: 0, y: 0, z: 0}
@@ -1307,6 +1306,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1119083096}
     m_Modifications:
+    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
+      propertyPath: m_Name
+      value: Player(1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 400090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
       propertyPath: m_LocalPosition.x
       value: 182.28755
@@ -1350,18 +1361,6 @@ PrefabInstance:
     - target: {fileID: 400090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
-      propertyPath: m_Name
-      value: Player(1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
-      propertyPath: m_TagString
-      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 9500000, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
       propertyPath: m_CullingMode
@@ -2097,7 +2096,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 2
   hp: 0
-  animator: 0
   vertical: 0
   horizontal: 0
   rotation: {x: 0, y: 0, z: 0}
@@ -2209,7 +2207,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 4
   hp: 0
-  animator: 0
   vertical: 0
   horizontal: 0
   rotation: {x: 0, y: 0, z: 0}
@@ -3215,6 +3212,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1119083096}
     m_Modifications:
+    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
+      propertyPath: m_Name
+      value: Player(4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 400090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
       propertyPath: m_LocalPosition.x
       value: 182.2877
@@ -3259,18 +3268,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
-      propertyPath: m_Name
-      value: Player(4)
-      objectReference: {fileID: 0}
-    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
-      propertyPath: m_TagString
-      value: Player
-      objectReference: {fileID: 0}
     - target: {fileID: 9500000, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
       propertyPath: m_CullingMode
       value: 1
@@ -3300,6 +3297,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1119083096}
     m_Modifications:
+    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
+      propertyPath: m_Name
+      value: Player(2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 400090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
       propertyPath: m_LocalPosition.x
       value: 182.28767
@@ -3343,18 +3352,6 @@ PrefabInstance:
     - target: {fileID: 400090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
-      propertyPath: m_Name
-      value: Player(2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
-      propertyPath: m_TagString
-      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 9500000, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
       propertyPath: m_CullingMode
@@ -3468,7 +3465,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 1
   hp: 0
-  animator: 0
   vertical: 0
   horizontal: 0
   rotation: {x: 0, y: 0, z: 0}
@@ -3494,6 +3490,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1119083096}
     m_Modifications:
+    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
+      propertyPath: m_Name
+      value: Player(3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 400090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
       propertyPath: m_LocalPosition.x
       value: 182.2877
@@ -3537,18 +3545,6 @@ PrefabInstance:
     - target: {fileID: 400090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
-      propertyPath: m_Name
-      value: Player(3)
-      objectReference: {fileID: 0}
-    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
-      propertyPath: m_TagString
-      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 9500000, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
       propertyPath: m_CullingMode

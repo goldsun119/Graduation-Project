@@ -10,7 +10,7 @@ public class PlayerStatus : MonoBehaviour
 
     //
     public int hp;
-    public int animator;
+    //public int animator;
     public float vertical;
     public float horizontal;
     public Vector3 rotation;
@@ -51,7 +51,8 @@ public class PlayerStatus : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        MoveStatus();
+        if (ID == Game.Network.NetWork.Client_id)
+            MoveStatus();
         RecvStatus();
     }
 
@@ -200,12 +201,13 @@ public class PlayerStatus : MonoBehaviour
         if (Game.Network.NetWork.client_data.ContainsKey(ID) && ID != Game.Network.NetWork.Client_id)
         {
             hp = Game.Network.NetWork.client_data[ID].get_hp();
-            animator = Game.Network.NetWork.client_data[ID].get_animator();
+            anitype = Game.Network.NetWork.client_data[ID].get_animator();
             vertical = Game.Network.NetWork.client_data[ID].get_vertical();
             horizontal = Game.Network.NetWork.client_data[ID].get_horizontal();
             rotation = Game.Network.NetWork.client_data[ID].get_rot();
             position = Game.Network.NetWork.client_data[ID].get_pos();
-
+            Direction_X = Game.Network.NetWork.client_data[ID].get_dirX();
+            Direction_Z = Game.Network.NetWork.client_data[ID].get_dirZ();
             transform.position = position;
             transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
         }

@@ -101,8 +101,8 @@ public class PlayerMove : MonoBehaviour
         player.position = playerObj.transform.position;
         player.rotation = new Vector3(playerObj.transform.eulerAngles.x, playerObj.transform.eulerAngles.y, playerObj.transform.eulerAngles.z);
 
-        if (player.anitype != 0)
-            Game.Network.NetWork.SendPlayerInfo(player.position, player.animator, player.Direction_X, player.Direction_Z, player.horizontal, player.vertical, player.rotation, player.name);
+        //if (player.anitype != 0)
+            Game.Network.NetWork.SendPlayerInfo(player.position, player.anitype, player.Direction_X, player.Direction_Z, player.horizontal, player.vertical, player.rotation, player.name);
 
     }
 }
