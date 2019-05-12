@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CameraMgr : MonoBehaviour
 {
+    GameObject playerObj;
     PlayerStatus player;
     
     public Camera Third_Cam;
@@ -19,7 +20,10 @@ public class CameraMgr : MonoBehaviour
 
     void Start()
     {
-        player = GetComponent<PlayerStatus>();
+        string a = "Player(" + Game.Network.NetWork.Client_id.ToString() + ")";
+        playerObj = GameObject.Find("Players").transform.Find(a).gameObject;
+        player = playerObj.GetComponent<PlayerStatus>();
+        
         ThirdCamOn();
         Camera_Num = 0;
 
@@ -58,6 +62,8 @@ public class CameraMgr : MonoBehaviour
         Third_Cam.enabled = true;
         First_Cam.enabled = false;
         Isometric_Cam.enabled = false;
+
+        ThirdCamMove();
     }
 
     void FirstCamOn()
@@ -67,6 +73,7 @@ public class CameraMgr : MonoBehaviour
         Isometric_Cam.enabled = false;
 
         FirstCamMouseMove();
+        FirstCamMove();
     }
 
     void IsometricCamOn()
@@ -78,9 +85,20 @@ public class CameraMgr : MonoBehaviour
         IsometricCamMove();
     }
 
+    void ThirdCamMove()
+    {
+        Third_Cam.transform.position = new Vector3(player.position.x - 10, player.position.y + 10, player.position.z - 10);
+    }
+
+    void FirstCamMove()
+    {
+        First_Cam.transform.position = new Vector3(player.position.x - 10, player.position.y + 10, player.position.z - 10);
+    }
+
+
     void IsometricCamMove()
     {
-        Isometric_Cam.transform.position = new Vector3(transform.position.x - 10, transform.position.y + 10, transform.position.z - 10);
+        Isometric_Cam.transform.position = new Vector3(player.position.x - 10, player.position.y + 10, player.position.z - 10);
         //Debug.Log(transform.position.x);
         //Debug.Log(Isometric_Cam.transform.position.x);
     }

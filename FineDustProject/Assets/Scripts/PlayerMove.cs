@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     PlayerStatus player;
-    CameraMgr CMgr;
+    //CameraMgr CMgr;
     Rigidbody rigid;
     
     Vector3 relativePos;
@@ -19,7 +19,7 @@ public class PlayerMove : MonoBehaviour
         playerObj = GameObject.Find("Players").transform.Find(a).gameObject;
         player = playerObj.GetComponent<PlayerStatus>();
         rigid = GetComponent<Rigidbody>();
-        CMgr = GetComponent<CameraMgr>();
+        //CMgr = playerObj.GetComponent<CameraMgr>();
     }
 
     // Update is called once per frame
@@ -33,26 +33,26 @@ public class PlayerMove : MonoBehaviour
         if (player.Ani_State_Walk_Run >= PlayerStatus.ANI_TYPE.WALK)
         {
 
-            if (CMgr.Camera_Num == 2)
-            {
+            //if (CMgr.Camera_Num == 2)
+            //{
 
-                if (Input.GetKey(KeyCode.W)) relativePos = Vector3.forward + Vector3.right - Vector3.zero;
-                if (Input.GetKey(KeyCode.A)) relativePos = Vector3.forward + Vector3.left - Vector3.zero;
-                if (Input.GetKey(KeyCode.S)) relativePos = Vector3.back + Vector3.left - Vector3.zero;
-                if (Input.GetKey(KeyCode.D)) relativePos = Vector3.back + Vector3.right - Vector3.zero;
+            //    if (Input.GetKey(KeyCode.W)) relativePos = Vector3.forward + Vector3.right - Vector3.zero;
+            //    if (Input.GetKey(KeyCode.A)) relativePos = Vector3.forward + Vector3.left - Vector3.zero;
+            //    if (Input.GetKey(KeyCode.S)) relativePos = Vector3.back + Vector3.left - Vector3.zero;
+            //    if (Input.GetKey(KeyCode.D)) relativePos = Vector3.back + Vector3.right - Vector3.zero;
 
-                if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A)) relativePos = Vector3.forward - Vector3.zero;
-                if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D)) relativePos = Vector3.right - Vector3.zero;
-                if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A)) relativePos = Vector3.left - Vector3.zero;
-                if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D)) relativePos = Vector3.back - Vector3.zero;
+            //    if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A)) relativePos = Vector3.forward - Vector3.zero;
+            //    if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D)) relativePos = Vector3.right - Vector3.zero;
+            //    if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A)) relativePos = Vector3.left - Vector3.zero;
+            //    if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D)) relativePos = Vector3.back - Vector3.zero;
 
-                Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
-                transform.rotation = rotation;
+            //    Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
+            //    transform.rotation = rotation;
 
-                transform.Translate((Vector3.forward) * player.speedT * Time.deltaTime);
+            //    transform.Translate((Vector3.forward) * player.speedT * Time.deltaTime);
 
-            }
-            else
+            //}
+            //else
             {
                 // 앞뒤 이동
 

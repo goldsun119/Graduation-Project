@@ -386,7 +386,7 @@ void process_packet(const int id, const int packet_size, const char * buf)
 		clients[id].SetPos(p);
 		clients[id].SetRotation(r);
 		clients[id].SetUnlock();
-		cout << "ID:"<<id<<" pos: " << p.x << "," << p.y << "," << p.z << endl;
+		//cout << "ID:"<<id<<" pos: " << p.x << "," << p.y << "," << p.z << endl;
 	}
 	break;
 	case CS_GET_ITEM:

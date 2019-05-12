@@ -15,7 +15,7 @@ public class PlayerAnimation : MonoBehaviour
     {
         player = GetComponent<PlayerStatus>();
         animator = GetComponent<Animator>();
-        CMgr = GetComponent<CameraMgr>();
+        //CMgr = GetComponent<CameraMgr>();
     }
 
     // Update is called once per frame
@@ -39,11 +39,11 @@ public class PlayerAnimation : MonoBehaviour
         animator.SetInteger("Ani_type", anitype);
 
         // 3인칭 카메라만 방향변화
-        if (CMgr.Camera_Num == 0)
-        {
-            animator.SetFloat("DirectionX", player.Direction_X);
-            animator.SetFloat("DirectionZ", player.Direction_Z);
-        }
+        //if (CMgr.Camera_Num == 0)
+        //{
+        //    animator.SetFloat("DirectionX", player.Direction_X);
+         //   animator.SetFloat("DirectionZ", player.Direction_Z);
+        //}
 
 
     }
