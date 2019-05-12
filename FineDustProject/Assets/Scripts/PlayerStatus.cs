@@ -17,6 +17,9 @@ public class PlayerStatus : MonoBehaviour
     public Vector3 position;
     public bool connect;
     public bool draw;
+    public int anitype = 0;
+    public float Direction_X = 0;
+    public float Direction_Z = 0;
     //
 
     public float speedT = 0;
@@ -25,8 +28,7 @@ public class PlayerStatus : MonoBehaviour
 
     public int key_on_num = 0;
     public enum ANI_TYPE { IDEL, WALK, RUN, JUMP };
-    public float Direction_X = 0;
-    public float Direction_Z = 0;
+    
     public ANI_TYPE Ani_State_Walk_Run = ANI_TYPE.IDEL;
     public ANI_TYPE Ani_State_Jump = ANI_TYPE.IDEL;
 
@@ -55,17 +57,33 @@ public class PlayerStatus : MonoBehaviour
 
     void MoveStatus()
     {
+        
         // 방향에 따라 Direction 변화
         if (Input.GetKeyDown(KeyCode.W)) Direction_Z = 1;
         if (Input.GetKeyDown(KeyCode.S)) Direction_Z = -1;
         if (Input.GetKeyDown(KeyCode.A)) Direction_X = -1;
         if (Input.GetKeyDown(KeyCode.D)) Direction_X = 1;
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            Direction_Z = 1;
+            Direction_X = -0.1f;
+            Debug.Log(Direction_Z);
+            Debug.Log(Direction_X);
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            Direction_Z = 1;
+            Direction_X = 0.1f;
+            Debug.Log(Direction_Z);
+            Debug.Log(Direction_X);
+        }
 
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S)) Direction_Z = 0;
         if (Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.A)) Direction_X = 0;
+        //if (Input.GetKeyUp(KeyCode.Q) || Input.GetKeyUp(KeyCode.E)) Direction_X = 0;
 
         // 걷기
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.E))
         {
             // idle 상태일때 키를 누르면 walk 상태로 전환
             if (Ani_State_Walk_Run == ANI_TYPE.IDEL) Ani_State_Walk_Run = ANI_TYPE.WALK;
@@ -98,7 +116,7 @@ public class PlayerStatus : MonoBehaviour
             }
             
             // 반대 방향키를 같이 누르고 있으면 제자리 서기
-            if ((Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.S)) || (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D)))
+            if ((Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.S)) || (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D)) || (Input.GetKey(KeyCode.Q) && Input.GetKey(KeyCode.E)))
             {
                 Ani_State_Walk_Run = ANI_TYPE.IDEL;
                 Direction_X = 0;

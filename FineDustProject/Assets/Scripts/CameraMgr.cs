@@ -32,7 +32,9 @@ public class CameraMgr : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyUp(KeyCode.V))
+        player = playerObj.GetComponent<PlayerStatus>();
+
+        if (Input.GetKeyUp(KeyCode.V))
         {
             Camera_Num += 1;
             Camera_Num = Camera_Num % 3;
@@ -72,6 +74,8 @@ public class CameraMgr : MonoBehaviour
         First_Cam.enabled = true;
         Isometric_Cam.enabled = false;
 
+        Cursor.lockState = CursorLockMode.Locked;
+        
         FirstCamMouseMove();
         FirstCamMove();
     }
@@ -82,23 +86,30 @@ public class CameraMgr : MonoBehaviour
         First_Cam.enabled = false;
         Isometric_Cam.enabled = true;
 
+        Cursor.lockState = CursorLockMode.None; //: 일반 마우스 커서
+        //Cursor.lockState = CursorLockMode.Confined : 창밖으로 커서가 나가지 못함
+
         IsometricCamMove();
     }
 
     void ThirdCamMove()
     {
-        Third_Cam.transform.position = new Vector3(player.position.x - 10, player.position.y + 10, player.position.z - 10);
+        Quaternion rotation = Quaternion.Euler(player.rotation.x, player.rotation.y, player.rotation.z);
+        Third_Cam.transform.rotation = Quaternion.Euler(player.rotation.x, player.rotation.y, player.rotation.z);
+        Third_Cam.transform.position = rotation * new Vector3(0, 2.2f, - 4.5f) + player.position;
     }
 
     void FirstCamMove()
     {
-        First_Cam.transform.position = new Vector3(player.position.x - 10, player.position.y + 10, player.position.z - 10);
+        Quaternion rotation = Quaternion.Euler(player.rotation.x, player.rotation.y, player.rotation.z);
+        First_Cam.transform.rotation = Quaternion.Euler(player.rotation.x, player.rotation.y, player.rotation.z);
+        First_Cam.transform.position = new Vector3(player.position.x, player.position.y + 1.6f, player.position.z + 0.2f);
     }
 
 
     void IsometricCamMove()
     {
-        Isometric_Cam.transform.position = new Vector3(player.position.x - 10, player.position.y + 10, player.position.z - 10);
+        Isometric_Cam.transform.position = new Vector3(player.position.x - 10f, player.position.y + 10f, player.position.z - 10f);
         //Debug.Log(transform.position.x);
         //Debug.Log(Isometric_Cam.transform.position.x);
     }
@@ -108,7 +119,7 @@ public class CameraMgr : MonoBehaviour
         //좌우 회전
         float hor = Input.GetAxis("Mouse X");
         Debug.Log("move mouse");
-        transform.Rotate(Vector3.up * mouseSensitivity * hor);
+        player.transform.Rotate(Vector3.up * mouseSensitivity * hor);
 
         //상하 회전
 
