@@ -1,12 +1,4 @@
-﻿  Item.cpp
-  Obj.cpp
-  main.cpp
-d:\project\graduation-project\server\server\main.cpp(194): warning C4244: '인수': 'ULONG'에서 'char'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\project\graduation-project\server\server\main.cpp(336): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _itoa. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\stdlib.h(1323): note: 'itoa' 선언을 참조하십시오.
-  코드를 생성하고 있습니다.
-  185 of 495 functions (37.4%) were compiled, the rest were copied from previous compilation.
-    3 functions were new in current compilation
-    21 functions had inline decision re-evaluated but remain unchanged
+﻿  코드를 생성하고 있습니다.
+  All 510 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   코드를 생성했습니다.
-  Server.vcxproj -> D:\project\Graduation-Project\Server\Release\Server.exe
+  Server.vcxproj -> C:\Users\JES\Documents\GitHub\Graduation-Project\Server\Release\Server.exe
