@@ -1,4 +1,0 @@
-table Client_Id_Packet {
-  id:int;
-}
-

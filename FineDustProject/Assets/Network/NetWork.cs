@@ -118,13 +118,15 @@ namespace Game.Network
                 int id = get_data.Id;
                 int hp = get_data.Hp;
                 int ani = get_data.Animator;
+                float x = get_data.DirX;
+                float z = get_data.DirZ;
                 float h = get_data.Horizontal;
                 float v = get_data.Vertical;
                 string n = get_data.Name;
                 Vector3 p = new Vector3(get_data.Position.Value.X, get_data.Position.Value.Y, get_data.Position.Value.Z);
                 Vector3 r = new Vector3(get_data.Rotation.Value.X, get_data.Rotation.Value.Y, get_data.Rotation.Value.Z);
 
-                client_data.Add(id, new ClientClass(id, hp, ani, h, v, n, p, r));
+                client_data.Add(id, new ClientClass(id, hp, ani, x, z, h, v, n, p, r));
                 Debug.Log("클라이언트 아이디 : " + Client_id);
             }
             else if (type == Game.Protocol.Protocol.SC_PUT_PLAYER)      // 다른 클라가 접속했을 때
@@ -135,13 +137,15 @@ namespace Game.Network
                 int id = get_data.Id;
                 int hp = get_data.Hp;
                 int ani = get_data.Animator;
+                float x = get_data.DirX;
+                float z = get_data.DirZ;
                 float h = get_data.Horizontal;
                 float v = get_data.Vertical;
                 string n = get_data.Name;
                 Vector3 p = new Vector3(get_data.Position.Value.X, get_data.Position.Value.Y, get_data.Position.Value.Z);
                 Vector3 r = new Vector3(get_data.Rotation.Value.X, get_data.Rotation.Value.Y, get_data.Rotation.Value.Z);
 
-                client_data.Add(id, new ClientClass(id, hp, ani, h, v, n, p, r));
+                client_data.Add(id, new ClientClass(id, hp, ani, x, z, h, v, n, p, r));
                 Debug.Log("새로 접속한 아이디 : " + new_player_id);
 
             }
@@ -155,6 +159,8 @@ namespace Game.Network
                     int id = get_all_data.Data(i).Value.Id;
                     int hp = get_all_data.Data(i).Value.Hp;
                     int ani = get_all_data.Data(i).Value.Animator;
+                    float x = get_all_data.Data(i).Value.DirX;
+                    float z = get_all_data.Data(i).Value.DirZ;
                     float h = get_all_data.Data(i).Value.Horizontal;
                     float v = get_all_data.Data(i).Value.Vertical;
                     string n = get_all_data.Data(i).Value.Name;
@@ -170,10 +176,13 @@ namespace Game.Network
                         iter.set_vertical(v);
                         iter.set_horizontal(h);
                         iter.set_animator(ani);
+                        iter.set_dirX(x);
+                        iter.set_dirZ(z);
+
                     }
                     else
                     {
-                        client_data.Add(id, new ClientClass(id,hp,ani,h,v,n,p,r));
+                        client_data.Add(id, new ClientClass(id, hp, ani, x, z, h, v, n, p, r));
                     }
                 }
             }
@@ -184,6 +193,8 @@ namespace Game.Network
                 int id = get_data.Id;
                 int hp = get_data.Hp;
                 int ani = get_data.Animator;
+                float x = get_data.DirX;
+                float z = get_data.DirZ;
                 float h = get_data.Horizontal;
                 float v = get_data.Vertical;
                 string n = get_data.Name;
@@ -199,10 +210,12 @@ namespace Game.Network
                     iter.set_vertical(v);
                     iter.set_horizontal(h);
                     iter.set_animator(ani);
+                    iter.set_dirX(x);
+                    iter.set_dirZ(z);
                 }
                 else
                 {
-                    client_data.Add(id, new ClientClass(id, hp, ani, h, v, n, p, r));
+                        client_data.Add(id, new ClientClass(id, hp, ani, x, z, h, v, n, p, r));
                 }
             }
             //else if (type == Game.Protocol.Protocol.SC_REMOVE_PLAYER)
@@ -375,9 +388,9 @@ namespace Game.Network
             sock = null;
         }
 
-        public static void SendPlayerInfo(Vector3 p, int ani, float h, float v, Vector3 rot, string nick)
+        public static void SendPlayerInfo(Vector3 p, int ani, float x, float z, float h, float v, Vector3 rot, string nick)
         {
-            Sendbyte = sF.makeClient_PacketInfo(p, ani, h, v, rot, nick);
+            Sendbyte = sF.makeClient_PacketInfo(p, ani, x, z, h, v, rot, nick);
             Send_Packet(Sendbyte);
         }
     }

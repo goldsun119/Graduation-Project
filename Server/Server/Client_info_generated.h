@@ -97,11 +97,13 @@ struct Client_info FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_ID = 4,
     VT_HP = 6,
     VT_ANIMATOR = 8,
-    VT_HORIZONTAL = 10,
-    VT_VERTICAL = 12,
-    VT_NAME = 14,
-    VT_POSITION = 16,
-    VT_ROTATION = 18
+    VT_DIRX = 10,
+    VT_DIRZ = 12,
+    VT_HORIZONTAL = 14,
+    VT_VERTICAL = 16,
+    VT_NAME = 18,
+    VT_POSITION = 20,
+    VT_ROTATION = 22
   };
   int32_t id() const {
     return GetField<int32_t>(VT_ID, 0);
@@ -111,6 +113,12 @@ struct Client_info FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
   int32_t animator() const {
     return GetField<int32_t>(VT_ANIMATOR, 0);
+  }
+  float dirX() const {
+    return GetField<float>(VT_DIRX, 0.0f);
+  }
+  float dirZ() const {
+    return GetField<float>(VT_DIRZ, 0.0f);
   }
   float horizontal() const {
     return GetField<float>(VT_HORIZONTAL, 0.0f);
@@ -132,6 +140,8 @@ struct Client_info FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyField<int32_t>(verifier, VT_ID) &&
            VerifyField<int32_t>(verifier, VT_HP) &&
            VerifyField<int32_t>(verifier, VT_ANIMATOR) &&
+           VerifyField<float>(verifier, VT_DIRX) &&
+           VerifyField<float>(verifier, VT_DIRZ) &&
            VerifyField<float>(verifier, VT_HORIZONTAL) &&
            VerifyField<float>(verifier, VT_VERTICAL) &&
            VerifyOffset(verifier, VT_NAME) &&
@@ -153,6 +163,12 @@ struct Client_infoBuilder {
   }
   void add_animator(int32_t animator) {
     fbb_.AddElement<int32_t>(Client_info::VT_ANIMATOR, animator, 0);
+  }
+  void add_dirX(float dirX) {
+    fbb_.AddElement<float>(Client_info::VT_DIRX, dirX, 0.0f);
+  }
+  void add_dirZ(float dirZ) {
+    fbb_.AddElement<float>(Client_info::VT_DIRZ, dirZ, 0.0f);
   }
   void add_horizontal(float horizontal) {
     fbb_.AddElement<float>(Client_info::VT_HORIZONTAL, horizontal, 0.0f);
@@ -186,6 +202,8 @@ inline flatbuffers::Offset<Client_info> CreateClient_info(
     int32_t id = 0,
     int32_t hp = 0,
     int32_t animator = 0,
+    float dirX = 0.0f,
+    float dirZ = 0.0f,
     float horizontal = 0.0f,
     float vertical = 0.0f,
     flatbuffers::Offset<flatbuffers::String> name = 0,
@@ -197,6 +215,8 @@ inline flatbuffers::Offset<Client_info> CreateClient_info(
   builder_.add_name(name);
   builder_.add_vertical(vertical);
   builder_.add_horizontal(horizontal);
+  builder_.add_dirZ(dirZ);
+  builder_.add_dirX(dirX);
   builder_.add_animator(animator);
   builder_.add_hp(hp);
   builder_.add_id(id);
@@ -208,6 +228,8 @@ inline flatbuffers::Offset<Client_info> CreateClient_infoDirect(
     int32_t id = 0,
     int32_t hp = 0,
     int32_t animator = 0,
+    float dirX = 0.0f,
+    float dirZ = 0.0f,
     float horizontal = 0.0f,
     float vertical = 0.0f,
     const char *name = nullptr,
@@ -218,6 +240,8 @@ inline flatbuffers::Offset<Client_info> CreateClient_infoDirect(
       id,
       hp,
       animator,
+      dirX,
+      dirZ,
       horizontal,
       vertical,
       name ? _fbb.CreateString(name) : 0,
@@ -227,9 +251,7 @@ inline flatbuffers::Offset<Client_info> CreateClient_infoDirect(
 inline const Game::Protocol::Client_info *GetClientView(const void *buf) {
 	return flatbuffers::GetRoot<Game::Protocol::Client_info>(buf);
 }
-
-}
 }  // namespace Protocol
-  // namespace Game
+}  // namespace Game
 
 #endif  // FLATBUFFERS_GENERATED_CLIENTINFO_GAME_PROTOCOL_H_

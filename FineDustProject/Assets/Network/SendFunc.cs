@@ -12,13 +12,15 @@ namespace Game.Network
 {
     public class SendFunc: Game.Protocol.Protocol
     {
-        public byte[] makeClient_PacketInfo(Vector3 pos, int Player_Animator, float horizontal, float vertical, Vector3 PlayerRotation, string nickName)
+        public byte[] makeClient_PacketInfo(Vector3 pos, int Player_Animator,float dirX, float dirZ, float horizontal, float vertical, Vector3 PlayerRotation, string nickName)
         {
             FlatBufferBuilder fbb = new FlatBufferBuilder(1);
             fbb.Clear(); // 클리어를 안해주고 시작하면 계속 누적해서 데이터가 들어간다.
             var fbbNickName = fbb.CreateString(nickName); // String 문자열이 있을경우 미리 생성해라.
             Client_info.StartClient_info(fbb);
             Client_info.AddAnimator(fbb, Player_Animator);
+            Client_info.AddDirX(fbb, dirX);
+            Client_info.AddDirZ(fbb, dirZ);
             Client_info.AddHorizontal(fbb, horizontal);
             Client_info.AddVertical(fbb, vertical);
             Client_info.AddName(fbb, fbbNickName);

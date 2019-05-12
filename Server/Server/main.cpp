@@ -382,9 +382,15 @@ void process_packet(const int id, const int packet_size, const char * buf)
 		auto client_Check_info = Game::Protocol::GetClientView(get_packet);
 		vec3 p = { client_Check_info->position()->x(), client_Check_info->position()->y(), client_Check_info->position()->z() };
 		vec3 r = { client_Check_info->rotation()->x(), client_Check_info->rotation()->y(), client_Check_info->rotation()->z() };
+		int ani = client_Check_info->animator();
+		float x = client_Check_info->dirX();
+		float z = client_Check_info->dirZ();
 		clients[id].SetLock();
 		clients[id].SetPos(p);
 		clients[id].SetRotation(r);
+		clients[id].SetAnimator(ani);
+		clients[id].SetDirX(x);
+		clients[id].SetDirZ(z);
 		clients[id].SetUnlock();
 		//cout << "ID:"<<id<<" pos: " << p.x << "," << p.y << "," << p.z << endl;
 	}
@@ -415,13 +421,15 @@ void send_login_ok_packet(int id)
 	int i = clients[id].GetId();
 	int hp = clients[id].GetHp();
 	int ani = clients[id].GetAnimator();
+	float x = clients[id].GetDirX();
+	float z = clients[id].GetDirZ();
 	auto name = builder.CreateString(clients[id].GetName());
 	float h = clients[id].GetHorizontal();
 	float v = clients[id].GetVertical();
 	auto pos = clients[id].GetPos();
 	auto rot = clients[id].GetRotation();
 	clients[id].SetUnlock();
-	auto data = CreateClient_info(builder, id, hp, ani, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
+	auto data = CreateClient_info(builder, i, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x,rot.y,rot.z));
 	builder.Finish(data);
 	SendPacket(SC_LOGIN_OK, id, builder.GetBufferPointer(), builder.GetSize());
 }
@@ -433,13 +441,15 @@ void send_put_player_packet(int id)
 	int i = clients[id].GetId();
 	int hp = clients[id].GetHp();
 	int ani = clients[id].GetAnimator();
+	float x = clients[id].GetDirX();
+	float z = clients[id].GetDirZ();
 	auto name = builder.CreateString(clients[id].GetName());
 	float h = clients[id].GetHorizontal();
 	float v = clients[id].GetVertical();
 	auto pos = clients[id].GetPos();
 	auto rot = clients[id].GetRotation();
 	clients[id].SetUnlock();
-	auto data = CreateClient_info(builder, id, hp, ani, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
+	auto data = CreateClient_info(builder, i, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
 	builder.Finish(data);
 	for (int i = 1; i < MAX_USER + 1; ++i)
 	{
@@ -475,6 +485,8 @@ void send_all_player_packet(int id)
 		int id = clients[i].GetId();
 		int hp = clients[i].GetHp();
 		int ani = clients[i].GetAnimator();
+		float x = clients[i].GetDirX();
+		float z = clients[i].GetDirZ();
 		auto name = builder.CreateString(clients[i].GetName());
 		float h = clients[i].GetHorizontal();
 		float v = clients[i].GetVertical();
@@ -483,7 +495,7 @@ void send_all_player_packet(int id)
 		
 		clients[i].SetUnlock();
 
-		auto data = CreateClient_info(builder, id, hp, ani, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
+		auto data = CreateClient_info(builder, id, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
 		clients_data.emplace_back(data);
 	}
 	if (clients_data.size() == 0)
@@ -502,13 +514,15 @@ void send_my_status_to_all_packet(int id)
 	int i = clients[id].GetId();
 	int hp = clients[id].GetHp();
 	int ani = clients[id].GetAnimator();
+	float x = clients[i].GetDirX();
+	float z = clients[i].GetDirZ();
 	auto name = builder.CreateString(clients[id].GetName());
 	float h = clients[id].GetHorizontal();
 	float v = clients[id].GetVertical();
 	auto pos = clients[id].GetPos();
 	auto rot = clients[id].GetRotation();
 	clients[id].SetUnlock();
-	auto data = CreateClient_info(builder, id, hp, ani, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
+	auto data = CreateClient_info(builder,i,hp,ani,x,z,h,v,name,&Vec3(pos.x,pos.y,pos.z),&Vec3(rot.x,rot.y,rot.z));
 	builder.Finish(data);
 	for (int i = 1; i < MAX_USER+1; ++i)
 	{

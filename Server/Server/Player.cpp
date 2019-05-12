@@ -14,6 +14,8 @@ Player::Player()
 	vertical = 0.f;
 	horizontal = 0.f;
 	animator = 0;
+	dirX = 0.f;
+	dirZ = 0.f;
 	hp = 0;
 	id = 0;
 }
@@ -84,6 +86,20 @@ int Player::GetAnimator() {
 }
 void Player::SetAnimator(int a) {
 	animator = a;
+}
+
+float Player::GetDirX() {
+	return dirX;
+}
+void Player::SetDirX(float a) {
+	dirX = a;
+}
+
+float Player::GetDirZ() {
+	return dirZ;
+}
+void Player::SetDirZ(float a) {
+	dirZ = a;
 }
 
 int Player::GetId()

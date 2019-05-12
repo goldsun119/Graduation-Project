@@ -32,6 +32,8 @@ private:
 	float vertical;
 	float horizontal;
 	int animator;
+	float dirX;
+	float dirZ;
 	int hp;
 	int id;
 
@@ -55,6 +57,12 @@ public:
 	
 	int GetAnimator();
 	void SetAnimator(int a);
+
+	float GetDirX();
+	void SetDirX(float a);
+
+	float GetDirZ();
+	void SetDirZ(float a);
 	
 	int GetId();
 	
