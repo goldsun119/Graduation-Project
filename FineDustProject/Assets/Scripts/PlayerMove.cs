@@ -33,27 +33,39 @@ public class PlayerMove : MonoBehaviour
 
         if (player.Ani_State_Walk_Run >= PlayerStatus.ANI_TYPE.WALK)
         {
-            if (CMgr.Camera_Num == 2)
+            //if (CMgr.Camera_Num == 2)
+            //{
+            //    if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+                
+
+            //    //if (Input.GetKey(KeyCode.W)) relativePos = Vector3.forward + Vector3.right - Vector3.zero;
+            //    //if (Input.GetKey(KeyCode.A)) relativePos = Vector3.forward + Vector3.left - Vector3.zero;
+            //    //if (Input.GetKey(KeyCode.S)) relativePos = Vector3.back + Vector3.left - Vector3.zero;
+            //    //if (Input.GetKey(KeyCode.D)) relativePos = Vector3.back + Vector3.right - Vector3.zero;
+
+            //        //if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A)) relativePos = Vector3.forward - Vector3.zero;
+            //        //if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D)) relativePos = Vector3.right - Vector3.zero;
+            //        //if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A)) relativePos = Vector3.left - Vector3.zero;
+            //        //if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D)) relativePos = Vector3.back - Vector3.zero;
+
+            //        //Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
+            //        //transform.rotation = rotation;
+
+            //        //transform.Translate((Vector3.forward) * player.speedT * Time.deltaTime);
+
+            //        //transform.rotation = Quaternion.Euler(0, player.rotation.y + 45, 0);
+            //}
+            //else
             {
+                if (CMgr.Camera_Num == 2)
+                {
+                    
+                    relativePos = Vector3.forward + Vector3.right - Vector3.zero;
+                    Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
+                    transform.rotation = rotation;
 
-                if (Input.GetKey(KeyCode.W)) relativePos = Vector3.forward + Vector3.right - Vector3.zero;
-                if (Input.GetKey(KeyCode.A)) relativePos = Vector3.forward + Vector3.left - Vector3.zero;
-                if (Input.GetKey(KeyCode.S)) relativePos = Vector3.back + Vector3.left - Vector3.zero;
-                if (Input.GetKey(KeyCode.D)) relativePos = Vector3.back + Vector3.right - Vector3.zero;
-
-                if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A)) relativePos = Vector3.forward - Vector3.zero;
-                if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D)) relativePos = Vector3.right - Vector3.zero;
-                if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A)) relativePos = Vector3.left - Vector3.zero;
-                if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D)) relativePos = Vector3.back - Vector3.zero;
-
-                Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
-                transform.rotation = rotation;
-
-                transform.Translate((Vector3.forward) * player.speedT * Time.deltaTime);
-
-            }
-            else
-            {
+                    //transform.Translate((Vector3.forward) * player.speedT * Time.deltaTime);
+                }
                 // 앞뒤 이동
 
                 player.vertical = Input.GetAxis("Vertical");          // W, S 키
@@ -62,9 +74,11 @@ public class PlayerMove : MonoBehaviour
                 // 회전
                 player.horizontal = Input.GetAxis("Horizontal");        // Q, E 키 
                 transform.Rotate(Vector3.up * player.speedR * player.horizontal);    // 회전
+                
 
                 if (Input.GetKey(KeyCode.A)) transform.Translate(Vector3.left * player.speedT * Time.deltaTime);
                 if (Input.GetKey(KeyCode.D)) transform.Translate(Vector3.right * player.speedT * Time.deltaTime);
+
 
                 Debug.Log(player.Direction_X);
             }
