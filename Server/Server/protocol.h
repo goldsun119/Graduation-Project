@@ -14,9 +14,9 @@ constexpr int ISLAND_RADIUS =			900;
 constexpr int DUSTAREA_RADIUS =	625;
 
 
-constexpr int CS_INFO =					1;
-constexpr int CS_GET_ITEM =		2;
-constexpr int CS_MONSTER_HP =	3;
+constexpr int CS_INFO =							1;
+constexpr int CS_GET_ITEM =				2;
+constexpr int CS_MONSTER_STATUS =	3;
 
 constexpr int SC_LOGIN_OK =					1;
 constexpr int	SC_PUT_PLAER =				2;

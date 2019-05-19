@@ -53,6 +53,8 @@ namespace Game.Network
         private static byte[] Sendbyte = new byte[1024];
 
         public static Dictionary<int, ClientClass> client_data = new Dictionary<int, ClientClass>();
+
+        public static Dictionary<int, MonsterClass> monster_data = new Dictionary<int, MonsterClass>();
         
         static SendFunc sF = new SendFunc();
 
@@ -243,6 +245,37 @@ namespace Game.Network
             {
                 int id = recvPacket[0];
                 client_data[id].set_draw(false);
+            }
+            else if(type == Game.Protocol.Protocol.SC_PUT_MONSTER)
+            {
+                ByteBuffer recv_buf = new ByteBuffer(recvPacket);
+                Monster_info get_data = Monster_info.GetRootAsMonster_info(recv_buf);
+                int id = get_data.Id;
+                int hp = get_data.Hp;
+                int ani = get_data.Animator;
+                float x = get_data.DirX;
+                float z = get_data.DirZ;
+                Vector3 p = new Vector3(get_data.Position.Value.X, get_data.Position.Value.Y, get_data.Position.Value.Z);
+                Vector3 r = new Vector3(get_data.Rotation.Value.X, get_data.Rotation.Value.Y, get_data.Rotation.Value.Z);
+
+                if (monster_data.ContainsKey(id))
+                {
+                    MonsterClass iter = monster_data[id];
+                    iter.set_hp(hp);
+                    iter.set_pos(p);
+                    iter.set_rot(r);
+                    iter.set_animator(ani);
+                    iter.set_dirX(x);
+                    iter.set_dirZ(z);
+                    iter.set_draw(true);
+                }
+                else
+                {
+                    monster_data.Add(id, new MonsterClass(id, hp, ani, x, z, p, r));
+                    monster_data[id].set_draw(true);
+                }
+                Debug.Log("몬스터 생성 아이디 : " + id);
+
             }
         }
 

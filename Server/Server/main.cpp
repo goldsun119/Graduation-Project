@@ -2,6 +2,7 @@
 #include <mutex>
 #include <thread>
 #include <vector>
+#include <map>
 #include <chrono>
 
 using namespace std;
@@ -10,7 +11,8 @@ using namespace std;
 
 #include "protocol.h"
 #include "Player.h"
-#include "Client_info_generated.h"
+#include "Monster.h"
+#include "info_generated.h"
 
 using namespace Game::Protocol;
 
@@ -24,6 +26,9 @@ HANDLE g_iocp;
 
 mutex buf_lock;
 
+std::chrono::high_resolution_clock::time_point point;
+std::map <int, Monster> monsters;
+
 void error_display(const char *msg, int err_no);
 void initialize();
 int get_new_id();
@@ -32,6 +37,7 @@ void disconnect(int id);
 void worker_thread();
 void do_accept();
 void do_recv(char id);
+void make_obj();
 
 void SendPacket(const int type, const int id, const void *packet, const int packet_size);
 
@@ -43,6 +49,7 @@ void send_put_player_packet(int id);
 void send_my_status_to_all_packet(int id);
 void send_all_player_packet(int id);
 void send_remove_player_packet(int to, int obj);
+void send_put_monster_packet(int monster_id);
 //------------------------------packet------------------------------
 
 int main()
@@ -57,6 +64,9 @@ int main()
 		worker_threads.emplace_back(thread{ worker_thread });
 
 	thread accept_thread{ do_accept };
+
+	point = std::chrono::high_resolution_clock::now();
+	thread make_thread{ make_obj };
 
 	accept_thread.join();
 	for (auto &th : worker_threads)
@@ -309,6 +319,20 @@ void do_recv(char id)
 		}
 	}
 }
+void make_obj()
+{
+	int monster_id = 0;
+	auto delta = point - std::chrono::high_resolution_clock::now();
+	if (std::chrono::duration_cast<std::chrono::seconds>(delta).count()>60)	// 60초 예시
+	{
+		// monster map 에 넣기
+		
+
+		send_put_monster_packet(monster_id);
+		point = std::chrono::high_resolution_clock::now();
+		++monster_id;
+	}
+}
 
 
 void SendPacket(const int type, const int id, const void *packet, const int packet_size)
@@ -389,7 +413,7 @@ void process_packet(const int id, const int packet_size, const char * buf)
 
 	}
 	break;
-	case CS_MONSTER_HP:
+	case CS_MONSTER_STATUS:
 	{
 
 	}
@@ -440,19 +464,19 @@ void send_put_player_packet(int id)
 	clients[id].SetUnlock();
 	auto data = CreateClient_info(builder, i, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
 	builder.Finish(data);
-	for (int i = 1; i < MAX_USER + 1; ++i)
+	for (int to = 1; to <= MAX_USER; ++to)
 	{
-		clients[i].SetLock();
-		if (clients[i].sock.connected == true && i != id)
+		clients[to].SetLock();
+		if (clients[to].sock.connected == true && to != id)
 		{
-			clients[i].SetUnlock();
-			SendPacket(SC_PUT_PLAER, i, builder.GetBufferPointer(), builder.GetSize());
+			clients[to].SetUnlock();
+			SendPacket(SC_PUT_PLAER, to, builder.GetBufferPointer(), builder.GetSize());
 			continue;
 		}
-		clients[i].SetUnlock();
+		clients[to].SetUnlock();
 	}
 }
-void send_all_player_packet(int id)
+void send_all_player_packet(int to)
 {
 	flatbuffers::FlatBufferBuilder builder;
 	builder.Clear();
@@ -466,7 +490,7 @@ void send_all_player_packet(int id)
 			clients[i].SetUnlock();
 			continue;
 		}
-		if (clients[i].GetId() == id)
+		if (clients[i].GetId() == to)
 		{
 			clients[i].SetUnlock();
 			continue;
@@ -493,7 +517,7 @@ void send_all_player_packet(int id)
 	auto p = CreateClient_Collection(builder, full_data);
 	builder.Finish(p);
 
-	SendPacket(SC_ALL_PLAYER_DATA, id, builder.GetBufferPointer(), builder.GetSize());
+	SendPacket(SC_ALL_PLAYER_DATA, to, builder.GetBufferPointer(), builder.GetSize());
 }
 void send_my_status_to_all_packet(int id)
 {
@@ -513,10 +537,10 @@ void send_my_status_to_all_packet(int id)
 	clients[id].SetUnlock();
 	auto data = CreateClient_info(builder,i,hp,ani,x,z,h,v,name,&Vec3(pos.x,pos.y,pos.z),&Vec3(rot.x,rot.y,rot.z));
 	builder.Finish(data);
-	for (int i = 1; i < MAX_USER+1; ++i)
+	for (int to = 1; to <= MAX_USER; ++to)
 	{
-		if (clients[i].sock.connected == true&& i != id)
-			SendPacket(SC_PLAYER_STATUS, i, builder.GetBufferPointer(), builder.GetSize());
+		if (clients[to].sock.connected == true&& to != id)
+			SendPacket(SC_PLAYER_STATUS, to, builder.GetBufferPointer(), builder.GetSize());
 	}
 }
 
@@ -524,5 +548,24 @@ void send_remove_player_packet(int to, int obj)
 {
 	int i = obj;
 	SendPacket(SC_REMOVE_PLAYER, to, &i, sizeof(i));
+}
+
+void send_put_monster_packet(int monster_id) 
+{
+	flatbuffers::FlatBufferBuilder builder;
+	builder.Clear();
+	monsters[monster_id].SetLock();
+	int i = monsters[monster_id].GetId();
+	int hp = monsters[monster_id].GetHp();
+	int ani = monsters[monster_id].GetAnimator();
+	float x = monsters[monster_id].GetDirX();
+	float z = monsters[monster_id].GetDirZ();
+	auto pos = monsters[monster_id].GetPos();
+	auto rot = monsters[monster_id].GetRotation();
+	monsters[monster_id].SetUnlock();
+	auto data = CreateMonster_info(builder, i, hp, ani, x, z, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
+	builder.Finish(data);
+	for(int to = 1; to<=MAX_USER;++to)
+		SendPacket(SC_PUT_MONSTER, to, builder.GetBufferPointer(), builder.GetSize());
 }
 //------------------------------packet------------------------------

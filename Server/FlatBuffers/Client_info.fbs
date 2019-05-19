@@ -25,3 +25,17 @@ name:string;
 position:Vec3;
 rotation:Vec3;
 }
+
+table Monster_Collection{
+data:[Monster_info];
+}
+
+table Monster_info{
+id:int;
+hp:int;
+animator:int;
+dirX:float;
+dirZ:float;
+position:Vec3;
+rotation:Vec3;
+}

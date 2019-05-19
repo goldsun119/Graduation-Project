@@ -59,13 +59,13 @@
     <ClInclude Include="Player.h">
       <Filter>소스 파일\Object\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Client_info_generated.h">
-      <Filter>소스 파일\Object\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Obj.h">
       <Filter>소스 파일\Object\Obj</Filter>
     </ClInclude>
     <ClInclude Include="vec3.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="info_generated.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

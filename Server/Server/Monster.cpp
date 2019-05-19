@@ -1,20 +1,57 @@
 #include "Monster.h"
-/*
-table Monster {
-  pos:Vec3;
 
-  hp:short = 100;
+Monster::Monster()
+{
+
 }
-*/
-//
-//using namespace MyGame::Monster;
-//
-//void monster_create(float x, float y, float z, short hp)
-//{
-//	flatbuffers::FlatBufferBuilder builder;
-//	auto position = Vec3(x, y, z);
-//	auto inputHp = hp;
-//	auto pig = CreateMonster(builder,&position,inputHp);
-//
-//	builder.Finish(pig);
-//}
+
+int Monster::GetHp()
+{
+	return hp;
+}
+
+void Monster::SetHp(int a)
+{
+	hp = a;
+}
+
+vec3 Monster::GetRotation()
+{
+	return rotation;
+}
+
+void Monster::SetRotation(vec3 a)
+{
+	rotation = a;
+}
+
+int Monster::GetAnimator() {
+	return animator;
+}
+void Monster::SetAnimator(int a) {
+	animator = a;
+}
+
+float Monster::GetDirX() {
+	return dirX;
+}
+void Monster::SetDirX(float a) {
+	dirX = a;
+}
+
+float Monster::GetDirZ() {
+	return dirZ;
+}
+void Monster::SetDirZ(float a) {
+	dirZ = a;
+}
+
+int Monster::GetId()
+{
+	return id;
+}
+
+Monster::~Monster()
+{
+
+}
