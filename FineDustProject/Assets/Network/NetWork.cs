@@ -127,6 +127,7 @@ namespace Game.Network
                 Vector3 r = new Vector3(get_data.Rotation.Value.X, get_data.Rotation.Value.Y, get_data.Rotation.Value.Z);
 
                 client_data.Add(id, new ClientClass(id, hp, ani, x, z, h, v, n, p, r));
+                client_data[id].set_draw(true);
                 Debug.Log("클라이언트 아이디 : " + Client_id);
             }
             else if (type == Game.Protocol.Protocol.SC_PUT_PLAYER)      // 다른 클라가 접속했을 때
@@ -145,7 +146,24 @@ namespace Game.Network
                 Vector3 p = new Vector3(get_data.Position.Value.X, get_data.Position.Value.Y, get_data.Position.Value.Z);
                 Vector3 r = new Vector3(get_data.Rotation.Value.X, get_data.Rotation.Value.Y, get_data.Rotation.Value.Z);
 
-                client_data.Add(id, new ClientClass(id, hp, ani, x, z, h, v, n, p, r));
+                if (client_data.ContainsKey(id))
+                {
+                    ClientClass iter = client_data[id];
+                    iter.set_hp(hp);
+                    iter.set_pos(p);
+                    iter.set_rot(r);
+                    iter.set_vertical(v);
+                    iter.set_horizontal(h);
+                    iter.set_animator(ani);
+                    iter.set_dirX(x);
+                    iter.set_dirZ(z);
+                    iter.set_draw(true);
+                }
+                else
+                {
+                    client_data.Add(id, new ClientClass(id, hp, ani, x, z, h, v, n, p, r));
+                    client_data[id].set_draw(true);
+                }
                 Debug.Log("새로 접속한 아이디 : " + new_player_id);
 
             }
@@ -178,11 +196,12 @@ namespace Game.Network
                         iter.set_animator(ani);
                         iter.set_dirX(x);
                         iter.set_dirZ(z);
-
+                        iter.set_draw(true);
                     }
                     else
                     {
                         client_data.Add(id, new ClientClass(id, hp, ani, x, z, h, v, n, p, r));
+                        client_data[id].set_draw(true);
                     }
                 }
             }
@@ -212,15 +231,19 @@ namespace Game.Network
                     iter.set_animator(ani);
                     iter.set_dirX(x);
                     iter.set_dirZ(z);
+                    iter.set_draw(true);
                 }
                 else
                 {
                         client_data.Add(id, new ClientClass(id, hp, ani, x, z, h, v, n, p, r));
+                        client_data[id].set_draw(true);
                 }
             }
-            //else if (type == Game.Protocol.Protocol.SC_REMOVE_PLAYER)
-            //{
-            //}
+            else if (type == Game.Protocol.Protocol.SC_REMOVE_PLAYER)
+            {
+                int id = recvPacket[0];
+                client_data[id].set_draw(false);
+            }
         }
 
         public static void Send_Packet(byte[] packet)

@@ -25,24 +25,26 @@ void Player::init(int i)
 	switch (id)
 	{
 	case 1:
-		SetPos(-1, 0, -6);
+		SetPos(50, 50, 95);
 		break;
 
 	case 2:
-		SetPos(1, 0, -6);
+		SetPos(55, 50, 100);
 		break;
 
 	case 3:
-		SetPos(-1, 0, -7);
+		SetPos(50, 50, 100);
 		break;
 
 	case 4:
-		SetPos(1, 0, -7);
+		SetPos(55, 50, 95);
 		break;
 	default:
 		break;
 	}
+	SetRotation(vec3{0, 0, 0});
 	hp = 100;
+	isDraw = true;
 }
 
 

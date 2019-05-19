@@ -14,9 +14,9 @@ public class players : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(last_id != Game.Network.NetWork.new_player_id)
-        {
-            for (int i = 1; i <= Game.Network.NetWork.new_player_id; ++i)
+        //if(last_id != Game.Network.NetWork.new_player_id)
+        //{
+            for (int i = 1; i <= Game.Protocol.Protocol.MAX_USER; ++i)
             {
                 string a = "Player(" + i.ToString() + ")";
                 //GameObject playerObj = transform.GetChild(id-1).gameObject;
@@ -24,13 +24,17 @@ public class players : MonoBehaviour
                 PlayerStatus playerStatus = playerObj.GetComponent<PlayerStatus>();
                 if (Game.Network.NetWork.client_data.ContainsKey(i))
                 {
-                    playerStatus.position = Game.Network.NetWork.client_data[i].get_pos();
-                    playerStatus.rotation = Game.Network.NetWork.client_data[i].get_rot();
+                    //    playerStatus.position = Game.Network.NetWork.client_data[i].get_pos();
+                    //    playerStatus.rotation = Game.Network.NetWork.client_data[i].get_rot();
+                    playerStatus.draw = Game.Network.NetWork.client_data[i].get_draw();
                 }
-                playerObj.SetActive(true);
-                last_id = Game.Network.NetWork.new_player_id;
+                if (playerStatus.draw)
+                    playerObj.SetActive(true);
+                else
+                    playerObj.SetActive(false);
+            //        last_id = Game.Network.NetWork.new_player_id;
             }
-        }
+        //}
     }
 
     public void spawn(int id)

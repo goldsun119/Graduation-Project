@@ -222,6 +222,7 @@ public class PlayerStatus : MonoBehaviour
             Direction_Z = Game.Network.NetWork.client_data[ID].get_dirZ();
             transform.position = position;
             transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
+            draw = Game.Network.NetWork.client_data[ID].get_draw();
         }
     }
 }

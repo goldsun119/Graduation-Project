@@ -17,7 +17,7 @@ namespace Game.Protocol
         public static int CS_GET_ITEM = 2;
         public static int CS_MONSTER_HP = 3;
 
-        public static int MAX_USER = 5;   // 0번째는 버림
+        public static int MAX_USER = 4;   // 0번째는 버림
 
         public Protocol()
         {

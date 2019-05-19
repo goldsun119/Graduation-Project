@@ -42,6 +42,7 @@ void send_login_ok_packet(int id);
 void send_put_player_packet(int id);
 void send_my_status_to_all_packet(int id);
 void send_all_player_packet(int id);
+void send_remove_player_packet(int to, int obj);
 //------------------------------packet------------------------------
 
 int main()
@@ -96,25 +97,14 @@ int get_new_id()
 
 void disconnect(int id)
 {
-	//for (int i = 0; i < MAX_USER; ++i) {
-	//	if (false == clients[i].sock.connected) continue;
-	//	clients[i].access_lock.lock();
-	//	if (0 != clients[i].viewlist.count(id))	// 접속유저 전체 돌면서 뷰리스트 안에 id 있을때
-	//	{
-	//		clients[i].viewlist.erase(id);
-	//		clients[i].access_lock.unlock();
-	//		send_remove_player_packet(i, id);
-	//	}
-	//	else
-	//	{
-	//		clients[i].access_lock.unlock();
-	//	}
-	//}
 	clients[id].SetLock();
 	closesocket(clients[id].sock.socket);
-	//clients[id].viewlist.clear();
 	clients[id].sock.connected = false;
 	clients[id].SetUnlock();
+	for (int i = 1; i <= MAX_USER; ++i) {
+		if (false == clients[i].sock.connected) continue;
+		send_remove_player_packet(i,id);
+	}
 	cout << "접속종료 ID:" << id << endl;
 }
 void worker_thread()
@@ -266,7 +256,6 @@ void do_accept()
 		cout << "접속 아이디: " << new_id << endl;
 		clients[new_id].init(new_id);
 
-		clients[new_id].sock.connected = false;
 		memset(&clients[new_id].sock.over, 0x00, sizeof(struct OVER_EX));
 		memset(&clients[new_id].sock.packet_buf, 0x00, MAX_BUFFER);
 
@@ -529,5 +518,11 @@ void send_my_status_to_all_packet(int id)
 		if (clients[i].sock.connected == true&& i != id)
 			SendPacket(SC_PLAYER_STATUS, i, builder.GetBufferPointer(), builder.GetSize());
 	}
+}
+
+void send_remove_player_packet(int to, int obj)
+{
+	int i = obj;
+	SendPacket(SC_REMOVE_PLAYER, to, &i, sizeof(i));
 }
 //------------------------------packet------------------------------
