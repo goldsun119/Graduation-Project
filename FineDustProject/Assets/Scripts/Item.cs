@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Item : MonoBehaviour
 {
     public bool isCollision = false;
     public GameObject player;
+    Rigidbody rigidbody;
 
     public enum TYPE { Box, Crystal }
 
@@ -20,11 +22,26 @@ public class Item : MonoBehaviour
         // 태그명이 "Inventory"인 객체의 GameObject를 반환한다.
         // 반환된 객체가 가지고 있는 스크립트를 GetComponent를 통해 가져온다.
         Iv = GameObject.FindGameObjectWithTag("Inventory").GetComponent<Inventory>();
+        rigidbody = GetComponent<Rigidbody>();
+        Vector3 spawnPosition = (transform.position);
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(spawnPosition, out hit, 50.0f, NavMesh.AllAreas))
+        {
+            Debug.Log("hit"+hit.position);
+            Debug.Log("spawn"+spawnPosition);
+            spawnPosition.y = hit.position.y;
+            transform.position = new Vector3(spawnPosition.x, spawnPosition.y, spawnPosition.z);
+        }
+    }
 
+    void Start()
+    {
+        
     }
 
     void Update()
     {
+
         if (isCollision)
         {
             if (Input.GetKey(KeyCode.F))
@@ -50,6 +67,15 @@ public class Item : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
             isCollision = true;
+
+        if (collision.gameObject.CompareTag("Terrain"))
+        {
+            if (null != rigidbody)
+
+                Destroy(GetComponent<Rigidbody>());
+            Debug.Log("땅에 만난 템");
+        }
+
     }
 
     void OnCollisionExit(Collision collision)

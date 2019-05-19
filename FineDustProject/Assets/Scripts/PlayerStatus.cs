@@ -20,6 +20,7 @@ public class PlayerStatus : MonoBehaviour
     public int anitype = 0;
     public float Direction_X = 0;
     public float Direction_Z = 0;
+    public int Enviroment_Level = 0;
     //
 
     public float speedT = 0;
@@ -37,6 +38,7 @@ public class PlayerStatus : MonoBehaviour
     // 상호작용
     public bool isItem = false;
     public bool isMon = false;
+    public bool Inventory_on = false;
 
     CameraMgr CMgr;
     //public int bagSize = 5;
@@ -52,7 +54,10 @@ public class PlayerStatus : MonoBehaviour
     void Update()
     {
         if (ID == Game.Network.NetWork.Client_id)
+        {
             MoveStatus();
+            Inventory_On_Off();
+        }
         RecvStatus();
     }
 
@@ -207,6 +212,18 @@ public class PlayerStatus : MonoBehaviour
         isItem = false;
         isMon = false;
     }
+
+    void Inventory_On_Off()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            if (Inventory_on)
+                Inventory_on = false;
+            else if (!Inventory_on)
+                Inventory_on = true;
+        }
+    }
+
 
     void RecvStatus()
     {

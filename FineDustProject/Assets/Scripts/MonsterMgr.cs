@@ -22,7 +22,7 @@ public class MonsterMgr : MonoBehaviour
     void Start()
     {
         player_tf = GameObject.FindGameObjectWithTag("Player").transform;   // 플레이어의 정보값
-        player_st = GetComponent<PlayerStatus>();
+        player_st = player_tf.GetComponent<PlayerStatus>();
         nav = GetComponent<NavMeshAgent>();
         targetRange = 100.0f;
         HP = 100;
@@ -35,9 +35,9 @@ public class MonsterMgr : MonoBehaviour
         player_st = GetComponent<PlayerStatus>();
         // 이것을 어떻게 받아와야 할까?...
 
-        //if (player_st.isRun)
-        //    nav.speed = 20;
-        //else nav.speed = 10;
+        if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.RUN)
+            nav.speed = 20;
+        else nav.speed = 10;
 
         var _distance = Vector3.Distance(player_tf.transform.position, transform.position);   // 몬스터와 플레이어 사이 거리
 
