@@ -31,10 +31,6 @@ public class MonsterMgr : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        player_tf = GameObject.FindGameObjectWithTag("Player").transform;
-        player_st = GetComponent<PlayerStatus>();
-        // 이것을 어떻게 받아와야 할까?...
-
         if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.RUN)
             nav.speed = 20;
         else nav.speed = 10;
