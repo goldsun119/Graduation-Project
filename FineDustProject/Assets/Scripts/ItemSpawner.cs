@@ -6,8 +6,8 @@ public class ItemSpawner : MonoBehaviour
 {
     public GameObject itemObj;
 
-    public int itemCnt = 1;
-    public int itemMaxCnt = 100;
+    public int itemCnt = 0;
+    public int itemMaxCnt = 10;
 
 
     // Start is called before the first frame update
@@ -40,18 +40,18 @@ public class ItemSpawner : MonoBehaviour
             return;
         }
 
-        spawnPos += Vector3.up * 0.6f;
+        //spawnPos += Vector3.up * 0.6f;
 
         GameObject item = Instantiate(itemObj, spawnPos, Quaternion.identity);
+
+        Debug.Log("아이템 생성" + itemCnt + " " + spawnPos.x + ", " + spawnPos.y + ", " + spawnPos.z);
     }
 
     Vector3 RandomPosition()
     {
         Vector3 itemPosXZ = Random.insideUnitCircle * 900;
-        Vector3 itemPos = new Vector3(itemPosXZ.x, 0f, itemPosXZ.y);
-
-        Debug.Log(itemPos.x + ", " + itemPos.y + ", " + itemPos.z);
-
+        Vector3 itemPos = new Vector3(itemPosXZ.x, 70f, itemPosXZ.y);
+        
         return itemPos;
     }
 }

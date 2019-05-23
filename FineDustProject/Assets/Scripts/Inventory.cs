@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
+    GameObject playerObj;
+    PlayerStatus player;
 
     // 공개
     public List<GameObject> AllSlot;    // 모든 슬롯을 관리해줄 리스트.
@@ -67,6 +69,13 @@ public class Inventory : MonoBehaviour
         // 빈 슬롯 = 슬롯의 숫자.
         EmptySlot = AllSlot.Count;
     }
+
+
+    void Start()
+    {
+        
+    }
+
 
     // 아이템을 넣기위해 모든 슬롯을 검사.
     public bool AddItem(Item item)

@@ -70,8 +70,8 @@ public class CameraMgr : MonoBehaviour
 
     void FirstCamOn()
     {
-        Third_Cam.enabled = false;
         First_Cam.enabled = true;
+        Third_Cam.enabled = false;
         Isometric_Cam.enabled = false;
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -82,9 +82,9 @@ public class CameraMgr : MonoBehaviour
 
     void IsometricCamOn()
     {
+        Isometric_Cam.enabled = true;
         Third_Cam.enabled = false;
         First_Cam.enabled = false;
-        Isometric_Cam.enabled = true;
 
         Cursor.lockState = CursorLockMode.None; //: 일반 마우스 커서
         //Cursor.lockState = CursorLockMode.Confined : 창밖으로 커서가 나가지 못함

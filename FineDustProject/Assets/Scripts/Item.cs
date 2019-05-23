@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Item : MonoBehaviour
 {
     public bool isCollision = false;
     public GameObject player;
+    new Rigidbody rigidbody;
+    ItemSpawner Item_Spawner;
 
     public enum TYPE { Box, Crystal }
 
@@ -21,16 +24,40 @@ public class Item : MonoBehaviour
         // 반환된 객체가 가지고 있는 스크립트를 GetComponent를 통해 가져온다.
         Iv = GameObject.FindGameObjectWithTag("Inventory").GetComponent<Inventory>();
 
+        Item_Spawner = GameObject.Find("ItemSpawner").GetComponent<ItemSpawner>();
+
+        rigidbody = GetComponent<Rigidbody>();
+        Vector3 spawnPosition = (transform.position);
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(spawnPosition, out hit, 50.0f, NavMesh.AllAreas))
+        {
+            //Debug.Log("hit"+hit.position);
+            //Debug.Log("spawn"+spawnPosition);
+            spawnPosition.y = hit.position.y;
+            transform.position = new Vector3(spawnPosition.x, spawnPosition.y, spawnPosition.z);
+        }
+    }
+
+    void Start()
+    {
+        
     }
 
     void Update()
     {
+        if (transform.position.y < 20)
+        {
+            Destroy(gameObject);
+            Item_Spawner.itemCnt--;
+        }
+
         if (isCollision)
         {
             if (Input.GetKey(KeyCode.F))
             {
                 Destroy(gameObject);
                 AddItem();
+                Item_Spawner.itemCnt--;
                 Debug.Log("냠");
             }
         }
@@ -50,6 +77,15 @@ public class Item : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
             isCollision = true;
+
+        //if (collision.gameObject.CompareTag("Terrain"))
+        //{
+        //    if (null != rigidbody)
+
+        //        Destroy(GetComponent<Rigidbody>());
+        //    Debug.Log("땅에 만난 템");
+        //}
+
     }
 
     void OnCollisionExit(Collision collision)

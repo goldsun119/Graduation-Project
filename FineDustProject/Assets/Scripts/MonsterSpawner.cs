@@ -33,24 +33,24 @@ public class MonsterSpawner : MonoBehaviour
 
         spawnPos = RandomPosition();
 
-        if ((spawnPos.x * spawnPos.x) + (spawnPos.z * spawnPos.z) <= (350 * 350))
+        if ((spawnPos.x * spawnPos.x) + (spawnPos.z * spawnPos.z) >= (350 * 350))
         {
             monCnt--;
             Debug.Log("돔 안임");
             return;
         }
 
-        spawnPos += Vector3.up * 0.6f;
+        //spawnPos += Vector3.up * 0.6f;
 
         GameObject mon = Instantiate(monObj, spawnPos, Quaternion.identity);
+
+        Debug.Log("몬스터 생성" + monCnt + " " + spawnPos.x + ", " + spawnPos.y + ", " + spawnPos.z);
     }
 
     Vector3 RandomPosition()
     {
         Vector3 monPosXZ = Random.insideUnitCircle * 900;
-        Vector3 monPos = new Vector3(monPosXZ.x, 30f, monPosXZ.y);
-
-        Debug.Log(monPos.x + ", " + monPos.y + ", " + monPos.z);
+        Vector3 monPos = new Vector3(monPosXZ.x, 70f, monPosXZ.y);
 
         return monPos;
     }
