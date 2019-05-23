@@ -7,7 +7,7 @@ public class Item : MonoBehaviour
 {
     public bool isCollision = false;
     public GameObject player;
-    Rigidbody rigidbody;
+    new Rigidbody rigidbody;
     ItemSpawner Item_Spawner;
 
     public enum TYPE { Box, Crystal }

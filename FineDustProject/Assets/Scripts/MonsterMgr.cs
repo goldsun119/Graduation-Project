@@ -8,6 +8,8 @@ public class MonsterMgr : MonoBehaviour
     public Transform player_tf;
     public PlayerStatus player_st;
     NavMeshAgent nav;
+    //new Rigidbody rigidbody;
+    MonsterSpawner Monster_Spawner;
 
     public int HP;
     public bool isCollision = false;
@@ -19,11 +21,28 @@ public class MonsterMgr : MonoBehaviour
     public float KnockBack_Time = 0.1f;
     public float Waiting_Time = 0.0f;
 
+    void Awake()
+    {
+        nav = GetComponent<NavMeshAgent>();
+
+        Monster_Spawner = GameObject.Find("MonsterSpawner").GetComponent<MonsterSpawner>();
+
+        //rigidbody = GetComponent<Rigidbody>();
+        Vector3 spawnPosition = (transform.position);
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(spawnPosition, out hit, 50.0f, NavMesh.AllAreas))
+        {
+            spawnPosition.y = hit.position.y;
+            transform.position = new Vector3(spawnPosition.x, spawnPosition.y, spawnPosition.z);
+            nav.Warp(new Vector3(spawnPosition.x, spawnPosition.y, spawnPosition.z));
+        }
+    }
+
     void Start()
     {
         player_tf = GameObject.FindGameObjectWithTag("Player").transform;   // 플레이어의 정보값
         player_st = player_tf.GetComponent<PlayerStatus>();
-        nav = GetComponent<NavMeshAgent>();
+        
         targetRange = 100.0f;
         HP = 100;
     }
@@ -31,6 +50,12 @@ public class MonsterMgr : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (transform.position.y < 20)
+        {
+            Destroy(gameObject);
+            Monster_Spawner.monCnt--;
+        }
+
         if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.RUN)
             nav.speed = 20;
         else nav.speed = 10;
@@ -42,7 +67,7 @@ public class MonsterMgr : MonoBehaviour
         {
             is_Tracking = true;
             nav.SetDestination(player_tf.transform.position);
-            Debug.Log("몬스터와 캐릭터 사이의 거리" + _distance);
+            //Debug.Log("몬스터와 캐릭터 사이의 거리" + _distance);
         }
         else
         {
@@ -56,7 +81,7 @@ public class MonsterMgr : MonoBehaviour
             if (Input.GetMouseButtonUp(0)) //0:좌 1:중 2:우
             {
                 HP -= 10;
-                Debug.Log("피 " + HP + "만큼 남아따");
+                Debug.Log("피 " + HP + "남음");
                 is_KnockBack = true;
                 KnockBack_Time = 0.1f;
             }
@@ -84,7 +109,8 @@ public class MonsterMgr : MonoBehaviour
         if (HP == 0)
         {
             Destroy(gameObject);
-            Debug.Log("나주거");
+            Debug.Log("멧돼지 사망");
+            Monster_Spawner.monCnt--;
         }
         
     }

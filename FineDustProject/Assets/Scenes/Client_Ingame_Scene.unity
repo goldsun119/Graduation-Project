@@ -722,7 +722,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: NaN, y: -2.1230414e+34, z: 8.46e-43, w: 1.96577e-40}
+  m_BoundingSphereOverride: {x: 0, y: 4.6250347e+29, z: 85898.336, w: -1.254808e-17}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -6617,11 +6617,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 51.4
+      value: 51.472
       objectReference: {fileID: 0}
     - target: {fileID: 400090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 96.9
+      value: 96.878
       objectReference: {fileID: 0}
     - target: {fileID: 400090, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
       propertyPath: m_LocalRotation.x
@@ -6873,7 +6873,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1047080200
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8242,7 +8242,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 4.5905e-41, y: -2.8155917e-14, z: 4.5905e-41, w: 0}
+  m_BoundingSphereOverride: {x: 0, y: 7.4436246e-10, z: 4.354398e-38, w: 5.3421577e-12}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -8315,6 +8315,22 @@ MonoBehaviour:
   targetRange: 5
   KnockBack_Time: 0
   Waiting_Time: 0
+--- !u!54 &1592288366
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1592288360}
+  serializedVersion: 2
+  m_Mass: 100
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
 --- !u!1 &1627136134 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100090, guid: 4b664c76012e1be48bce60d08d5954ec,
@@ -8352,13 +8368,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1644847484}
-  m_LocalRotation: {x: 0.23911765, y: 0.3696438, z: -0.09904577, w: 0.89239913}
+  m_LocalRotation: {x: 0.39044833, y: 0.34682897, z: -0.161729, w: 0.8373192}
   m_LocalPosition: {x: -238.07, y: 50.03, z: 256.93}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 30, y: 45, z: 0}
+  m_LocalEulerAnglesHint: {x: 50, y: 45, z: 0}
 --- !u!81 &1644847487
 AudioListener:
   m_ObjectHideFlags: 0
