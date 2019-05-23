@@ -19,6 +19,10 @@ struct Monster_Collection;
 
 struct Monster_info;
 
+struct Item_Collection;
+
+struct Item_info;
+
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3 FLATBUFFERS_FINAL_CLASS {
  private:
   float x_;
@@ -402,11 +406,124 @@ inline flatbuffers::Offset<Monster_info> CreateMonster_info(
   builder_.add_id(id);
   return builder_.Finish();
 }
+
+struct Item_Collection FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  enum {
+    VT_DATA = 4
+  };
+  const flatbuffers::Vector<flatbuffers::Offset<Item_info>> *data() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Item_info>> *>(VT_DATA);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_DATA) &&
+           verifier.VerifyVector(data()) &&
+           verifier.VerifyVectorOfTables(data()) &&
+           verifier.EndTable();
+  }
+};
+
+struct Item_CollectionBuilder {
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_data(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Item_info>>> data) {
+    fbb_.AddOffset(Item_Collection::VT_DATA, data);
+  }
+  explicit Item_CollectionBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  Item_CollectionBuilder &operator=(const Item_CollectionBuilder &);
+  flatbuffers::Offset<Item_Collection> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<Item_Collection>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<Item_Collection> CreateItem_Collection(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Item_info>>> data = 0) {
+  Item_CollectionBuilder builder_(_fbb);
+  builder_.add_data(data);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<Item_Collection> CreateItem_CollectionDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const std::vector<flatbuffers::Offset<Item_info>> *data = nullptr) {
+  return Game::Protocol::CreateItem_Collection(
+      _fbb,
+      data ? _fbb.CreateVector<flatbuffers::Offset<Item_info>>(*data) : 0);
+}
+
+struct Item_info FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  enum {
+    VT_ID = 4,
+    VT_TYPE = 6,
+    VT_POSITION = 8
+  };
+  int32_t id() const {
+    return GetField<int32_t>(VT_ID, 0);
+  }
+  int32_t type() const {
+    return GetField<int32_t>(VT_TYPE, 0);
+  }
+  const Vec3 *position() const {
+    return GetStruct<const Vec3 *>(VT_POSITION);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int32_t>(verifier, VT_ID) &&
+           VerifyField<int32_t>(verifier, VT_TYPE) &&
+           VerifyField<Vec3>(verifier, VT_POSITION) &&
+           verifier.EndTable();
+  }
+};
+
+struct Item_infoBuilder {
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_id(int32_t id) {
+    fbb_.AddElement<int32_t>(Item_info::VT_ID, id, 0);
+  }
+  void add_type(int32_t type) {
+    fbb_.AddElement<int32_t>(Item_info::VT_TYPE, type, 0);
+  }
+  void add_position(const Vec3 *position) {
+    fbb_.AddStruct(Item_info::VT_POSITION, position);
+  }
+  explicit Item_infoBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  Item_infoBuilder &operator=(const Item_infoBuilder &);
+  flatbuffers::Offset<Item_info> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<Item_info>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<Item_info> CreateItem_info(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    int32_t id = 0,
+    int32_t type = 0,
+    const Vec3 *position = 0) {
+  Item_infoBuilder builder_(_fbb);
+  builder_.add_position(position);
+  builder_.add_type(type);
+  builder_.add_id(id);
+  return builder_.Finish();
+}
 inline const Game::Protocol::Client_info *GetClientView(const void *buf) {
 	return flatbuffers::GetRoot<Game::Protocol::Client_info>(buf);
 }
 inline const Game::Protocol::Monster_info *GetMonsterView(const void *buf) {
 	return flatbuffers::GetRoot<Game::Protocol::Monster_info>(buf);
+}
+inline const Game::Protocol::Item_info *GetItemView(const void *buf) {
+	return flatbuffers::GetRoot<Game::Protocol::Item_info>(buf);
 }
 }  // namespace Protocol
 }  // namespace Game

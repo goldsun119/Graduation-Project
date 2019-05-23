@@ -6,6 +6,7 @@
 constexpr int SERVER_PORT =			9000;
 
 constexpr int MAX_USER =					4;
+constexpr int MAX_ITEM =					100;
 constexpr int WORLD_WIDTH =			2000;
 constexpr int WORLD_HEIGHT =			2000;
 
@@ -18,13 +19,17 @@ constexpr int CS_INFO =							1;
 constexpr int CS_GET_ITEM =				2;
 constexpr int CS_MONSTER_STATUS =	3;
 
-constexpr int SC_LOGIN_OK =					1;
-constexpr int	SC_PUT_PLAER =				2;
+constexpr int SC_ID =								1;
+constexpr int	SC_PUT_PLAYER =			2;
 constexpr int SC_REMOVE_PLAYER =		3;
 constexpr int SC_PLAYER_STATUS	 =		4;
 constexpr int SC_ALL_PLAYER_DATA =	5;
 constexpr int SC_PUT_MONSTER =			6;
 constexpr int SC_REMOVE_MONSTER =	7;
+constexpr int SC_PUT_ITEM =				8;
+constexpr int SC_REMOVE_ITEM =			9;
+constexpr int SC_PUT_IN_BAG			 =	10;
+
 
 #pragma pack(push, 1)
 

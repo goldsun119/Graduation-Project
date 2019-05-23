@@ -18,9 +18,9 @@ using FlatBuffers;
 
 public class NetworkMessage
 {
-    public int LimitReceivebyte = 1024;                     // Receive Data Length. (byte)
-    public byte[] Receivebyte = new byte[1024];    // Receive data by this array to save.
-    public byte[] Sendbyte = new byte[1024];
+    public int LimitReceivebyte = 10000;                     // Receive Data Length. (byte)
+    public byte[] Receivebyte = new byte[10000];    // Receive data by this array to save.
+    public byte[] Sendbyte = new byte[10000];
     public int now_packet_size = 0;
     public int prev_packet_size = 0;
     public StringBuilder sb = new StringBuilder();
@@ -55,7 +55,9 @@ namespace Game.Network
         public static Dictionary<int, ClientClass> client_data = new Dictionary<int, ClientClass>();
 
         public static Dictionary<int, MonsterClass> monster_data = new Dictionary<int, MonsterClass>();
-        
+
+        public static Dictionary<int, ItemClass> item_data = new Dictionary<int, ItemClass>();
+
         static SendFunc sF = new SendFunc();
 
         public static int Client_id = -1;         // 자신의 클라이언트 아이디
@@ -277,6 +279,32 @@ namespace Game.Network
                 Debug.Log("몬스터 생성 아이디 : " + id);
 
             }
+            else if(type == Game.Protocol.Protocol.SC_PUT_ITEM)
+            {
+                ByteBuffer recv_buf = new ByteBuffer(recvPacket);
+                var get_all_data = Item_Collection.GetRootAsItem_Collection(recv_buf);
+                for (int i = 0; i < get_all_data.DataLength; ++i)
+                {
+                    //데이터 접근 get_all_data.Data(i).Value.변수
+                    int id = get_all_data.Data(i).Value.Id;
+                    int t = get_all_data.Data(i).Value.Type;
+                    Vector3 p = new Vector3(get_all_data.Data(i).Value.Position.Value.X, get_all_data.Data(i).Value.Position.Value.Y, get_all_data.Data(i).Value.Position.Value.Z);
+
+                    if (item_data.ContainsKey(id))
+                    {
+                        ItemClass iter = item_data[id];
+                        iter.set_id(id);
+                        iter.set_type(t);
+                        iter.set_pos(p);
+                        iter.set_draw(true);
+                    }
+                    else
+                    {
+                        item_data.Add(id, new ItemClass(id,t,p));
+                        item_data[id].set_draw(true);
+                    }
+                }
+            }
         }
 
         public static void Send_Packet(byte[] packet)
@@ -369,6 +397,10 @@ namespace Game.Network
 
         void RecieveHeaderCallback(IAsyncResult ar)
         {
+            // 시작할때 데이터가 연달아 붙어서 와서 안되는것같다.
+            // 받은 데이터를 계속 확인하면서 받은 크기만큼 끊고 이어서 다시 받고 하는 식으로 짜야할듯
+            // 데이터가 덜 왔다면 기다렸다가 크기만큼 받고
+            // 데이터가 뒤에꺼까지 같이 왔다면 앞부분만큼 잘라 읽기
             try
             {
                 NetworkMessage msg = (NetworkMessage)ar.AsyncState;     // Recieve된 Packet을 받아온다.

@@ -6,8 +6,8 @@ public class ItemSpawner : MonoBehaviour
 {
     public GameObject itemObj;
 
-    public int itemCnt = 0;
-    public int itemMaxCnt = 10;
+    public int itemCnt = 1;
+    public int itemMaxCnt = 100;
 
 
     // Start is called before the first frame update
@@ -19,11 +19,14 @@ public class ItemSpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(itemCnt < itemMaxCnt)
+        if (Game.Network.NetWork.item_data.Count == 100)
         {
-            Spawn();
-            itemCnt++;
-            Debug.Log(itemCnt);
+            if (itemCnt <= itemMaxCnt)
+            {
+                Spawn();
+                itemCnt++;
+                Debug.Log(itemCnt);
+            }
         }
     }
 
@@ -31,14 +34,15 @@ public class ItemSpawner : MonoBehaviour
     {
         Vector3 spawnPos;
 
-        spawnPos = RandomPosition();
+        //spawnPos = RandomPosition();
+        spawnPos = Game.Network.NetWork.item_data[itemCnt].get_pos();
 
-        if((spawnPos.x * spawnPos.x) + (spawnPos.z * spawnPos.z) <= (350*350))
-        {
-            itemCnt--;
-            Debug.Log("돔 안임");
-            return;
-        }
+        //if((spawnPos.x * spawnPos.x) + (spawnPos.z * spawnPos.z) <= (350*350))
+        //{
+        //    itemCnt--;
+        //    Debug.Log("돔 안임");
+        //    return;
+        //}
 
         //spawnPos += Vector3.up * 0.6f;
 

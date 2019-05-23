@@ -8,17 +8,19 @@
 using namespace std;
 
 #include <winsock2.h>
+#include <time.h>
 
 #include "protocol.h"
 #include "Player.h"
 #include "Monster.h"
+#include "Item.h"
 #include "info_generated.h"
 
 using namespace Game::Protocol;
 
 #pragma comment(lib, "Ws2_32.lib")
 
-#define MAX_BUFFER        1024
+#define MAX_BUFFER        10000
 
 Player clients[MAX_USER+1]; // SOCKET이 어떤 SOCKETINFO 인지 알아야한다!!
 
@@ -28,9 +30,11 @@ mutex buf_lock;
 
 std::chrono::high_resolution_clock::time_point point;
 std::map <int, Monster> monsters;
+std::map <int, Item> items;
 
 void error_display(const char *msg, int err_no);
 void initialize();
+void make_items();
 int get_new_id();
 
 void disconnect(int id);
@@ -50,6 +54,7 @@ void send_my_status_to_all_packet(int id);
 void send_all_player_packet(int id);
 void send_remove_player_packet(int to, int obj);
 void send_put_monster_packet(int monster_id);
+void send_put_item_packet(int id);
 //------------------------------packet------------------------------
 
 int main()
@@ -57,6 +62,7 @@ int main()
 	vector<thread> worker_threads;
 
 	initialize();
+	make_items();
 
 	g_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0);
 
@@ -87,6 +93,31 @@ void initialize()
 {
 	for (auto &cl : clients) {
 		cl.sock.connected = false;
+	}
+}
+void make_items()
+{
+	// 좌표범위
+	srand(time(NULL));
+	for (int i = 0; i < MAX_ITEM; ++i)
+	{
+		float x = float(rand() % 1800 - 900);
+		if (-350 <= x && x <= 350)
+		{
+			--i;
+			continue;
+		}
+		float z = float(rand() % 1800 - 900);
+		if (-350 <= z && z <= 350)
+		{
+			--i;
+			continue;
+		}
+		int type = rand() % 2 + 1;
+		items[i].SetDraw( true);
+		items[i].SetId(i);
+		items[i].SetType(type);
+		items[i].SetPos(x, 100, z);
 	}
 }
 int get_new_id()
@@ -284,6 +315,7 @@ void do_accept()
 
 		// 처음 연결 시 다른 캐릭터, 몬스터 정보 나에게 보내고 
 		send_all_player_packet(new_id);
+		send_put_item_packet(new_id);
 
 		//new_id 접속을 이미 들어와있는 플레이어들에게 알리기
 		send_put_player_packet(new_id);
@@ -337,12 +369,10 @@ void make_obj()
 
 void SendPacket(const int type, const int id, const void *packet, const int packet_size)
 {
-	// 창현오빠꺼에서 가져옴 이해하기
 	if (clients[id].sock.socket != NULL) {
 		OVER_EX *over = new OVER_EX;
 		ZeroMemory(&over->overlapped, sizeof(over->overlapped));
 		over->is_recv = false;
-		buf_lock.lock();
 		char p_size[MAX_BUFFER]{ 0 };
 
 		// 클라이언트에게 패킷 전송시 <패킷크기 | 패킷 타입 8바이트 부터 데이터> 으로 전송을 한다.
@@ -358,12 +388,11 @@ void SendPacket(const int type, const int id, const void *packet, const int pack
 			p_size[i] = over->messageBuffer[i - 8];
 		}
 		ZeroMemory(&over->messageBuffer, sizeof(over->messageBuffer));
-		memcpy(over->messageBuffer, p_size, MAX_BUFFER);
+		memcpy(over->messageBuffer, p_size, packet_size + 8);
 
 		over->dataBuffer.buf = reinterpret_cast<CHAR *>(p_size);
 		over->dataBuffer.len = packet_size + 8;
 		int res = WSASend(clients[id].sock.socket, &over->dataBuffer, 1, NULL, 0, &over->overlapped, NULL);
-		buf_lock.unlock();
 		if (0 != res) {
 			int error_no = WSAGetLastError();
 			if (WSA_IO_PENDING != error_no) {
@@ -444,7 +473,7 @@ void send_login_ok_packet(int id)
 	clients[id].SetUnlock();
 	auto data = CreateClient_info(builder, i, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x,rot.y,rot.z));
 	builder.Finish(data);
-	SendPacket(SC_LOGIN_OK, id, builder.GetBufferPointer(), builder.GetSize());
+	SendPacket(SC_ID, id, builder.GetBufferPointer(), builder.GetSize());
 }
 void send_put_player_packet(int id)
 {
@@ -470,7 +499,7 @@ void send_put_player_packet(int id)
 		if (clients[to].sock.connected == true && to != id)
 		{
 			clients[to].SetUnlock();
-			SendPacket(SC_PUT_PLAER, to, builder.GetBufferPointer(), builder.GetSize());
+			SendPacket(SC_PUT_PLAYER, to, builder.GetBufferPointer(), builder.GetSize());
 			continue;
 		}
 		clients[to].SetUnlock();
@@ -565,7 +594,36 @@ void send_put_monster_packet(int monster_id)
 	monsters[monster_id].SetUnlock();
 	auto data = CreateMonster_info(builder, i, hp, ani, x, z, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
 	builder.Finish(data);
-	for(int to = 1; to<=MAX_USER;++to)
-		SendPacket(SC_PUT_MONSTER, to, builder.GetBufferPointer(), builder.GetSize());
+	for (int to = 1; to <= MAX_USER; ++to)
+	{
+		if (clients[to].sock.connected == true)
+			SendPacket(SC_PUT_MONSTER, to, builder.GetBufferPointer(), builder.GetSize());
+	}
+}
+
+void send_put_item_packet(int id)
+{
+	flatbuffers::FlatBufferBuilder builder;
+	builder.Clear();
+	std::vector<flatbuffers::Offset<Item_info>> items_data;
+
+	for (int item_id = 0; item_id < MAX_ITEM; ++item_id)
+	{
+		items[item_id].SetLock();
+		int i = items[item_id].GetId();
+		int t = items[item_id].GetType();
+		auto pos = items[item_id].GetPos();
+		items[item_id].SetUnlock();
+		auto data = CreateItem_info(builder, i, t, &Vec3(pos.x, pos.y, pos.z));
+		items_data.emplace_back(data);
+	}
+	auto full_data = builder.CreateVector(items_data);
+	auto p = CreateItem_Collection(builder, full_data);
+	builder.Finish(p);
+	for (int to = 1; to <= MAX_USER; ++to)
+	{
+		if (clients[to].sock.connected == true)
+			SendPacket(SC_PUT_ITEM, to, builder.GetBufferPointer(), builder.GetSize());
+	}
 }
 //------------------------------packet------------------------------

@@ -3,10 +3,6 @@
 #include <mutex>
 #include "vec3.h"
 
-enum OBJ_TYPE
-{
-	PLAYER = 1, MONSTER, ITEM
-};
 
 class Obj
 {

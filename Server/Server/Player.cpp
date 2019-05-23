@@ -7,7 +7,6 @@ Player::Player()
 	pos.z = 0.f;
 	isDraw = false;
 	name = "";
-	type = OBJ_TYPE::PLAYER;
 	rotation.x = 0.f;
 	rotation.y = 0.f;
 	rotation.z = 0.f;

@@ -39,3 +39,13 @@ dirZ:float;
 position:Vec3;
 rotation:Vec3;
 }
+
+table Item_Collection{
+data:[Item_info];
+}
+
+table Item_info{
+id:int;
+type:int;
+position:Vec3;
+}

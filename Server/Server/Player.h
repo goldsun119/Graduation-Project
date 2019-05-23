@@ -4,7 +4,7 @@
 #include <mutex>
 #include "protocol.h"
 
-#define MAX_BUFFER        1024
+#define MAX_BUFFER        10000
 
 struct OVER_EX
 {
