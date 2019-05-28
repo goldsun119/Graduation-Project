@@ -165,6 +165,7 @@ public class PlayerStatus : MonoBehaviour
         if ((Input.GetKeyDown(KeyCode.Space)) && (Ani_State_Jump == ANI_TYPE.IDEL))
             Ani_State_Jump = ANI_TYPE.JUMP;
 
+        CheatKey();
     }
 
     void OnCollisionEnter(Collision collision)
@@ -224,6 +225,11 @@ public class PlayerStatus : MonoBehaviour
         }
     }
 
+    void CheatKey()
+    {
+        if (Input.GetKeyDown(KeyCode.P)) transform.position = new Vector3(0, 30, 360);
+        if (Input.GetKeyDown(KeyCode.O)) transform.position = new Vector3(0, 30, 100);
+    }
 
     void RecvStatus()
     {

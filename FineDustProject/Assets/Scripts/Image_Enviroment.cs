@@ -11,6 +11,7 @@ public class Image_Enviroment : MonoBehaviour
     private Image EL_Image;
     public Sprite Default_img;
     public Sprite Level1_img;
+    public int Enviroment_Level;
 
     // Start is called before the first frame update
     void Start()
@@ -29,12 +30,23 @@ public class Image_Enviroment : MonoBehaviour
         {
             case 0:
                 EL_Image.sprite = Default_img;  // 투명
+                //RenderSettings.fog = false;
+                RenderSettings.fogMode = FogMode.Linear;
+                //RenderSettings.fogStartDistance = 0.0f;
+                //RenderSettings.fogEndDistance = 700.0f;
+
                 break;
             case 1:
                 EL_Image.sprite = Level1_img;   // 1단계
+                //RenderSettings.fog = true;
+                RenderSettings.fogMode = FogMode.Exponential;
+
                 break;
             default:
                 EL_Image.sprite = Default_img;
+                //RenderSettings.fog = true;
+                RenderSettings.fogMode = FogMode.Exponential;
+                
                 break;
         }
     }
