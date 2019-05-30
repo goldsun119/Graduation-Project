@@ -19,7 +19,7 @@ public class ItemSpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Game.Network.NetWork.item_data.Count == 100)
+        //if (Game.Network.NetWork.item_data.Count == 100)
         {
             if (itemCnt <= itemMaxCnt)
             {
@@ -34,8 +34,8 @@ public class ItemSpawner : MonoBehaviour
     {
         Vector3 spawnPos;
 
-        //spawnPos = RandomPosition();
-        spawnPos = Game.Network.NetWork.item_data[itemCnt].get_pos();
+        spawnPos = RandomPosition();
+        //spawnPos = Game.Network.NetWork.item_data[itemCnt].get_pos();
 
         //if((spawnPos.x * spawnPos.x) + (spawnPos.z * spawnPos.z) <= (350*350))
         //{

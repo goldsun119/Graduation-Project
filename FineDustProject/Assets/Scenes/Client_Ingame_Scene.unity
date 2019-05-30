@@ -721,8 +721,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: -6.3384464e+29, y: 1.7592186e+13, z: -1.7014118e+38,
-    w: 2.5243547e-29}
+  m_BoundingSphereOverride: {x: 1.3e-44, y: 1.8525046e+28, z: 7.397733e+31, w: 8.7e-44}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -860,8 +859,7 @@ MonoBehaviour:
   Renderer: {fileID: 206530293}
   Dome_Material_Clear: {fileID: 239378781582670930, guid: 92b8681fc7177f641b94a62e6d554266,
     type: 3}
-  Dome_Material_Fine: {fileID: 239378781582670930, guid: 92b8681fc7177f641b94a62e6d554266,
-    type: 3}
+  Dome_Material_Fine: {fileID: 2100000, guid: 898df6d0e86c73349bde7b3205147cb9, type: 2}
 --- !u!135 &206530297
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -7608,7 +7606,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1046176304
 MonoBehaviour:
   m_ObjectHideFlags: 0
