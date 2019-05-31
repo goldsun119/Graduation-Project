@@ -20,11 +20,11 @@ TagManager:
   - 
   - 
   - PostProcessing
+  - Terrain
+  - Static_Object
   - 
-  - 
-  - 
-  - 
-  - 
+  - MonsterMarker
+  - PlayerMarker
   - 
   - 
   - 

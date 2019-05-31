@@ -25,8 +25,8 @@ public class Inventory : MonoBehaviour
     void Awake()
     {
         // 인벤토리 이미지의 가로, 세로 사이즈 셋팅.
-        InvenWidth = (slotCountX * slotSize) + (slotCountX * slotGap) + (slotGap * 2);
-        InvenHeight = (slotCountY * slotSize) + (slotCountY * slotGap) + (slotGap * 2);
+        InvenWidth = (slotCountX * slotSize) + ((slotCountX*2) * slotGap);
+        InvenHeight = (slotCountY * slotSize) + ( (slotCountY*2) * slotGap);
 
         // 셋팅된 사이즈로 크기를 설정.
         InvenRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, InvenWidth); // 가로.
@@ -48,10 +48,10 @@ public class Inventory : MonoBehaviour
                 slot.transform.parent = transform; // 슬롯의 부모를 설정. (Inventory객체가 부모임.)
 
                 // 슬롯이 생성될 위치 설정하기.
-                slotRect.localPosition = new Vector3((slotSize * x - slotSize/2) + (slotGap * x),
-                                                   -((slotSize * y - slotSize/2) + (slotGap * y)),
+                slotRect.localPosition = new Vector3((slotSize * x) + (slotGap * (x*2+1)),
+                                                   -((slotSize * y) + (slotGap * (y*2+1))),
                                                       0);
-
+                
                 // 슬롯의 자식인 투명이미지의 사이즈 설정하기.
                 slotRect.localScale = Vector3.one;
                 slotRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, slotSize); // 가로

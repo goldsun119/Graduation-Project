@@ -10,6 +10,8 @@ public class CameraMgr : MonoBehaviour
     public Camera Third_Cam;
     public Camera First_Cam;
     public Camera Isometric_Cam;
+    public Camera MiniMap_Cam;
+
 
     // player 넣고 플레이어 받아와서 카메라주기?
 
@@ -40,6 +42,8 @@ public class CameraMgr : MonoBehaviour
             Camera_Num = Camera_Num % 3;
             Debug.Log(Camera_Num);
         }
+
+        MinimapCamMove();
 
         switch (Camera_Num)
         {
@@ -97,8 +101,8 @@ public class CameraMgr : MonoBehaviour
     void ThirdCamMove()
     {
         Quaternion rotation = Quaternion.Euler(player.rotation.x, player.rotation.y, player.rotation.z);
-        Third_Cam.transform.rotation = Quaternion.Euler(player.rotation.x, player.rotation.y, player.rotation.z);
-        Third_Cam.transform.position = rotation * new Vector3(0, 2.2f, - 4.5f) + player.position;
+        Third_Cam.transform.rotation = Quaternion.Euler(player.rotation.x + 15, player.rotation.y, player.rotation.z);
+        Third_Cam.transform.position = rotation * new Vector3(0, 4.25f, -5.5f) + player.position;
     }
 
     void FirstCamMove()
@@ -108,10 +112,16 @@ public class CameraMgr : MonoBehaviour
         First_Cam.transform.position = new Vector3(player.position.x, player.position.y + 1.6f, player.position.z + 0.2f);
     }
 
+    void MinimapCamMove()
+    {
+        Quaternion rotation = Quaternion.Euler(player.rotation.x, player.rotation.y, player.rotation.z);
+        MiniMap_Cam.transform.rotation = Quaternion.Euler(90.0f, player.rotation.y, 0.0f);
+        MiniMap_Cam.transform.position = new Vector3(player.position.x, 200.0f, player.position.z);
+    }
 
     void IsometricCamMove()
     {
-        Isometric_Cam.transform.position = new Vector3(player.position.x - 10f, player.position.y + 10f, player.position.z - 10f);
+        Isometric_Cam.transform.position = new Vector3(player.position.x - 15, player.position.y + 10f, player.position.z - 15);
         //Debug.Log(transform.position.x);
         //Debug.Log(Isometric_Cam.transform.position.x);
     }

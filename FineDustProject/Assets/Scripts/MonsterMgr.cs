@@ -60,10 +60,11 @@ public class MonsterMgr : MonoBehaviour
             nav.speed = 20;
         else nav.speed = 10;
 
+
         var _distance = Vector3.Distance(player_tf.transform.position, transform.position);   // 몬스터와 플레이어 사이 거리
 
         // 몬스터 플레이어 따라가기
-        if ((1.5f <= _distance) && (_distance <= targetRange) && (!is_Wait))
+        if ((2f <= _distance) && (_distance <= targetRange) && (!is_Wait))
         {
             is_Tracking = true;
             nav.SetDestination(player_tf.transform.position);
@@ -73,6 +74,8 @@ public class MonsterMgr : MonoBehaviour
         {
             is_Tracking = false;
             nav.SetDestination(transform.position);
+            transform.LookAt(player_tf);
+
         }
 
         // 플레이어가 몬스터 공격
