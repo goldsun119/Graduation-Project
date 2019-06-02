@@ -73,15 +73,11 @@ public class PlayerStatus : MonoBehaviour
         {
             Direction_Z = 1;
             Direction_X = -0.1f;
-            Debug.Log(Direction_Z);
-            Debug.Log(Direction_X);
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
             Direction_Z = 1;
             Direction_X = 0.1f;
-            Debug.Log(Direction_Z);
-            Debug.Log(Direction_X);
         }
 
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S)) Direction_Z = 0;

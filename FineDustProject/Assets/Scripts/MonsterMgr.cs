@@ -11,15 +11,24 @@ public class MonsterMgr : MonoBehaviour
     //new Rigidbody rigidbody;
     MonsterSpawner Monster_Spawner;
 
+    public enum ANI_TYPE { IDEL, WALK, RUN, JUMP };
+
     public int HP;
     public bool isCollision = false;
     public bool is_KnockBack = false;
     public bool is_Wait = false;
     public bool is_Tracking = false;    // tracking이 on일 때 player의 미세먼지 흡입량을 증가시키기 위해서
+    public bool is_BackToSpawn = false;
 
-    public float targetRange = 50.0f;
+
+    public float targetRange = 20.0f;
     public float KnockBack_Time = 0.1f;
     public float Waiting_Time = 0.0f;
+
+    public Vector3 Random_Position;
+    public float default_velocity;
+
+    public Vector3 spawnPosition;
 
     void Awake()
     {
@@ -28,7 +37,7 @@ public class MonsterMgr : MonoBehaviour
         Monster_Spawner = GameObject.Find("MonsterSpawner").GetComponent<MonsterSpawner>();
 
         //rigidbody = GetComponent<Rigidbody>();
-        Vector3 spawnPosition = (transform.position);
+        spawnPosition = (transform.position);
         NavMeshHit hit;
         if (NavMesh.SamplePosition(spawnPosition, out hit, 50.0f, NavMesh.AllAreas))
         {
@@ -45,6 +54,8 @@ public class MonsterMgr : MonoBehaviour
         
         targetRange = 100.0f;
         HP = 100;
+
+        Random_Position = transform.position;
     }
 
     // Update is called once per frame
@@ -56,26 +67,58 @@ public class MonsterMgr : MonoBehaviour
             Monster_Spawner.monCnt--;
         }
 
-        if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.RUN)
-            nav.speed = 20;
-        else nav.speed = 10;
-
-
-        var _distance = Vector3.Distance(player_tf.transform.position, transform.position);   // 몬스터와 플레이어 사이 거리
-
-        // 몬스터 플레이어 따라가기
-        if ((2f <= _distance) && (_distance <= targetRange) && (!is_Wait))
+        if (Vector3.Distance(Random_Position, spawnPosition) > 80)
         {
-            is_Tracking = true;
-            nav.SetDestination(player_tf.transform.position);
-            //Debug.Log("몬스터와 캐릭터 사이의 거리" + _distance);
+            Random_Position += (spawnPosition - Vector3.zero);
         }
         else
         {
-            is_Tracking = false;
-            nav.SetDestination(transform.position);
-            transform.LookAt(player_tf);
+            Random_Position.x += Random.Range(-0.5f, 0.5f);
+            Random_Position.z += Random.Range(-0.5f, 0.5f);
+        }
 
+        if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.RUN)
+            nav.speed = 20;
+        else if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.WALK)
+            nav.speed = 10;
+        else nav.speed = 3;
+        
+        var _distance = Vector3.Distance(player_tf.transform.position, transform.position);   // 몬스터와 플레이어 사이 거리
+        var spawn_distance = Vector3.Distance(spawnPosition, transform.position);   // 스폰 영역 밖으로 나갔는지 확인 할 거리
+        var spawn_player_distance = Vector3.Distance(spawnPosition, player_tf.transform.position);
+
+        if (spawn_distance < 100 && spawn_player_distance < 100)   // 스폰 영역 내일때
+        {
+            Debug.Log(spawn_distance);
+            // 몬스터 플레이어 따라가기
+            if ((2f <= _distance) && (_distance <= targetRange) && (!is_Wait))
+            {
+                is_Tracking = true;
+                nav.SetDestination(player_tf.transform.position);
+                //Debug.Log("몬스터와 캐릭터 사이의 거리" + _distance);
+            }
+            else
+            {
+                is_Tracking = false;
+                nav.SetDestination(transform.position);
+                transform.LookAt(player_tf);
+            }
+        }
+        else    // 스폰 영역 밖일때
+        {
+            is_BackToSpawn = true;
+            is_Tracking = false;
+            nav.SetDestination(spawnPosition);
+        }
+
+        if (!is_Tracking)
+        {
+            nav.SetDestination(Random_Position);
+        }
+
+        if (is_BackToSpawn && (transform.position == spawnPosition))
+        {
+            is_BackToSpawn = false;
         }
 
         // 플레이어가 몬스터 공격

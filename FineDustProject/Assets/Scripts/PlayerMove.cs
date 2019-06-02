@@ -78,9 +78,7 @@ public class PlayerMove : MonoBehaviour
 
                 if (Input.GetKey(KeyCode.A)) transform.Translate(Vector3.left * player.speedT * Time.deltaTime);
                 if (Input.GetKey(KeyCode.D)) transform.Translate(Vector3.right * player.speedT * Time.deltaTime);
-
-
-                Debug.Log(player.Direction_X);
+                
             }
         }
 
