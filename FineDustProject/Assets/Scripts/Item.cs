@@ -40,7 +40,7 @@ public class Item : MonoBehaviour
 
     void Start()
     {
-        
+        MaxCount = 3;
     }
 
     void Update()
@@ -55,7 +55,6 @@ public class Item : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.F))
             {
-                Destroy(gameObject);
                 AddItem();
                 Item_Spawner.itemCnt--;
                 Debug.Log("냠");
@@ -70,7 +69,10 @@ public class Item : MonoBehaviour
         if (!Iv.AddItem(this))
             Debug.Log("아이템이 가득 찼습니다.");
         else // 아이템 획득에 성공할 경우.
-            gameObject.SetActive(false); // 아이템을 비활성화 시켜준다.
+        {
+            Destroy(gameObject); // 아이템을 비활성화 시켜준다.
+            Item_Spawner.itemCnt--;
+        }
     }
 
     void OnCollisionEnter(Collision collision)

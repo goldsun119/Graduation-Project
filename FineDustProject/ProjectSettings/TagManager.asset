@@ -10,6 +10,7 @@ TagManager:
   - Inventory
   - Door
   - Terrain
+  - DragImg
   layers:
   - Default
   - TransparentFX

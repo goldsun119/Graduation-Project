@@ -71,9 +71,18 @@ public class Slot : MonoBehaviour
     // 슬롯에 대한 각종 정보 업데이트.
     public void UpdateInfo(bool isSlot, Sprite sprite)
     {
-        SetSlots(isSlot);                                          // 슬롯이 비어있다면 false 아니면 true 셋팅.
-        ItemImg.sprite = sprite;                                   // 슬롯안에 들어있는 아이템의 이미지를 셋팅.
-        text.text = slot.Count > 1 ? slot.Count.ToString() : "";   // 아이템이 2개 이상일때면 텍스트로 표현.
-        //ItemIO.SaveDate();                                         // 인벤토리에 변동사항이 생겼으므로 저장.
+        this.isSlot = isSlot;
+        transform.GetChild(0).GetComponent<Image>().sprite = sprite;
+
+        if (slot.Count > 1)
+            text.text = slot.Count.ToString();
+        else
+            text.text = "";
+
+        //SetSlots(isSlot);                                          // 슬롯이 비어있다면 false 아니면 true 셋팅.
+        //ItemImg.sprite = sprite;                                   // 슬롯안에 들어있는 아이템의 이미지를 셋팅.
+        //text.text = slot.Count > 1 ? slot.Count.ToString() : "";   // 아이템이 2개 이상일때면 텍스트로 표현.
+        ////ItemIO.SaveDate();                                         // 인벤토리에 변동사항이 생겼으므로 저장.
     }
+
 }
