@@ -60,8 +60,8 @@ public class Inventory : MonoBehaviour
                 slotRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, slotSize);   // 세로.
 
                 // 슬롯의 사이즈 설정하기.
-                item.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, slotSize - slotSize * 0.3f); // 가로.
-                item.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, slotSize - slotSize * 0.3f);   // 세로.
+                item.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, slotSize); // 가로.
+                item.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, slotSize);   // 세로.
 
                 // 리스트에 슬롯을 추가.
                 AllSlot.Add(slot);

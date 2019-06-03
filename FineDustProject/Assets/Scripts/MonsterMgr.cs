@@ -19,8 +19,7 @@ public class MonsterMgr : MonoBehaviour
     public bool is_Wait = false;
     public bool is_Tracking = false;    // tracking이 on일 때 player의 미세먼지 흡입량을 증가시키기 위해서
     public bool is_BackToSpawn = false;
-
-
+    
     public float targetRange = 20.0f;
     public float KnockBack_Time = 0.1f;
     public float Waiting_Time = 0.0f;

@@ -44,6 +44,7 @@ public class PlayerStatus : MonoBehaviour
     //public int bagSize = 5;
 
     //public int itemCount = 0;
+    public MonsterSpawner MonSpawner;
 
     void Start()
     {
@@ -225,6 +226,10 @@ public class PlayerStatus : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.P)) transform.position = new Vector3(0, 30, 360);
         if (Input.GetKeyDown(KeyCode.O)) transform.position = new Vector3(0, 30, 100);
+
+        //if (Input.GetKeyDown(KeyCode.L)) transform.position = ;
+        //if (Input.GetKeyDown(KeyCode.K)) transform.position = MonSpawner.Last_Spawn;
+
     }
 
     void RecvStatus()
