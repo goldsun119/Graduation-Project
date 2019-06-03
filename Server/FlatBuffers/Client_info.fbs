@@ -49,3 +49,10 @@ id:int;
 type:int;
 position:Vec3;
 }
+
+table Init_Collection{
+id:int;
+itemData:[Item_info];
+MonsterData:[Monster_info];
+clientData:[Client_info];
+}

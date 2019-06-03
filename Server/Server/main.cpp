@@ -55,6 +55,8 @@ void send_all_player_packet(int id);
 void send_remove_player_packet(int to, int obj);
 void send_put_monster_packet(int monster_id);
 void send_put_item_packet(int id);
+void send_remove_item_packet(int id, int item);
+void send_init_packet(int id);
 //------------------------------packet------------------------------
 
 int main()
@@ -99,7 +101,11 @@ void make_items()
 {
 	// 좌표범위
 	srand(time(NULL));
-	for (int i = 0; i < MAX_ITEM; ++i)
+	items[0].SetDraw(true);
+	items[0].SetId(0);
+	items[0].SetType(1);
+	items[0].SetPos(351, 150, 351);
+	for (int i = 1; i < MAX_ITEM; ++i)
 	{
 		float x = float(rand() % 1800 - 900);
 		if (-350 <= x && x <= 350)
@@ -117,7 +123,7 @@ void make_items()
 		items[i].SetDraw( true);
 		items[i].SetId(i);
 		items[i].SetType(type);
-		items[i].SetPos(x, 100, z);
+		items[i].SetPos(x, 150, z);
 	}
 }
 int get_new_id()
@@ -311,11 +317,12 @@ void do_accept()
 		//iocp연결 후 트루로 켜야함 그래서 이거 아래에
 		clients[new_id].sock.connected = true;
 
-		send_login_ok_packet(new_id);	// 내 아이디 클라에게 알려주기
+		//send_login_ok_packet(new_id);	// 내 아이디 클라에게 알려주기
 
 		// 처음 연결 시 다른 캐릭터, 몬스터 정보 나에게 보내고 
-		send_all_player_packet(new_id);
-		send_put_item_packet(new_id);
+		//send_all_player_packet(new_id);
+		//send_put_item_packet(new_id);
+		send_init_packet(new_id);
 
 		//new_id 접속을 이미 들어와있는 플레이어들에게 알리기
 		send_put_player_packet(new_id);
@@ -357,8 +364,13 @@ void make_obj()
 	auto delta = point - std::chrono::high_resolution_clock::now();
 	if (std::chrono::duration_cast<std::chrono::seconds>(delta).count()>60)	// 60초 예시
 	{
-		// monster map 에 넣기
-		
+		// monsters map 에 넣기
+			float x = float(rand() % 1800 - 900);
+			float z = float(rand() % 1800 - 900);
+
+			monsters[monster_id].SetDraw(true);
+			monsters[monster_id].SetPos(x, 100, z);
+			monsters[monster_id].SetHp(100);
 
 		send_put_monster_packet(monster_id);
 		point = std::chrono::high_resolution_clock::now();
@@ -439,7 +451,14 @@ void process_packet(const int id, const int packet_size, const char * buf)
 	break;
 	case CS_GET_ITEM:
 	{
-
+		int item = get_packet[0];
+		items[item].SetDraw(false);
+		for (int i = 1; i <= MAX_USER; ++i)
+		{
+			if (i == id) continue;
+			if (clients[i].sock.connected == false) continue;
+		send_remove_item_packet(i, item);
+		}
 	}
 	break;
 	case CS_MONSTER_STATUS:
@@ -626,4 +645,81 @@ void send_put_item_packet(int id)
 			SendPacket(SC_PUT_ITEM, to, builder.GetBufferPointer(), builder.GetSize());
 	}
 }
+
+void send_remove_item_packet(int id, int item)
+{
+	int i = item;
+	SendPacket(SC_REMOVE_ITEM, id, &i, sizeof(i));
+}
+
+void send_init_packet(int id)
+{
+	flatbuffers::FlatBufferBuilder builder;
+	builder.Clear();
+	std::vector<flatbuffers::Offset<Item_info>> items_data;
+	std::vector<flatbuffers::Offset<Client_info>> clients_data;
+	std::vector<flatbuffers::Offset<Monster_info>> monsters_data;
+	for (int item_id = 0; item_id < MAX_ITEM; ++item_id)
+	{
+		items[item_id].SetLock();
+		int i = items[item_id].GetId();
+		int t = items[item_id].GetType();
+		auto pos = items[item_id].GetPos();
+		items[item_id].SetUnlock();
+		auto data = CreateItem_info(builder, i, t, &Vec3(pos.x, pos.y, pos.z));
+		items_data.emplace_back(data);
+	}
+	auto full_items_data = builder.CreateVector(items_data);
+
+	for (int i = 1; i < MAX_USER + 1; ++i)
+	{
+		clients[i].SetLock();
+		if (clients[i].sock.connected == false || clients[i].GetHp() == 0)
+		{
+			clients[i].SetUnlock();
+			continue;
+		}
+		//if (clients[i].GetId() == id)
+		//{
+		//	clients[i].SetUnlock();
+		//	continue;
+		//}
+		int id = clients[i].GetId();
+		int hp = clients[i].GetHp();
+		int ani = clients[i].GetAnimator();
+		float x = clients[i].GetDirX();
+		float z = clients[i].GetDirZ();
+		auto name = builder.CreateString(clients[i].GetName());
+		float h = clients[i].GetHorizontal();
+		float v = clients[i].GetVertical();
+		auto pos = clients[i].GetPos();
+		auto rot = clients[i].GetRotation();
+
+		clients[i].SetUnlock();
+
+		auto data = CreateClient_info(builder, id, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
+		clients_data.emplace_back(data);
+	}
+	if (clients_data.size() == 0)
+		return;
+	auto full_clients_data = builder.CreateVector(clients_data);
+	auto full_monsters_data = builder.CreateVector(monsters_data);
+	auto p = CreateInit_Collection(builder, id, full_items_data, full_monsters_data, full_clients_data);
+	builder.Finish(p);
+	SendPacket(SC_INIT_DATA, id, builder.GetBufferPointer(), builder.GetSize());
+
+}
 //------------------------------packet------------------------------
+
+/*	
+		inline const Game::Protocol::Client_info *GetClientView(const void *buf) {
+			return flatbuffers::GetRoot<Game::Protocol::Client_info>(buf);
+		}
+		inline const Game::Protocol::Monster_info *GetMonsterView(const void *buf) {
+			return flatbuffers::GetRoot<Game::Protocol::Monster_info>(buf);
+		}
+		inline const Game::Protocol::Item_info *GetItemView(const void *buf) {
+			return flatbuffers::GetRoot<Game::Protocol::Item_info>(buf);
+		}
+		
+*/

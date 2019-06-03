@@ -23,6 +23,8 @@ struct Item_Collection;
 
 struct Item_info;
 
+struct Init_Collection;
+
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3 FLATBUFFERS_FINAL_CLASS {
  private:
   float x_;
@@ -515,6 +517,96 @@ inline flatbuffers::Offset<Item_info> CreateItem_info(
   builder_.add_type(type);
   builder_.add_id(id);
   return builder_.Finish();
+}
+
+struct Init_Collection FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  enum {
+    VT_ID = 4,
+    VT_ITEMDATA = 6,
+    VT_MONSTERDATA = 8,
+    VT_CLIENTDATA = 10
+  };
+  int32_t id() const {
+    return GetField<int32_t>(VT_ID, 0);
+  }
+  const flatbuffers::Vector<flatbuffers::Offset<Item_info>> *itemData() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Item_info>> *>(VT_ITEMDATA);
+  }
+  const flatbuffers::Vector<flatbuffers::Offset<Monster_info>> *MonsterData() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Monster_info>> *>(VT_MONSTERDATA);
+  }
+  const flatbuffers::Vector<flatbuffers::Offset<Client_info>> *clientData() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Client_info>> *>(VT_CLIENTDATA);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int32_t>(verifier, VT_ID) &&
+           VerifyOffset(verifier, VT_ITEMDATA) &&
+           verifier.VerifyVector(itemData()) &&
+           verifier.VerifyVectorOfTables(itemData()) &&
+           VerifyOffset(verifier, VT_MONSTERDATA) &&
+           verifier.VerifyVector(MonsterData()) &&
+           verifier.VerifyVectorOfTables(MonsterData()) &&
+           VerifyOffset(verifier, VT_CLIENTDATA) &&
+           verifier.VerifyVector(clientData()) &&
+           verifier.VerifyVectorOfTables(clientData()) &&
+           verifier.EndTable();
+  }
+};
+
+struct Init_CollectionBuilder {
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_id(int32_t id) {
+    fbb_.AddElement<int32_t>(Init_Collection::VT_ID, id, 0);
+  }
+  void add_itemData(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Item_info>>> itemData) {
+    fbb_.AddOffset(Init_Collection::VT_ITEMDATA, itemData);
+  }
+  void add_MonsterData(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Monster_info>>> MonsterData) {
+    fbb_.AddOffset(Init_Collection::VT_MONSTERDATA, MonsterData);
+  }
+  void add_clientData(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Client_info>>> clientData) {
+    fbb_.AddOffset(Init_Collection::VT_CLIENTDATA, clientData);
+  }
+  explicit Init_CollectionBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  Init_CollectionBuilder &operator=(const Init_CollectionBuilder &);
+  flatbuffers::Offset<Init_Collection> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<Init_Collection>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<Init_Collection> CreateInit_Collection(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    int32_t id = 0,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Item_info>>> itemData = 0,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Monster_info>>> MonsterData = 0,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Client_info>>> clientData = 0) {
+  Init_CollectionBuilder builder_(_fbb);
+  builder_.add_clientData(clientData);
+  builder_.add_MonsterData(MonsterData);
+  builder_.add_itemData(itemData);
+  builder_.add_id(id);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<Init_Collection> CreateInit_CollectionDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    int32_t id = 0,
+    const std::vector<flatbuffers::Offset<Item_info>> *itemData = nullptr,
+    const std::vector<flatbuffers::Offset<Monster_info>> *MonsterData = nullptr,
+    const std::vector<flatbuffers::Offset<Client_info>> *clientData = nullptr) {
+  return Game::Protocol::CreateInit_Collection(
+      _fbb,
+      id,
+      itemData ? _fbb.CreateVector<flatbuffers::Offset<Item_info>>(*itemData) : 0,
+      MonsterData ? _fbb.CreateVector<flatbuffers::Offset<Monster_info>>(*MonsterData) : 0,
+      clientData ? _fbb.CreateVector<flatbuffers::Offset<Client_info>>(*clientData) : 0);
 }
 
 }  // namespace Protocol

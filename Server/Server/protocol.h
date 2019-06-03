@@ -28,7 +28,8 @@ constexpr int SC_PUT_MONSTER =			6;
 constexpr int SC_REMOVE_MONSTER =	7;
 constexpr int SC_PUT_ITEM =				8;
 constexpr int SC_REMOVE_ITEM =			9;
-constexpr int SC_PUT_IN_BAG			 =	10;
+constexpr int SC_PUT_IN_BAG =				10;
+constexpr int SC_INIT_DATA				 =	11;
 
 
 #pragma pack(push, 1)
