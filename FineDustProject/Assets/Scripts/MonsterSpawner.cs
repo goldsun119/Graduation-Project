@@ -9,6 +9,7 @@ public class MonsterSpawner : MonoBehaviour
     public int monCnt = 1;
     public int monMaxCnt = 10;
 
+    public Vector2 Last_Spawn;
 
     // Start is called before the first frame update
     void Start()
@@ -33,7 +34,7 @@ public class MonsterSpawner : MonoBehaviour
 
         spawnPos = RandomPosition();
 
-        if ((spawnPos.x * spawnPos.x) + (spawnPos.z * spawnPos.z) >= (350 * 350))
+        if ((spawnPos.x * spawnPos.x) + (spawnPos.z * spawnPos.z) <= (350 * 350))
         {
             monCnt--;
             Debug.Log("돔 안임");
@@ -43,7 +44,7 @@ public class MonsterSpawner : MonoBehaviour
         //spawnPos += Vector3.up * 0.6f;
 
         GameObject mon = Instantiate(monObj, spawnPos, Quaternion.identity);
-
+        Last_Spawn = spawnPos;
         Debug.Log("몬스터 생성" + monCnt + " " + spawnPos.x + ", " + spawnPos.y + ", " + spawnPos.z);
     }
 

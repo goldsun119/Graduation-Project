@@ -32,6 +32,7 @@ public class Image_Enviroment : MonoBehaviour
                 EL_Image.sprite = Default_img;  // 투명
                 //RenderSettings.fog = false;
                 RenderSettings.fogMode = FogMode.Linear;
+                RenderSettings.fogDensity = 0.04f;
                 //RenderSettings.fogStartDistance = 0.0f;
                 //RenderSettings.fogEndDistance = 700.0f;
 
