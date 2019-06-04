@@ -279,7 +279,7 @@ namespace Game.Network
                 Debug.Log("몬스터 생성 아이디 : " + id);
 
             }
-            else if(type == Game.Protocol.Protocol.SC_PUT_ITEM)
+            else if (type == Game.Protocol.Protocol.SC_PUT_ITEM)
             {
                 ByteBuffer recv_buf = new ByteBuffer(recvPacket);
                 var get_all_data = Item_Collection.GetRootAsItem_Collection(recv_buf);
@@ -300,7 +300,73 @@ namespace Game.Network
                     }
                     else
                     {
-                        item_data.Add(id, new ItemClass(id,t,p));
+                        item_data.Add(id, new ItemClass(id, t, p));
+                        item_data[id].set_draw(true);
+                    }
+                }
+            }
+            else if (type == Game.Protocol.Protocol.SC_REMOVE_ITEM)
+            {
+                int remove_item = recvPacket[0];
+                item_data[remove_item].set_draw(false);
+            }
+
+            else if (type == Game.Protocol.Protocol.SC_INIT_DATA)
+            {
+                ByteBuffer recv_buf = new ByteBuffer(recvPacket);
+                var get_all_data = Init_Collection.GetRootAsInit_Collection(recv_buf);
+                Client_id = get_all_data.Id;
+                new_player_id = get_all_data.Id;
+                for ( int i = 0; i<get_all_data.ClientDataLength;++i)
+                {
+                    int id = get_all_data.ClientData(i).Value.Id;
+                    int hp = get_all_data.ClientData(i).Value.Hp;
+                    int ani = get_all_data.ClientData(i).Value.Animator;
+                    float x = get_all_data.ClientData(i).Value.DirX;
+                    float z = get_all_data.ClientData(i).Value.DirZ;
+                    float h = get_all_data.ClientData(i).Value.Horizontal;
+                    float v = get_all_data.ClientData(i).Value.Vertical;
+                    string n = get_all_data.ClientData(i).Value.Name;
+                    Vector3 p = new Vector3(get_all_data.ClientData(i).Value.Position.Value.X, get_all_data.ClientData(i).Value.Position.Value.Y, get_all_data.ClientData(i).Value.Position.Value.Z);
+                    Vector3 r = new Vector3(get_all_data.ClientData(i).Value.Rotation.Value.X, get_all_data.ClientData(i).Value.Rotation.Value.Y, get_all_data.ClientData(i).Value.Rotation.Value.Z);
+
+                    if (client_data.ContainsKey(id))
+                    {
+                        ClientClass iter = client_data[id];
+                        iter.set_hp(hp);
+                        iter.set_pos(p);
+                        iter.set_rot(r);
+                        iter.set_vertical(v);
+                        iter.set_horizontal(h);
+                        iter.set_animator(ani);
+                        iter.set_dirX(x);
+                        iter.set_dirZ(z);
+                        iter.set_draw(true);
+                    }
+                    else
+                    {
+                        client_data.Add(id, new ClientClass(id, hp, ani, x, z, h, v, n, p, r));
+                        client_data[id].set_draw(true);
+                    }
+                }
+                for (int i = 0; i < get_all_data.ItemDataLength; ++i)
+                {
+                    //데이터 접근 get_all_data.Data(i).Value.변수
+                    int id = get_all_data.ItemData(i).Value.Id;
+                    int t = get_all_data.ItemData(i).Value.Type;
+                    Vector3 p = new Vector3(get_all_data.ItemData(i).Value.Position.Value.X, get_all_data.ItemData(i).Value.Position.Value.Y, get_all_data.ItemData(i).Value.Position.Value.Z);
+
+                    if (item_data.ContainsKey(id))
+                    {
+                        ItemClass iter = item_data[id];
+                        iter.set_id(id);
+                        iter.set_type(t);
+                        iter.set_pos(p);
+                        iter.set_draw(true);
+                    }
+                    else
+                    {
+                        item_data.Add(id, new ItemClass(id, t, p));
                         item_data[id].set_draw(true);
                     }
                 }

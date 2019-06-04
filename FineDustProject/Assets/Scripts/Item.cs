@@ -18,13 +18,13 @@ public class Item : MonoBehaviour
 
     private Inventory Iv;
 
+    public int id;
+
     void Awake()
     {
         // 태그명이 "Inventory"인 객체의 GameObject를 반환한다.
         // 반환된 객체가 가지고 있는 스크립트를 GetComponent를 통해 가져온다.
         Iv = GameObject.FindGameObjectWithTag("Inventory").GetComponent<Inventory>();
-
-        Item_Spawner = GameObject.Find("ItemSpawner").GetComponent<ItemSpawner>();
 
         rigidbody = GetComponent<Rigidbody>();
         Vector3 spawnPosition = (transform.position);
@@ -48,7 +48,6 @@ public class Item : MonoBehaviour
         if (transform.position.y < 20)
         {
             Destroy(gameObject);
-            Item_Spawner.itemCnt--;
         }
 
         if (isCollision)
@@ -56,7 +55,11 @@ public class Item : MonoBehaviour
             if (Input.GetKey(KeyCode.F))
             {
                 AddItem();
-                Item_Spawner.itemCnt--;
+                gameObject.SetActive(false);
+                //Item_Spawner.itemCnt--;
+                //Game.Network.NetWork.item_data[].set_draw(false);
+                //번호 알아서 그거 드로우 끄고 드로우상태에 따라 액티브 트루/폴스로
+
                 Debug.Log("냠");
             }
         }
@@ -71,7 +74,7 @@ public class Item : MonoBehaviour
         else // 아이템 획득에 성공할 경우.
         {
             Destroy(gameObject); // 아이템을 비활성화 시켜준다.
-            Item_Spawner.itemCnt--;
+            //Item_Spawner.itemCnt--;
         }
     }
 

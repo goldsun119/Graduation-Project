@@ -6,7 +6,7 @@ public class ItemSpawner : MonoBehaviour
 {
     public GameObject itemObj;
 
-    public int itemCnt = 1;
+    public int itemCnt = 0;
     public int itemMaxCnt = 100;
 
 
@@ -21,7 +21,7 @@ public class ItemSpawner : MonoBehaviour
     {
         if (Game.Network.NetWork.item_data.Count == 100)
         {
-            if (itemCnt <= itemMaxCnt)
+            if (itemCnt < itemMaxCnt)
             {
                 Spawn();
                 itemCnt++;
