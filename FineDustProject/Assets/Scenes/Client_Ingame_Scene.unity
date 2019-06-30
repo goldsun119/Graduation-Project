@@ -3411,6 +3411,7 @@ MonoBehaviour:
   isItem: 0
   isMon: 0
   Inventory_on: 0
+  MonSpawner: {fileID: 0}
 --- !u!114 &681389697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3981,9 +3982,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3227960265e2d554689cfa52f8fd9360, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monObj: {fileID: 1592288360}
+  monObj: {fileID: 1592288364}
   monCnt: 1
   monMaxCnt: 10
+  Last_Spawn: {x: 0, y: 0}
 --- !u!4 &1046176305
 Transform:
   m_ObjectHideFlags: 0
@@ -4726,6 +4728,7 @@ MonoBehaviour:
   isItem: 0
   isMon: 0
   Inventory_on: 0
+  MonSpawner: {fileID: 0}
 --- !u!1001 &1349760746
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5017,6 +5020,7 @@ MonoBehaviour:
   isItem: 0
   isMon: 0
   Inventory_on: 0
+  MonSpawner: {fileID: 0}
 --- !u!114 &1526097537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6877,6 +6881,7 @@ MonoBehaviour:
   isItem: 0
   isMon: 0
   Inventory_on: 0
+  MonSpawner: {fileID: 0}
 --- !u!1001 &7665532899062278763
 PrefabInstance:
   m_ObjectHideFlags: 0

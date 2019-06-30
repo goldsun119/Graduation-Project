@@ -7,6 +7,7 @@ public class MonsterSpawner : MonoBehaviour
     public GameObject monObj;
 
     public int monCnt = 1;
+    public int monID = 1;
     public int monMaxCnt = 10;
 
     public Vector2 Last_Spawn;
@@ -24,6 +25,7 @@ public class MonsterSpawner : MonoBehaviour
         {
             Spawn();
             monCnt++;
+            monID++;
             Debug.Log(monCnt);
         }
     }

@@ -18,13 +18,15 @@ public class Item : MonoBehaviour
 
     private Inventory Iv;
 
-    public int id;
+    public int ID;
 
     void Awake()
     {
         // 태그명이 "Inventory"인 객체의 GameObject를 반환한다.
         // 반환된 객체가 가지고 있는 스크립트를 GetComponent를 통해 가져온다.
         Iv = GameObject.FindGameObjectWithTag("Inventory").GetComponent<Inventory>();
+
+        Item_Spawner = GameObject.Find("ItemSpawner").GetComponent<ItemSpawner>();
 
         rigidbody = GetComponent<Rigidbody>();
         Vector3 spawnPosition = (transform.position);
@@ -36,6 +38,8 @@ public class Item : MonoBehaviour
             spawnPosition.y = hit.position.y;
             transform.position = new Vector3(spawnPosition.x, spawnPosition.y, spawnPosition.z);
         }
+
+        ID = Item_Spawner.itemCnt;
     }
 
     void Start()

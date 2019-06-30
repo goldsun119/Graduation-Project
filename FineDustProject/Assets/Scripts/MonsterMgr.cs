@@ -29,6 +29,8 @@ public class MonsterMgr : MonoBehaviour
 
     public Vector3 spawnPosition;
 
+    public int ID;
+
     void Awake()
     {
         nav = GetComponent<NavMeshAgent>();
@@ -44,6 +46,8 @@ public class MonsterMgr : MonoBehaviour
             transform.position = new Vector3(spawnPosition.x, spawnPosition.y, spawnPosition.z);
             nav.Warp(new Vector3(spawnPosition.x, spawnPosition.y, spawnPosition.z));
         }
+
+        ID = Monster_Spawner.monID;
     }
 
     void Start()
@@ -60,6 +64,7 @@ public class MonsterMgr : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if (transform.position.y < 20)
         {
             Destroy(gameObject);
@@ -174,6 +179,17 @@ public class MonsterMgr : MonoBehaviour
             isCollision = false;
     }
 
+    void OnTriggerStay(Collider other)
+    {
+        if (other is SphereCollider)
+        {
+            if (other.tag == "Player")
+            {
+                player_tf = GameObject.Find(other.ToString()).transform;   // 플레이어의 정보값
+                player_st = player_tf.GetComponent<PlayerStatus>();
+            }
+        }
+    }
     //bool CheckDistance()
     //{
     //    float distance = Vector3.Distance(player.transform.position, transform.position);

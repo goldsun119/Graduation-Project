@@ -7,6 +7,7 @@ public class ItemSpawner : MonoBehaviour
     public GameObject itemObj;
 
     public int itemCnt = 0;
+    public int itemID = 0;
     public int itemMaxCnt = 100;
 
 
@@ -25,6 +26,7 @@ public class ItemSpawner : MonoBehaviour
             {
                 Spawn();
                 itemCnt++;
+                itemID++;
                 Debug.Log(itemCnt);
             }
         }
