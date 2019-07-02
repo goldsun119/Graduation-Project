@@ -24,6 +24,13 @@ using namespace Game::Protocol;
 
 #define MAX_BUFFER        10000
 
+enum DB
+{
+	DB_LOGIN_SUCCESS,
+	DB_NO_DATA,
+	DB_LOGIN_FAIL
+};
+
 Player clients[MAX_USER + 1]; // SOCKET이 어떤 SOCKETINFO 인지 알아야한다!!
 
 extern HANDLE g_iocp;

@@ -16,7 +16,9 @@ Player::Player()
 	dirX = 0.f;
 	dirZ = 0.f;
 	hp = 0;
+	maxhp = 0;
 	id = 0;
+	
 }
 void Player::init(int i)
 {
@@ -55,6 +57,26 @@ int Player::GetHp()
 void Player::SetHp(int a)
 {
 	hp = a;
+}
+
+int Player::GetItem(int index)
+{
+	return item[index];
+}
+
+void Player::SetItem(int index, int a)
+{
+	item[index] = a;
+}
+
+int Player::GetMaxhp()
+{
+	return maxhp;
+}
+
+void Player::SetMaxhp(int a)
+{
+	maxhp = a;
 }
 
 vec3 Player::GetRotation()
@@ -102,6 +124,29 @@ float Player::GetDirZ() {
 void Player::SetDirZ(float a) {
 	dirZ = a;
 }
+
+
+char* Player::GetNickname() {
+	return nickname;
+}
+void Player::SetNickname(char* a) {
+	strcpy_s(nickname, a);
+}
+
+char* Player::GetGameId() {
+	return game_id;
+}
+void Player::SetGameId(char* a) {
+	strcpy_s(game_id, a);
+}
+
+char* Player::GetGamePassword() {
+	return game_password;
+}
+void Player::SetGamePassword(char* a) {
+	strcpy_s(game_password, a);
+}
+
 
 int Player::GetId()
 {
