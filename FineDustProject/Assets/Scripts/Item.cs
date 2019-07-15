@@ -49,6 +49,12 @@ public class Item : MonoBehaviour
 
     void Update()
     {
+        if (Game.Network.NetWork.item_data[ID].get_draw())
+        { }
+        else
+        {
+            gameObject.SetActive(false);
+        }
         if (transform.position.y < 20)
         {
             Destroy(gameObject);
@@ -58,6 +64,7 @@ public class Item : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.F))
             {
+                Game.Network.NetWork.SendEatItem(ID, Game.Network.NetWork.Client_id);
                 AddItem();
                 gameObject.SetActive(false);
                 //Item_Spawner.itemCnt--;

@@ -660,19 +660,6 @@ inline flatbuffers::Offset<Init_Collection> CreateInit_CollectionDirect(
       MonsterData ? _fbb.CreateVector<flatbuffers::Offset<Monster_info>>(*MonsterData) : 0,
       clientData ? _fbb.CreateVector<flatbuffers::Offset<Client_info>>(*clientData) : 0);
 }
-inline const Game::Protocol::Client_info *GetClientView(const void *buf) {
-	return flatbuffers::GetRoot<Game::Protocol::Client_info>(buf);
-}
-inline const Game::Protocol::Monster_info *GetMonsterView(const void *buf) {
-	return flatbuffers::GetRoot<Game::Protocol::Monster_info>(buf);
-}
-inline const Game::Protocol::Item_info *GetItemView(const void *buf) {
-	return flatbuffers::GetRoot<Game::Protocol::Item_info>(buf);
-}
-
-inline const Game::Protocol::Eat_Item *GetEatView(const void *buf) {
-	return flatbuffers::GetRoot<Game::Protocol::Eat_Item>(buf);
-}
 
 }  // namespace Protocol
 }  // namespace Game

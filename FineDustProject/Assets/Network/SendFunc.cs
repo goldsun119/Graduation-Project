@@ -38,6 +38,26 @@ namespace Game.Network
             return real_packet;
         }
 
+        public byte[] makeEatItemPacket(int item, int player)
+        {
+            FlatBufferBuilder fbb = new FlatBufferBuilder(1);
+            fbb.Clear();
+            Eat_Item.StartEat_Item(fbb);
+            Eat_Item.AddItemID(fbb, item);
+            Eat_Item.AddPlayerID(fbb, player);
+            var endOffset = Eat_Item.EndEat_Item(fbb);
+            fbb.Finish(endOffset.Value);
+
+            byte[] packet = fbb.SizedByteArray();   // flatbuffers 실제 패킷 데이터
+            byte[] magic_packet = makePacketinfo(packet.Length, CS_GET_ITEM);
+            byte[] real_packet = new byte[packet.Length + 8];
+            System.Buffer.BlockCopy(magic_packet, 0, real_packet, 0, magic_packet.Length);
+            System.Buffer.BlockCopy(packet, 0, real_packet, 8, packet.Length);
+
+            return real_packet;
+
+        }
+
         public byte[] makePacketinfo(int p_size, int type)
         {
             byte[] intBytes = new byte[p_size.ToString().Length + 2];   // 숫자 길이 + | + type

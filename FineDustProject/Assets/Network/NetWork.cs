@@ -547,5 +547,11 @@ namespace Game.Network
             Sendbyte = sF.makeClient_PacketInfo(p, ani, x, z, h, v, rot, nick);
             Send_Packet(Sendbyte);
         }
+
+        public static void SendEatItem(int itemID, int playerID)
+        {
+            Sendbyte = sF.makeEatItemPacket(itemID, playerID);
+            Send_Packet(Sendbyte);
+        }
     }
 }

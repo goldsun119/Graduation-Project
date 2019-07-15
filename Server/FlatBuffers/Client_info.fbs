@@ -50,6 +50,11 @@ type:int;
 position:Vec3;
 }
 
+table Eat_Item{
+itemID:int;
+playerID:int;
+}
+
 table Init_Collection{
 id:int;
 itemData:[Item_info];

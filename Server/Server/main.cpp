@@ -1,12 +1,100 @@
-#include "server.h"
+#include <iostream>
+#include <mutex>
+#include <thread>
+#include <vector>
+#include <map>
+#include <chrono>
+#include <queue>
+#include <random>
+
+#include <winsock2.h>
+#include <time.h>
+#include <sqlext.h>  
+
+using namespace std;
+
+#include "protocol.h"
+#include "Player.h"
+#include "Monster.h"
+#include "Item.h"
+#include "info_generated.h"
+
+using namespace Game::Protocol;
+
+#pragma comment(lib, "Ws2_32.lib")
+
+#define MAX_BUFFER        10000
+
+enum DB
+{
+	DB_LOGIN_SUCCESS,
+	DB_NO_DATA,
+	DB_LOGIN_FAIL
+};
+
+Player clients[MAX_USER + 1]; // SOCKET이 어떤 SOCKETINFO 인지 알아야한다!!
 
 HANDLE g_iocp;
-
-mutex buf_lock;
 
 std::chrono::high_resolution_clock::time_point point;
 std::map <int, Monster> monsters;
 std::map <int, Item> items;
+
+
+
+#define MAX_STR_LEN 10
+SQLHENV henv;
+SQLHDBC hdbc;
+SQLHSTMT hstmt = 0;
+SQLRETURN retcode;
+SQLWCHAR sz_id[MAX_STR_LEN], sz_password[MAX_STR_LEN], sz_nickname[MAX_STR_LEN];
+float db_x, db_y, db_z;
+int db_hp, db_maxhp, db_item[4], db_connect;
+SQLLEN cb_id = 0, cb_password = 0, cb_nickname = 0, cb_x = 0, cb_y = 0, cb_z = 0, cb_hp = 0, cb_maxhp = 0, cb_item[4]{ 0 }, cb_connect = 0;
+
+char  buf[255];
+wchar_t sql_data[255];
+SQLWCHAR sqldata[255] = { 0 };
+
+
+void error_display(const char *msg, int err_no);
+void initialize();
+void make_items();
+int get_new_id();
+
+void disconnect(int id);
+void worker_thread();
+void do_accept();
+void do_recv(int id);
+void make_obj();
+
+void SendPacket(const int type, const int id, const void *packet, const int packet_size);
+
+void process_packet(const int id, const int packet_size, const char * buf);
+
+//------------------------------packet------------------------------
+void send_login_ok_packet(int id);
+void send_put_player_packet(int id);
+void send_my_status_to_all_packet(int id);
+void send_all_player_packet(int id);
+void send_remove_player_packet(int to, int obj);
+void send_put_monster_packet(int monster_id);
+void send_put_item_packet(int id);
+void send_remove_item_packet(int id, int item);
+void send_init_packet(int id);
+//------------------------------packet------------------------------
+
+
+
+//------------------------------DB------------------------------
+//float db_x, db_y, db_z;
+//int db_hp, db_maxhp, db_item[4], db_connect;
+void init_DB();
+int get_DB_Info(int ci);
+void set_DB_Info(int ci);
+void set_DB_Shutdown(int ci);
+void new_DB_Id(int ci);
+//------------------------------DB------------------------------
 
 int main()
 {
@@ -49,7 +137,7 @@ void initialize()
 void make_items()
 {
 	// 좌표범위
-	srand(time(NULL));
+	srand(unsigned(time(NULL)));
 	items[0].SetDraw(true);
 	items[0].SetId(0);
 	items[0].SetType(1);
@@ -74,6 +162,7 @@ void make_items()
 		items[i].SetType(type);
 		items[i].SetPos(x, 150, z);
 	}
+	cout << "아이템 생성 완료" << endl;
 }
 int get_new_id()
 {
@@ -108,7 +197,7 @@ void worker_thread()
 	while (true)
 	{
 		DWORD io_byte;
-		ULONG		key;
+		unsigned long long		key;
 		OVER_EX *lpover_ex;
 
 		bool is_error = GetQueuedCompletionStatus(g_iocp, &io_byte, &key, reinterpret_cast<LPWSAOVERLAPPED*>(&lpover_ex), INFINITE);
@@ -118,12 +207,12 @@ void worker_thread()
 			if (64 != err_no)
 				error_display("GQCS ", err_no);
 			else {
-				disconnect(key);
+				disconnect(static_cast<int>(key));
 				continue;
 			}
 		}
 		if (0 == io_byte) {
-			disconnect(key);
+			disconnect(static_cast<int>(key));
 			continue;
 		}
 		if (lpover_ex->is_recv) {
@@ -166,7 +255,7 @@ void worker_thread()
 				int required = packet_size - clients[key].sock.prev_size;
 				if (rest_size >= required) {
 					memcpy(clients[key].sock.packet_buf + clients[key].sock.prev_size, ptr, required);
-					process_packet(key, packet_size, clients[key].sock.packet_buf);
+					process_packet(static_cast<int>(key), packet_size, clients[key].sock.packet_buf);
 					rest_size -= required;
 					ptr += required;
 					packet_size = 0;
@@ -177,7 +266,7 @@ void worker_thread()
 					rest_size = 0;
 				}
 			}
-			do_recv(key);
+			do_recv(static_cast<int>(key));
 		}
 		else {
 			delete lpover_ex;
@@ -288,7 +377,7 @@ void do_accept()
 
 	return;
 }
-void do_recv(char id)
+void do_recv(int id)
 {
 	DWORD flags = 0;
 
@@ -400,13 +489,14 @@ void process_packet(const int id, const int packet_size, const char * buf)
 	break;
 	case CS_GET_ITEM:
 	{
-		int item = get_packet[0];
-		items[item].SetDraw(false);
+		auto item_check_info = Game::Protocol::GetEatView(get_packet);
+		int a = item_check_info->itemID();
+		int b = item_check_info->playerID();
 		for (int i = 1; i <= MAX_USER; ++i)
 		{
-			if (i == id) continue;
+			if (i == b) continue;
 			if (clients[i].sock.connected == false) continue;
-		send_remove_item_packet(i, item);
+		send_remove_item_packet(i, a);
 		}
 	}
 	break;
@@ -658,6 +748,8 @@ void send_init_packet(int id)
 	SendPacket(SC_INIT_DATA, id, builder.GetBufferPointer(), builder.GetSize());
 
 }
+
+
 //------------------------------packet------------------------------
 
 /*	

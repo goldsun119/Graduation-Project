@@ -60,7 +60,7 @@ int get_DB_Info(int ci) {
 			retcode = SQLBindCol(hstmt, 5, SQL_FLOAT, &db_y, MAX_STR_LEN, &cb_y);
 			retcode = SQLBindCol(hstmt, 6, SQL_FLOAT, &db_y, MAX_STR_LEN, &cb_z);
 			retcode = SQLBindCol(hstmt, 7, SQL_INTEGER, &db_hp, MAX_STR_LEN, &cb_hp);
-			retcode = SQLBindCol(hstmt, 8, SQL_INTEGER, &db_level, MAX_STR_LEN, &cb_maxhp);
+			retcode = SQLBindCol(hstmt, 8, SQL_INTEGER, &db_maxhp, MAX_STR_LEN, &cb_maxhp);
 			retcode = SQLBindCol(hstmt, 9, SQL_INTEGER, &db_item[0], MAX_STR_LEN, &cb_item[0]);
 			retcode = SQLBindCol(hstmt, 10, SQL_INTEGER, &db_item[1], MAX_STR_LEN, &cb_item[1]);
 			retcode = SQLBindCol(hstmt, 11, SQL_INTEGER, &db_item[2], MAX_STR_LEN, &cb_item[2]);
@@ -117,7 +117,7 @@ void set_DB_Info(int ci) {
 			retcode = SQLBindCol(hstmt, 5, SQL_FLOAT, &db_y, MAX_STR_LEN, &cb_y);
 			retcode = SQLBindCol(hstmt, 6, SQL_FLOAT, &db_y, MAX_STR_LEN, &cb_z);
 			retcode = SQLBindCol(hstmt, 7, SQL_INTEGER, &db_hp, MAX_STR_LEN, &cb_hp);
-			retcode = SQLBindCol(hstmt, 8, SQL_INTEGER, &db_level, MAX_STR_LEN, &cb_maxhp);
+			retcode = SQLBindCol(hstmt, 8, SQL_INTEGER, &db_maxhp, MAX_STR_LEN, &cb_maxhp);
 			retcode = SQLBindCol(hstmt, 9, SQL_INTEGER, &db_item[0], MAX_STR_LEN, &cb_item[0]);
 			retcode = SQLBindCol(hstmt, 10, SQL_INTEGER, &db_item[1], MAX_STR_LEN, &cb_item[1]);
 			retcode = SQLBindCol(hstmt, 11, SQL_INTEGER, &db_item[2], MAX_STR_LEN, &cb_item[2]);
