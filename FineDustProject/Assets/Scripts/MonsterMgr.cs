@@ -93,7 +93,7 @@ public class MonsterMgr : MonoBehaviour
 
         if (spawn_distance < 100 && spawn_player_distance < 100)   // 스폰 영역 내일때
         {
-            Debug.Log(spawn_distance);
+            //Debug.Log(spawn_distance);
             // 몬스터 플레이어 따라가기
             if ((2f <= _distance) && (_distance <= targetRange) && (!is_Wait))
             {
