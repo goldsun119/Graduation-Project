@@ -20,6 +20,7 @@ public class Inventory : MonoBehaviour
     public float slotCountY;            // 슬롯의 세로 개수.
 
     // 비공개.
+    private Image InvenImg;
     private float InvenWidth;           // 인벤토리 가로길이.
     private float InvenHeight;          // 인밴토리 세로길이.
     private float EmptySlot;            // 빈 슬롯의 개수.
@@ -80,9 +81,35 @@ public class Inventory : MonoBehaviour
 
     void Start()
     {
-
+        InvenImg = transform.GetComponent<Image>();
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            Debug.Log("I누름");
+            if (InvenImg.enabled)
+            {
+                InvenImg.enabled = false;
+                ImageRender(false);
+            }
+            else
+            {
+                InvenImg.enabled = true;
+                ImageRender(true);
+            }
+        }
+    }
+
+    public void ImageRender( bool onoff)
+    {
+        for (int i = 0; i < AllSlot.Count; i++)
+        {
+            Slot slot = AllSlot[i].GetComponent<Slot>();
+            slot.ImageRender(onoff);
+        }
+    }
 
     // 아이템을 넣기위해 모든 슬롯을 검사.
     public bool AddItem(Item item)

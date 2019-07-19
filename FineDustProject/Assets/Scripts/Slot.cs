@@ -10,6 +10,7 @@ public class Slot : MonoBehaviour
     public Text text;       // 아이템에 개수를 표현해줄 텍스트.
     public Sprite DefaultImg; // 슬롯에 있는 아이템을 다 사용할 경우 아무것도 없는 이미지를 넣어줄 필요가 있다.
 
+    private Image SlotImg;
     private Image ItemImg;
     private bool isSlot;     // 현재 슬롯이 비어있는지?
 
@@ -37,6 +38,7 @@ public class Slot : MonoBehaviour
         // 텍스트 객체의 부모 객체의 x지름을 가져온다.
         // 폰트의 크기를 부모 객체의 x지름 / 2 만큼으로 지정해준다.
         ItemImg = transform.GetChild(0).GetComponent<Image>();
+        SlotImg = transform.GetComponent<Image>();
     }
 
     public void AddItem(Item item)
@@ -85,4 +87,9 @@ public class Slot : MonoBehaviour
         ////ItemIO.SaveDate();                                         // 인벤토리에 변동사항이 생겼으므로 저장.
     }
 
+    public void ImageRender(bool onoff)
+    {
+        SlotImg.enabled = onoff;
+        ItemImg.enabled = onoff;
+    }
 }
