@@ -19,8 +19,12 @@ public class AreaMgr : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        player_tf = GameObject.FindGameObjectWithTag("Player").transform;   // 플레이어의 정보값
-        player_st = player_tf.GetComponent<PlayerStatus>();
+        string a = "Player(" + Game.Network.NetWork.Client_id.ToString() + ")";
+        GameObject playerObj = GameObject.Find("Players").transform.Find(a).gameObject;
+        // player_tf = GameObject.FindGameObjectWithTag("Player").transform;   // 플레이어의 정보값
+        // player_st = player_tf.GetComponent<PlayerStatus>();
+        // PlayerStatus playerStatus = 
+        player_st = playerObj.GetComponent<PlayerStatus>();
         Renderer = GetComponent<MeshRenderer>();
     }
 
@@ -32,20 +36,32 @@ public class AreaMgr : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player") 
+            && (other.gameObject.GetComponent<PlayerStatus>().ID == Game.Network.NetWork.Client_id))
         {
-            player_st.Enviroment_Level = Enviroment_Level;
-            Renderer.material = Dome_Material_Fine;
+            player_st.Enviroment_Level = 0;
+
+            if ((player_st.ID == Game.Network.NetWork.Client_id) && (player_st.Enviroment_Level == 0))
+            {
+                Renderer.material = Dome_Material_Fine;
+                RenderSettings.fog = false;
+            }
+
         }
     }
 
     void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player")
+             && (other.gameObject.GetComponent<PlayerStatus>().ID == Game.Network.NetWork.Client_id))
         {
             player_st.Enviroment_Level = 1;
-            Renderer.material = Dome_Material_Clear;
+            if (player_st.ID == Game.Network.NetWork.Client_id && player_st.Enviroment_Level != 0)
+            {
+                Renderer.material = Dome_Material_Clear;
+                RenderSettings.fog = true;
 
+            }
         }
     }
 }

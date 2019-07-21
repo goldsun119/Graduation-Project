@@ -26,6 +26,7 @@ public class Image_Enviroment : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(player.ID == Game.Network.NetWork.Client_id)
         switch (player.Enviroment_Level)
         {
             case 0:
