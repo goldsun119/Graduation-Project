@@ -53,9 +53,10 @@ public class MonsterMgr : MonoBehaviour
     void Start()
     {
         player_tf = GameObject.FindGameObjectWithTag("Player").transform;   // 플레이어의 정보값
+        Debug.Log(player_tf.gameObject.name);
         player_st = player_tf.GetComponent<PlayerStatus>();
         
-        targetRange = 100.0f;
+        targetRange = 20.0f;
         HP = 100;
 
         Random_Position = transform.position;
@@ -183,9 +184,11 @@ public class MonsterMgr : MonoBehaviour
     {
         if (other is SphereCollider)
         {
+            Debug.Log(other.gameObject.name);
             if (other.tag == "Player")
             {
-                player_tf = GameObject.Find(other.ToString()).transform;   // 플레이어의 정보값
+                player_tf = GameObject.Find(other.gameObject.name).transform;   // 플레이어의 정보값
+                Debug.Log(player_tf.gameObject.name);
                 player_st = player_tf.GetComponent<PlayerStatus>();
             }
         }
