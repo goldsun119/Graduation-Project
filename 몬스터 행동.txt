@@ -1,0 +1,58 @@
+A. 몬스터가 스폰지역 내
+B. 플레이어가 스폰지역 내
+C. 플레이어가 몬스터 인식 범위 내
+
+A : 랜덤으로 돌아다닌다.
+B : C가 아니면 랜덤으로 돌아다닌다.
+C : 추격한다.
+
+!A : 스폰지역으로 돌아간다. 
+!B : C 였다면 추격을 멈춘다.
+!C : 돌아다닌다.
+
+A > B > C
+
+A 	o- B		o-	Co- 추격
+				Cx- 랜덤	
+			x-	Co- 랜덤
+				Cx- 랜덤
+	x- 스폰 back.
+
+B를 없애자!
+
+if (A) // & B)
+{
+	if( !M.is_player_tracking )	
+		M.RandomMoving();
+
+	else if ( M.is_player_tracking )
+		M.PlayerTracking();
+	
+}
+
+else
+{
+	M.is_player_tracking = false;
+	M.BacktoSpawn();
+}
+
+// 충돌체 처리로 enter / exit 처리 하자
+if (C)
+{
+	M.is_player_tracking = true;
+}
+else if (!C) <- 한 번만 처리하고 싶음
+{
+	M.is_player_tracking = false;
+}
+
+void OnTriggerStay(Collider other)
+{
+	M.is_player_tracking = true;
+}
+void OnTriggerExit(Collider other)
+{
+	M.is_player_tracking = false;
+	// 트랙킹 카운터 세고 0 일때만 false
+}
+
