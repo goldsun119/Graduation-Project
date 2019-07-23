@@ -90,30 +90,29 @@ public class MonsterMgr : MonoBehaviour
         
         var _distance = Vector3.Distance(player_tf.transform.position, transform.position);   // 몬스터와 플레이어 사이 거리
         var spawn_distance = Vector3.Distance(spawnPosition, transform.position);   // 스폰 영역 밖으로 나갔는지 확인 할 거리
-        var spawn_player_distance = Vector3.Distance(spawnPosition, player_tf.transform.position);
 
-        if (spawn_distance < 100 && spawn_player_distance < 100)   // 스폰 영역 내일때
+        if (spawn_distance < 100)   // 스폰 영역 내일때
         {
-            //Debug.Log(spawn_distance);
             // 몬스터 플레이어 따라가기
             if ((2f <= _distance) && (_distance <= targetRange) && (!is_Wait))
             {
                 is_Tracking = true;
-                nav.SetDestination(player_tf.transform.position);
-                //Debug.Log("몬스터와 캐릭터 사이의 거리" + _distance);
             }
+
             else
             {
                 is_Tracking = false;
-                nav.SetDestination(transform.position);
-                transform.LookAt(player_tf);
             }
         }
         else    // 스폰 영역 밖일때
         {
             is_BackToSpawn = true;
             is_Tracking = false;
-            nav.SetDestination(spawnPosition);
+        }
+
+        if (is_Tracking)
+        {
+            nav.SetDestination(player_tf.transform.position);
         }
 
         if (!is_Tracking)
@@ -121,9 +120,12 @@ public class MonsterMgr : MonoBehaviour
             nav.SetDestination(Random_Position);
         }
 
-        if (is_BackToSpawn && (transform.position == spawnPosition))
+        if (is_BackToSpawn)
         {
-            is_BackToSpawn = false;
+            nav.SetDestination(spawnPosition);
+
+            if (transform.position == spawnPosition)
+                is_BackToSpawn = false;
         }
 
         // 플레이어가 몬스터 공격
@@ -182,16 +184,22 @@ public class MonsterMgr : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        if (other is SphereCollider)
-        {
             Debug.Log(other.gameObject.name);
             if (other.tag == "Player")
             {
-                player_tf = GameObject.Find(other.gameObject.name).transform;   // 플레이어의 정보값
-                Debug.Log(player_tf.gameObject.name);
-                player_st = player_tf.GetComponent<PlayerStatus>();
+                Transform other_tf = other.gameObject.transform;
+                PlayerStatus other_st = other_tf.GetComponent<PlayerStatus>();
+
+                if (Vector3.Distance(other_st.transform.position, transform.position) 
+                    <= Vector3.Distance(player_tf.transform.position, transform.position))
+                {
+                    Debug.Log(player_tf.gameObject.name);
+                    player_tf = other_tf;
+                    player_st = other_st;
+
+                }
+                    is_Tracking = true;
             }
-        }
     }
     //bool CheckDistance()
     //{
