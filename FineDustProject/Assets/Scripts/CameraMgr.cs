@@ -11,7 +11,9 @@ public class CameraMgr : MonoBehaviour
     public Camera First_Cam;
     public Camera Isometric_Cam;
     public Camera MiniMap_Cam;
+    public Camera NPC_Cam;
 
+    public bool NPC_On;
 
     // player 넣고 플레이어 받아와서 카메라주기?
 
@@ -28,6 +30,8 @@ public class CameraMgr : MonoBehaviour
         
         ThirdCamOn();
         Camera_Num = 0;
+        NPC_On = false;
+        NPC_Cam.enabled = false;
 
     }
 
@@ -44,7 +48,7 @@ public class CameraMgr : MonoBehaviour
         }
 
         MinimapCamMove();
-
+        if (!NPC_On)
         switch (Camera_Num)
         {
             case 0:
@@ -60,6 +64,8 @@ public class CameraMgr : MonoBehaviour
                 IsometricCamOn();
                 break;
         }
+
+
     }
 
 
@@ -98,6 +104,19 @@ public class CameraMgr : MonoBehaviour
         IsometricCamMove();
     }
 
+    public void NPCCamOn(GameObject NPC)
+    {
+        NPC_On = true;
+
+        Isometric_Cam.enabled = false;
+        Third_Cam.enabled = false;
+        First_Cam.enabled = false;
+        NPC_Cam.enabled = true;
+
+        Cursor.lockState = CursorLockMode.None;
+        NPCCamMove(NPC);
+    }
+
     void ThirdCamMove()
     {
         Quaternion rotation = Quaternion.Euler(player.rotation.x, player.rotation.y, player.rotation.z);
@@ -124,6 +143,13 @@ public class CameraMgr : MonoBehaviour
         Isometric_Cam.transform.position = new Vector3(player.position.x - 5, player.position.y + 10f, player.position.z - 5);
         //Debug.Log(transform.position.x);
         //Debug.Log(Isometric_Cam.transform.position.x);
+    }
+
+    void NPCCamMove(GameObject NPC)
+    {
+        //Quaternion rotation = Quaternion.Euler(NPC.transform.rotation.x, NPC.transform.rotation.y, NPC.transform.rotation.z);
+        NPC_Cam.transform.rotation = Quaternion.Euler(NPC.transform.rotation.x + 15, NPC.transform.rotation.y + 180, NPC.transform.rotation.z);
+        NPC_Cam.transform.position = new Vector3(player.position.x, player.position.y + 1.5f, player.position.z + 3.0f);
     }
 
     void FirstCamMouseMove()

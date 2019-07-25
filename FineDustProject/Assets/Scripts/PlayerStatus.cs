@@ -38,7 +38,10 @@ public class PlayerStatus : MonoBehaviour
     // 상호작용
     public bool isItem = false;
     public bool isMon = false;
+    public bool is_move = true;
     public bool Inventory_on = false;
+
+    public IEnumerator coroutine;
 
     CameraMgr CMgr;
     //public int bagSize = 5;
@@ -49,6 +52,9 @@ public class PlayerStatus : MonoBehaviour
     void Start()
     {
         CMgr = GetComponent<CameraMgr>();
+        hp = 100;
+        coroutine = HPControl();
+        StartCoroutine(coroutine);
     }
 
     // Update is called once per frame
@@ -56,10 +62,28 @@ public class PlayerStatus : MonoBehaviour
     {
         if (ID == Game.Network.NetWork.Client_id)
         {
-            MoveStatus();
-            Inventory_On_Off();
+            if (is_move)
+            {
+                MoveStatus();
+            }
+            
         }
         RecvStatus();
+    }
+
+    IEnumerator HPControl()
+    {
+        while (true)
+        {
+            if (hp > 0)
+                hp -= Enviroment_Level;
+            else
+                StopCoroutine(coroutine);
+
+            Debug.Log("hp");
+            yield return new WaitForSeconds(2);//WaitForSeconds객체를 생성해서 반환
+                                               //StartCoroutine(HPControl());
+        }
     }
 
     void MoveStatus()
@@ -211,22 +235,11 @@ public class PlayerStatus : MonoBehaviour
         isMon = false;
     }
 
-    void Inventory_On_Off()
-    {
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            if (Inventory_on)
-                Inventory_on = false;
-            else if (!Inventory_on)
-                Inventory_on = true;
-        }
-    }
-
     void CheatKey()
     {
         if (Input.GetKeyDown(KeyCode.P)) transform.position = new Vector3(0, 30, 360);
         if (Input.GetKeyDown(KeyCode.O)) transform.position = new Vector3(0, 30, 100);
-
+        if (Input.GetKeyDown(KeyCode.L)) transform.position = new Vector3(0, 30, -5);
         //if (Input.GetKeyDown(KeyCode.L)) transform.position = ;
         //if (Input.GetKeyDown(KeyCode.K)) transform.position = MonSpawner.Last_Spawn;
 
