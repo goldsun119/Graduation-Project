@@ -61,3 +61,8 @@ itemData:[Item_info];
 MonsterData:[Monster_info];
 clientData:[Client_info];
 }
+
+table Login{
+id:string;
+password:string;
+}

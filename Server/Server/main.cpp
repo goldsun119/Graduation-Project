@@ -28,6 +28,7 @@ using namespace Game::Protocol;
 enum DB
 {
 	DB_LOGIN_SUCCESS,
+	DB_ALREADY_LOGIN,
 	DB_NO_DATA,
 	DB_LOGIN_FAIL
 };
@@ -55,7 +56,6 @@ SQLLEN cb_id = 0, cb_password = 0, cb_nickname = 0, cb_x = 0, cb_y = 0, cb_z = 0
 char  buf[255];
 wchar_t sql_data[255];
 SQLWCHAR sqldata[255] = { 0 };
-
 
 void error_display(const char *msg, int err_no);
 void initialize();
@@ -86,7 +86,7 @@ void send_init_packet(int id);
 
 
 
-//------------------------------DB------------------------------
+//--------------------------------DB-------------------------------
 //float db_x, db_y, db_z;
 //int db_hp, db_maxhp, db_item[4], db_connect;
 void init_DB();
@@ -94,7 +94,9 @@ int get_DB_Info(int ci);
 void set_DB_Info(int ci);
 void set_DB_Shutdown(int ci);
 void new_DB_Id(int ci);
-//------------------------------DB------------------------------
+int check_login(string a, string b);
+void autosave_info_db();
+//--------------------------------DB-------------------------------
 
 int main()
 {
@@ -112,6 +114,7 @@ int main()
 
 	point = std::chrono::high_resolution_clock::now();
 	thread make_thread{ make_obj };
+	thread save_thread{ autosave_info_db };
 
 	accept_thread.join();
 	for (auto &th : worker_threads)
@@ -133,6 +136,8 @@ void initialize()
 	for (auto &cl : clients) {
 		cl.sock.connected = false;
 	}
+
+	init_DB();
 }
 void make_items()
 {
@@ -360,10 +365,8 @@ void do_accept()
 		// 처음 연결 시 다른 캐릭터, 몬스터 정보 나에게 보내고 
 		//send_all_player_packet(new_id);
 		//send_put_item_packet(new_id);
-		send_init_packet(new_id);
 
 		//new_id 접속을 이미 들어와있는 플레이어들에게 알리기
-		send_put_player_packet(new_id);
 
 
 		do_recv(new_id);
@@ -469,6 +472,46 @@ void process_packet(const int id, const int packet_size, const char * buf)
 
 	switch (buf[Ipos + 1])
 	{
+	case CS_LOGIN:
+	{
+		auto login_info = Game::Protocol::GetLoginView(get_packet);
+		string a = login_info->id()->str();
+		string b = login_info->password()->str();
+		char game_id[10];
+		char game_pw[10];
+		strcpy(game_id, a.c_str());
+		strcpy(game_pw, b.c_str());
+
+		int ret = check_login(a, b);
+		if (ret == DB::DB_LOGIN_SUCCESS)
+		{
+			clients[id].SetLock();
+			clients[id].SetGameId(game_id);
+			clients[id].SetGamePassword(game_pw);
+			clients[id].SetPos(db_x, db_y, db_z);
+			clients[id].SetHp(db_hp);
+			clients[id].SetMaxhp(db_maxhp);
+			clients[id].SetItem(0, db_item[0]);
+			clients[id].SetItem(1, db_item[1]);
+			clients[id].SetItem(2, db_item[2]);
+			clients[id].SetItem(3, db_item[3]);
+			clients[id].SetUnlock();
+			send_init_packet(id);
+			send_put_player_packet(id);
+		}
+		else if (ret == DB::DB_ALREADY_LOGIN)
+		{
+
+		}
+		else if (ret == DB::DB_NO_DATA)
+		{
+		}
+		else
+		{
+
+		}
+	}
+		break;
 	case CS_INFO:
 	{
 		auto client_Check_info = Game::Protocol::GetClientView(get_packet);
@@ -492,6 +535,7 @@ void process_packet(const int id, const int packet_size, const char * buf)
 		auto item_check_info = Game::Protocol::GetEatView(get_packet);
 		int a = item_check_info->itemID();
 		int b = item_check_info->playerID();
+		//db에 아이템 삽입
 		for (int i = 1; i <= MAX_USER; ++i)
 		{
 			if (i == b) continue;
@@ -752,15 +796,330 @@ void send_init_packet(int id)
 
 //------------------------------packet------------------------------
 
+void init_DB()
+{
+	// Allocate environment handle  
+	retcode = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv);
+	// Set the ODBC version environment attribute  
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+		retcode = SQLSetEnvAttr(henv, SQL_ATTR_ODBC_VERSION, (SQLPOINTER*)SQL_OV_ODBC3, 0);
+		// Allocate connection handle  
+		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+			retcode = SQLAllocHandle(SQL_HANDLE_DBC, henv, &hdbc);
+
+			// Set login timeout to 5 seconds  
+			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
+			{
+				SQLSetConnectAttr(hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0);
+			}
+		}
+	}
+
+	std::cout << std::endl << "DB Load Complete!" << std::endl;
+}
+
+void set_login_on(int ci)
+{
+	retcode = SQLConnect(hdbc, (SQLWCHAR*)L"FineDust", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+		sprintf(buf, "EXEC dbo.user_get_info %s, %s", clients[ci].GetGameId(), clients[ci].GetGamePassword());
+		MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
+		sql_data[strlen(buf)] = '\0';
+
+		retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
+		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) 
+		{
+		}
+	}
+}
+  
+
+int check_login(string a, string b)
+{
+	retcode = SQLConnect(hdbc, (SQLWCHAR*)L"FineDust", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
+
+	// Allocate statement handle  
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+
+		sprintf(buf, "EXEC dbo.user_login %s, %s", a, b);
+		MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
+		sql_data[strlen(buf)] = '\0';
+
+		retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
+		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+
+			// Bind columns 1, 2, and 3  
+			retcode = SQLBindCol(hstmt, 1, SQL_WCHAR, sz_id, MAX_STR_LEN, &cb_id);
+			retcode = SQLBindCol(hstmt, 2, SQL_WCHAR, sz_password, MAX_STR_LEN, &cb_password);
+			retcode = SQLBindCol(hstmt, 3, SQL_WCHAR, sz_nickname, MAX_STR_LEN, &cb_nickname);
+			retcode = SQLBindCol(hstmt, 4, SQL_FLOAT, &db_x, MAX_STR_LEN, &cb_x);
+			retcode = SQLBindCol(hstmt, 5, SQL_FLOAT, &db_y, MAX_STR_LEN, &cb_y);
+			retcode = SQLBindCol(hstmt, 6, SQL_FLOAT, &db_z, MAX_STR_LEN, &cb_z);
+			retcode = SQLBindCol(hstmt, 7, SQL_INTEGER, &db_hp, MAX_STR_LEN, &cb_hp);
+			retcode = SQLBindCol(hstmt, 8, SQL_INTEGER, &db_maxhp, MAX_STR_LEN, &cb_maxhp);
+			retcode = SQLBindCol(hstmt, 9, SQL_INTEGER, &db_item[0], MAX_STR_LEN, &cb_item[0]);
+			retcode = SQLBindCol(hstmt, 10, SQL_INTEGER, &db_item[1], MAX_STR_LEN, &cb_item[1]);
+			retcode = SQLBindCol(hstmt, 11, SQL_INTEGER, &db_item[2], MAX_STR_LEN, &cb_item[2]);
+			retcode = SQLBindCol(hstmt, 12, SQL_INTEGER, &db_item[3], MAX_STR_LEN, &cb_item[3]);
+			retcode = SQLBindCol(hstmt, 13, SQL_INTEGER, &db_connect, MAX_STR_LEN, &cb_connect);
+
+			// Fetch and print each row of data. On an error, display a message and exit.  
+
+			retcode = SQLFetch(hstmt);
+
+			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+#if (DebugMod == TRUE )
+				printf("ID : %s\tX : %d\tY : %d\n", sz_id, db_x, db_y);
+#endif
+				SQLDisconnect(hdbc);
+				if (db_connect)
+				{
+					return DB_ALREADY_LOGIN;
+				}
+				return DB_LOGIN_SUCCESS;
+			}
+		}
+
+		if (retcode == SQL_NO_DATA) {
+			SQLDisconnect(hdbc);
+			return DB_NO_DATA;
+		}
+
+		if (retcode == SQL_ERROR) {
+			SQLDisconnect(hdbc);
+			return DB_LOGIN_FAIL;
+		}
+	}
+	SQLDisconnect(hdbc);
+}
+
+
+int get_DB_Info(int ci) {
+	// Connect to data source  
+	retcode = SQLConnect(hdbc, (SQLWCHAR*)L"FineDust", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
+
+	// Allocate statement handle  
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+
+		sprintf(buf, "EXEC dbo.user_get_info %s, %s", clients[ci].GetGameId(), clients[ci].GetGamePassword());
+		MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
+		sql_data[strlen(buf)] = '\0';
+
+		retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
+		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+
+			// Bind columns 1, 2, and 3  
+			retcode = SQLBindCol(hstmt, 1, SQL_WCHAR, sz_id, MAX_STR_LEN, &cb_id);
+			retcode = SQLBindCol(hstmt, 2, SQL_WCHAR, sz_password, MAX_STR_LEN, &cb_password);
+			retcode = SQLBindCol(hstmt, 3, SQL_WCHAR, sz_nickname, MAX_STR_LEN, &cb_nickname);
+			retcode = SQLBindCol(hstmt, 4, SQL_FLOAT, &db_x, MAX_STR_LEN, &cb_x);
+			retcode = SQLBindCol(hstmt, 5, SQL_FLOAT, &db_y, MAX_STR_LEN, &cb_y);
+			retcode = SQLBindCol(hstmt, 6, SQL_FLOAT, &db_z, MAX_STR_LEN, &cb_z);
+			retcode = SQLBindCol(hstmt, 7, SQL_INTEGER, &db_hp, MAX_STR_LEN, &cb_hp);
+			retcode = SQLBindCol(hstmt, 8, SQL_INTEGER, &db_maxhp, MAX_STR_LEN, &cb_maxhp);
+			retcode = SQLBindCol(hstmt, 9, SQL_INTEGER, &db_item[0], MAX_STR_LEN, &cb_item[0]);
+			retcode = SQLBindCol(hstmt, 10, SQL_INTEGER, &db_item[1], MAX_STR_LEN, &cb_item[1]);
+			retcode = SQLBindCol(hstmt, 11, SQL_INTEGER, &db_item[2], MAX_STR_LEN, &cb_item[2]);
+			retcode = SQLBindCol(hstmt, 12, SQL_INTEGER, &db_item[3], MAX_STR_LEN, &cb_item[3]);
+			retcode = SQLBindCol(hstmt, 13, SQL_INTEGER, &db_connect, MAX_STR_LEN, &cb_connect);
+
+			// Fetch and print each row of data. On an error, display a message and exit.  
+
+			retcode = SQLFetch(hstmt);
+
+			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+#if (DebugMod == TRUE )
+				printf("ID : %s\tX : %d\tY : %d\n", sz_id, db_x, db_y);
+#endif
+				SQLDisconnect(hdbc);
+				return DB_LOGIN_SUCCESS;
+			}
+		}
+
+		if (retcode == SQL_NO_DATA) {
+			SQLDisconnect(hdbc);
+			return DB_NO_DATA;
+		}
+
+		if (retcode == SQL_ERROR) {
+			SQLDisconnect(hdbc);
+			return DB_LOGIN_FAIL;
+		}
+	}
+	SQLDisconnect(hdbc);
+}
+
+void set_DB_Info(int ci) {
+	// Connect to data source  
+	retcode = SQLConnect(hdbc, (SQLWCHAR*)L"FineDust", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
+
+	// Allocate statement handle  
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+
+		sprintf(buf, "EXEC dbo.set_user %s, %s, %s, %f, %f, %f, %d, %d, %d, %d, %d, %d, %d", clients[ci].GetGameId(), clients[ci].GetGamePassword(), clients[ci].GetNickname(), clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp(), clients[ci].GetMaxhp(), clients[ci].GetItem(0), clients[ci].GetItem(1), clients[ci].GetItem(2), clients[ci].GetItem(3), 1);
+		MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
+		sql_data[strlen(buf)] = '\0';
+
+		retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
+		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+
+
+			// Bind columns 1, 2, and 3  
+			retcode = SQLBindCol(hstmt, 1, SQL_WCHAR, sz_id, MAX_STR_LEN, &cb_id);
+			retcode = SQLBindCol(hstmt, 2, SQL_WCHAR, sz_password, MAX_STR_LEN, &cb_password);
+			retcode = SQLBindCol(hstmt, 3, SQL_WCHAR, sz_nickname, MAX_STR_LEN, &cb_nickname);
+			retcode = SQLBindCol(hstmt, 4, SQL_FLOAT, &db_x, MAX_STR_LEN, &cb_x);
+			retcode = SQLBindCol(hstmt, 5, SQL_FLOAT, &db_y, MAX_STR_LEN, &cb_y);
+			retcode = SQLBindCol(hstmt, 6, SQL_FLOAT, &db_z, MAX_STR_LEN, &cb_z);
+			retcode = SQLBindCol(hstmt, 7, SQL_INTEGER, &db_hp, MAX_STR_LEN, &cb_hp);
+			retcode = SQLBindCol(hstmt, 8, SQL_INTEGER, &db_maxhp, MAX_STR_LEN, &cb_maxhp);
+			retcode = SQLBindCol(hstmt, 9, SQL_INTEGER, &db_item[0], MAX_STR_LEN, &cb_item[0]);
+			retcode = SQLBindCol(hstmt, 10, SQL_INTEGER, &db_item[1], MAX_STR_LEN, &cb_item[1]);
+			retcode = SQLBindCol(hstmt, 11, SQL_INTEGER, &db_item[2], MAX_STR_LEN, &cb_item[2]);
+			retcode = SQLBindCol(hstmt, 12, SQL_INTEGER, &db_item[3], MAX_STR_LEN, &cb_item[3]);
+			retcode = SQLBindCol(hstmt, 13, SQL_INTEGER, &db_connect, MAX_STR_LEN, &cb_connect);
+
+			// Fetch and print each row of data. On an error, display a message and exit.  
+
+			retcode = SQLFetch(hstmt);
+			if (retcode == SQL_ERROR || retcode == SQL_SUCCESS_WITH_INFO) {
+			}
+
+			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+#if (DebugMod == TRUE )
+				printf("ID : %s\tX : %d\tY : %d\n", sz_id, db_x, db_y);
+#endif
+			}
+
+		}
+	}
+	SQLDisconnect(hdbc);
+}
+
+void new_DB_Id(int ci) {
+	// Connect to data source  
+	retcode = SQLConnect(hdbc, (SQLWCHAR*)L"FineDust", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
+
+	// Allocate statement handle  
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+
+		sprintf(buf, "EXEC dbo.insert_user %s, %s, %s, %f, %f, %f, %d", clients[ci].GetGameId(), clients[ci].GetGamePassword(), clients[ci].GetNickname(), clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp());
+		MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
+		sql_data[strlen(buf)] = '\0';
+
+		retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
+		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+
+			retcode = SQLFetch(hstmt);
+			if (retcode == SQL_ERROR || retcode == SQL_SUCCESS_WITH_INFO) {
+			}
+
+			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+#if (DebugMod == TRUE )
+				printf("ID : %s\tX : %d\tY : %d\n", sz_id, db_x, db_y);
+#endif
+			}
+
+		}
+	}
+	SQLDisconnect(hdbc);
+}
+
+void set_DB_Shutdown(int ci) {
+	// Connect to data source  
+	retcode = SQLConnect(hdbc, (SQLWCHAR*)L"FineDust", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
+
+	// Allocate statement handle  
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+
+		//sprintf(buf, "EXEC dbo.shutdown_id %s", g_clients[ci].game_id);
+		MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
+		sql_data[strlen(buf)] = '\0';
+
+		retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
+		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+			retcode = SQLFetch(hstmt);
+			if (retcode == SQL_ERROR || retcode == SQL_SUCCESS_WITH_INFO) {
+			}
+
+			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+#if (DebugMod == TRUE )
+				printf("ID : %s\tX : %d\tY : %d\n", sz_id, db_x, db_y);
+#endif
+			}
+
+		}
+	}
+	SQLDisconnect(hdbc);
+}
+
+int load_item()
+{
+	retcode = SQLConnect(hdbc, (SQLWCHAR*)L"FineDust", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+		sprintf(buf, "EXEC dbo.user_get_info");
+		MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
+		sql_data[strlen(buf)] = '\0';
+
+		retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
+		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+
+			// Bind columns 1, 2, and 3  
+			retcode = SQLBindCol(hstmt, 1, SQL_WCHAR, sz_id, MAX_STR_LEN, &cb_id);
+		}
+	}
+}
+
+int load_monster()
+{
+
+}
+
+
+void autosave_info_db()
+{
+	std::chrono::high_resolution_clock::time_point save_time = std::chrono::high_resolution_clock::now();
+	while (true)
+	{
+		if (save_time + 10s <= std::chrono::high_resolution_clock::now())
+		{
+			for (int i = 1; i <= MAX_USER; ++i)
+			{
+				if (clients[i].sock.connected)
+				{
+					//DB_SQL_SET_POS(i);
+				}
+			}
+			save_time = std::chrono::high_resolution_clock::now();
+		}
+	}
+}
+
+
 /*	
-		inline const Game::Protocol::Client_info *GetClientView(const void *buf) {
-			return flatbuffers::GetRoot<Game::Protocol::Client_info>(buf);
-		}
-		inline const Game::Protocol::Monster_info *GetMonsterView(const void *buf) {
-			return flatbuffers::GetRoot<Game::Protocol::Monster_info>(buf);
-		}
-		inline const Game::Protocol::Item_info *GetItemView(const void *buf) {
-			return flatbuffers::GetRoot<Game::Protocol::Item_info>(buf);
-		}
-		
+
+inline const Game::Protocol::Client_info *GetClientView(const void *buf) {
+	return flatbuffers::GetRoot<Game::Protocol::Client_info>(buf);
+}
+inline const Game::Protocol::Monster_info *GetMonsterView(const void *buf) {
+	return flatbuffers::GetRoot<Game::Protocol::Monster_info>(buf);
+}
+inline const Game::Protocol::Item_info *GetItemView(const void *buf) {
+	return flatbuffers::GetRoot<Game::Protocol::Item_info>(buf);
+}
+
+inline const Game::Protocol::Eat_Item *GetEatView(const void *buf) {
+	return flatbuffers::GetRoot<Game::Protocol::Eat_ Item>(buf);
+}
+
+inline const Game::Protocol::Login *GetLoginView(const void *buf) {
+	return flatbuffers::GetRoot<Game::Protocol::Login>(buf);
+}
 */

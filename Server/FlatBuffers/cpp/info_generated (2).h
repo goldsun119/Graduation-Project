@@ -27,6 +27,8 @@ struct Eat_Item;
 
 struct Init_Collection;
 
+struct Login;
+
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3 FLATBUFFERS_FINAL_CLASS {
  private:
   float x_;
@@ -659,6 +661,68 @@ inline flatbuffers::Offset<Init_Collection> CreateInit_CollectionDirect(
       itemData ? _fbb.CreateVector<flatbuffers::Offset<Item_info>>(*itemData) : 0,
       MonsterData ? _fbb.CreateVector<flatbuffers::Offset<Monster_info>>(*MonsterData) : 0,
       clientData ? _fbb.CreateVector<flatbuffers::Offset<Client_info>>(*clientData) : 0);
+}
+
+struct Login FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  enum {
+    VT_ID = 4,
+    VT_PASSWORD = 6
+  };
+  const flatbuffers::String *id() const {
+    return GetPointer<const flatbuffers::String *>(VT_ID);
+  }
+  const flatbuffers::String *password() const {
+    return GetPointer<const flatbuffers::String *>(VT_PASSWORD);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_ID) &&
+           verifier.VerifyString(id()) &&
+           VerifyOffset(verifier, VT_PASSWORD) &&
+           verifier.VerifyString(password()) &&
+           verifier.EndTable();
+  }
+};
+
+struct LoginBuilder {
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_id(flatbuffers::Offset<flatbuffers::String> id) {
+    fbb_.AddOffset(Login::VT_ID, id);
+  }
+  void add_password(flatbuffers::Offset<flatbuffers::String> password) {
+    fbb_.AddOffset(Login::VT_PASSWORD, password);
+  }
+  explicit LoginBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  LoginBuilder &operator=(const LoginBuilder &);
+  flatbuffers::Offset<Login> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<Login>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<Login> CreateLogin(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<flatbuffers::String> id = 0,
+    flatbuffers::Offset<flatbuffers::String> password = 0) {
+  LoginBuilder builder_(_fbb);
+  builder_.add_password(password);
+  builder_.add_id(id);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<Login> CreateLoginDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const char *id = nullptr,
+    const char *password = nullptr) {
+  return Game::Protocol::CreateLogin(
+      _fbb,
+      id ? _fbb.CreateString(id) : 0,
+      password ? _fbb.CreateString(password) : 0);
 }
 
 }  // namespace Protocol

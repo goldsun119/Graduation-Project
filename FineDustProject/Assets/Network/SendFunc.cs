@@ -58,6 +58,27 @@ namespace Game.Network
 
         }
 
+        public byte[] makeLoginInfoPacket(string id, string pw)
+        {
+            FlatBufferBuilder fbb = new FlatBufferBuilder(1);
+            fbb.Clear();
+            var idOffset = fbb.CreateString(id); // String 문자열이 있을경우 미리 생성해라.
+            var pwOffset = fbb.CreateString(pw); // String 문자열이 있을경우 미리 생성해라.
+            Login.StartLogin(fbb);
+            Login.AddId(fbb, idOffset);
+            Login.AddId(fbb, pwOffset);
+            var endOffset = Login.EndLogin(fbb);
+            fbb.Finish(endOffset.Value);
+
+            byte[] packet = fbb.SizedByteArray();
+            byte[] magic_packet = makePacketinfo(packet.Length, CS_LOGIN);
+            byte[] real_packet = new byte[packet.Length + 8];
+            System.Buffer.BlockCopy(magic_packet, 0, real_packet, 0, magic_packet.Length);
+            System.Buffer.BlockCopy(packet, 0, real_packet, 8, packet.Length);
+
+            return real_packet;
+        }
+
         public byte[] makePacketinfo(int p_size, int type)
         {
             byte[] intBytes = new byte[p_size.ToString().Length + 2];   // 숫자 길이 + | + type

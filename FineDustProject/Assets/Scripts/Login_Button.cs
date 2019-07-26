@@ -11,6 +11,8 @@ using System.Net.Sockets;
 public class Login_Button : MonoBehaviour
 {
     public InputField input_field;
+    public InputField input_id;
+    public InputField input_password;
     public static bool login_ok = false;
     //string server_ip_text;
     //public IPAddress server_ip;
@@ -38,6 +40,8 @@ public class Login_Button : MonoBehaviour
         //server_ip_text = input_field.text;
         //server_ip = IPAddress.Parse(server_ip_text);
         Game.Network.NetWork.Instance_S.PlayerIP = input_field.text;
+        Game.Network.NetWork.Instance_S.PlayerID = input_id.text;
+        Game.Network.NetWork.Instance_S.PlayerPW = input_password.text;
         Game.Network.NetWork.Instance_S.connectSocket();
         //transferSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
         //transferSock.Connect(new IPEndPoint(server_ip, 9000));

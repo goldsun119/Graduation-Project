@@ -18,6 +18,7 @@ constexpr int DUSTAREA_RADIUS =	625;
 constexpr int CS_INFO =							1;
 constexpr int CS_GET_ITEM =				2;
 constexpr int CS_MONSTER_STATUS =	3;
+constexpr int CS_LOGIN						 =	4;
 
 constexpr int SC_ID =								1;
 constexpr int	SC_PUT_PLAYER =			2;

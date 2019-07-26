@@ -67,6 +67,8 @@ namespace Game.Network
         private static bool serverConnect = false;  // 서버 연결을 했는지 체크
         private static ManualResetEvent connectDone = new ManualResetEvent(false);
         private string playerIP = "";   // 플레이어 아이피
+        private string playerID = "";   // 플레이어 아이피
+        private string playerPW = "";   // 플레이어 아이피
         private static NetWork instance_S = null;
 
         public static NetWork Instance_S
@@ -89,6 +91,28 @@ namespace Game.Network
             set
             {
                 playerIP = value;
+            }
+        }
+        public string PlayerID                 // 플레이어 IP 접근 프로퍼티
+        {
+            get
+            {
+                return playerID;
+            }
+            set
+            {
+                playerID = value;
+            }
+        }
+        public string PlayerPW                 // 플레이어 IP 접근 프로퍼티
+        {
+            get
+            {
+                return playerPW;
+            }
+            set
+            {
+                playerPW = value;
             }
         }
         // Update is called once per frame
@@ -529,9 +553,15 @@ namespace Game.Network
                 sock.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
                 sock.NoDelay = true;
                 if (playerIP == "")
+                {
                     sock.BeginConnect("127.0.0.1", 9000, new AsyncCallback(ConnectCallback), sock);
+                    SendLoginInfo(playerID, playerPW);
+                }
                 else
+                {
                     sock.BeginConnect(playerIP, 9000, new AsyncCallback(ConnectCallback), sock);
+                    SendLoginInfo(playerID, playerPW);
+                }
             }
         }
 
@@ -551,6 +581,12 @@ namespace Game.Network
         public static void SendEatItem(int itemID, int playerID)
         {
             Sendbyte = sF.makeEatItemPacket(itemID, playerID);
+            Send_Packet(Sendbyte);
+        }
+
+        public static void SendLoginInfo(string id, string pw)
+        {
+            Sendbyte = sF.makeLoginInfoPacket(id, pw);
             Send_Packet(Sendbyte);
         }
     }
