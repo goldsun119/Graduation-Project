@@ -21,7 +21,11 @@ public class Login_Button : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        input_field = GameObject.Find("InputAdd").GetComponent<InputField>();
+        input_id = GameObject.Find("InputID").GetComponent<InputField>();
+        input_password = GameObject.Find("InputPW").GetComponent<InputField>();
+
+        login_ok = false;
     }
 
     // Update is called once per frame
@@ -36,7 +40,8 @@ public class Login_Button : MonoBehaviour
 
     public void Login()
     {
-        input_field = gameObject.GetComponent<InputField>();
+        //Debug.Log(input_field.text);
+
         //server_ip_text = input_field.text;
         //server_ip = IPAddress.Parse(server_ip_text);
         Game.Network.NetWork.Instance_S.PlayerIP = input_field.text;
@@ -47,5 +52,8 @@ public class Login_Button : MonoBehaviour
         //transferSock.Connect(new IPEndPoint(server_ip, 9000));
     }
 
-
+    public void ChangeScene()
+    {
+        SceneManager.LoadScene(2);
+    }
 }
