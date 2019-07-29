@@ -40,7 +40,9 @@ public class Login_Button : MonoBehaviour
 
     public void Login()
     {
-        //Debug.Log(input_field.text);
+        Debug.Log(input_id.text);
+        Debug.Log(input_password.text);
+
 
         //server_ip_text = input_field.text;
         //server_ip = IPAddress.Parse(server_ip_text);
