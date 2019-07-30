@@ -66,7 +66,7 @@ namespace Game.Network
             var pwOffset = fbb.CreateString(pw); // String 문자열이 있을경우 미리 생성해라.
             Login.StartLogin(fbb);
             Login.AddId(fbb, idOffset);
-            Login.AddId(fbb, pwOffset);
+            Login.AddPassword(fbb, pwOffset);
             var endOffset = Login.EndLogin(fbb);
             fbb.Finish(endOffset.Value);
 

@@ -53,10 +53,6 @@ float db_x, db_y, db_z;
 int db_hp, db_maxhp, db_item[4], db_connect;
 SQLLEN cb_id = 0, cb_password = 0, cb_nickname = 0, cb_x = 0, cb_y = 0, cb_z = 0, cb_hp = 0, cb_maxhp = 0, cb_item[4]{ 0 }, cb_connect = 0;
 
-char  buf[255];
-wchar_t sql_data[255];
-SQLWCHAR sqldata[255] = { 0 };
-
 void error_display(const char *msg, int err_no);
 void initialize();
 void make_items();
@@ -103,7 +99,6 @@ int main()
 	vector<thread> worker_threads;
 
 	initialize();
-	make_items();
 
 	g_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0);
 
@@ -121,6 +116,11 @@ int main()
 		th.join();
 
 	CloseHandle(g_iocp);
+	SQLCancel(hstmt);
+	SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
+	SQLDisconnect(hdbc);
+	SQLFreeHandle(SQL_HANDLE_DBC, hdbc);
+	SQLFreeHandle(SQL_HANDLE_ENV, henv);
 }
 
 void error_display(const char *msg, int err_no)
@@ -138,6 +138,7 @@ void initialize()
 	}
 
 	init_DB();
+	load_item();
 }
 void make_items()
 {
@@ -171,7 +172,7 @@ void make_items()
 }
 int get_new_id()
 {
-	for (int i = 1; i < MAX_USER; ++i)
+	for (int i = 1; i <= MAX_USER; ++i)
 	{
 		clients[i].SetLock();
 		if (clients[i].sock.connected == false)
@@ -613,7 +614,7 @@ void send_all_player_packet(int to)
 	builder.Clear();
 	std::vector<flatbuffers::Offset<Client_info>> clients_data;
 
-	for (int i = 1; i<MAX_USER+1;++i)
+	for (int i = 1; i<=MAX_USER;++i)
 	{
 		clients[i].SetLock();
 		if (clients[i].sock.connected == false || clients[i].GetHp() == 0)
@@ -754,7 +755,7 @@ void send_init_packet(int id)
 	}
 	auto full_items_data = builder.CreateVector(items_data);
 
-	for (int i = 1; i < MAX_USER + 1; ++i)
+	for (int i = 1; i <= MAX_USER; ++i)
 	{
 		clients[i].SetLock();
 		if (clients[i].sock.connected == false || clients[i].GetHp() == 0)
@@ -798,6 +799,7 @@ void send_init_packet(int id)
 
 void init_DB()
 {
+	setlocale(LC_ALL, "korean");
 	// Allocate environment handle  
 	retcode = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv);
 	// Set the ODBC version environment attribute  
@@ -811,43 +813,45 @@ void init_DB()
 			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
 			{
 				SQLSetConnectAttr(hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0);
+				retcode = SQLConnect(hdbc, (SQLWCHAR*)L"FineDust", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
+				if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+					std::cout << std::endl << "DB Connected" << std::endl;
+				}
 			}
 		}
 	}
 
-	std::cout << std::endl << "DB Load Complete!" << std::endl;
 }
 
 void set_login_on(int ci)
 {
-	retcode = SQLConnect(hdbc, (SQLWCHAR*)L"FineDust", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
-	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
-		sprintf(buf, "EXEC dbo.user_get_info %s, %s", clients[ci].GetGameId(), clients[ci].GetGamePassword());
-		MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
-		sql_data[strlen(buf)] = '\0';
+	retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+	WCHAR Query[MAX_BUFFER];
+	wsprintf((LPWSTR)Query, L"EXEC dbo.user_get_info %s, %s", clients[ci].GetGameId(), clients[ci].GetGamePassword());
+	//sprintf(buf, "EXEC dbo.user_get_info %s, %s", clients[ci].GetGameId(), clients[ci].GetGamePassword());
+	//MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
+	//sql_data[strlen(buf)] = '\0';
 
-		retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
-		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) 
-		{
-		}
+	retcode = SQLExecDirect(hstmt, (SQLWCHAR*)Query, SQL_NTS);
+	//retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) 
+	{
 	}
 }
   
 
 int check_login(string a, string b)
 {
-	retcode = SQLConnect(hdbc, (SQLWCHAR*)L"FineDust", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
-
-	// Allocate statement handle  
-	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+		WCHAR Query[MAX_BUFFER];
 
-		sprintf(buf, "EXEC dbo.user_login %s, %s", a, b);
-		MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
-		sql_data[strlen(buf)] = '\0';
+		wsprintf((LPWSTR)Query, L"EXEC dbo.user_login %s, %s", a, b);
+		retcode = SQLExecDirect(hstmt, (SQLWCHAR*)Query, SQL_NTS);
+		//sprintf(buf, "EXEC dbo.user_login %s, %s", a, b);
+		//MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
+		//sql_data[strlen(buf)] = '\0';
 
-		retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
+		//retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 
 			// Bind columns 1, 2, and 3  
@@ -870,45 +874,34 @@ int check_login(string a, string b)
 			retcode = SQLFetch(hstmt);
 
 			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-#if (DebugMod == TRUE )
-				printf("ID : %s\tX : %d\tY : %d\n", sz_id, db_x, db_y);
-#endif
-				SQLDisconnect(hdbc);
 				if (db_connect)
 				{
+					//연결끊기 후
 					return DB_ALREADY_LOGIN;
 				}
+				//connect 1로 바꾸기
 				return DB_LOGIN_SUCCESS;
 			}
 		}
 
 		if (retcode == SQL_NO_DATA) {
-			SQLDisconnect(hdbc);
+			//아이디 비번 추가하기
 			return DB_NO_DATA;
 		}
 
-		if (retcode == SQL_ERROR) {
-			SQLDisconnect(hdbc);
+		if (retcode == SQL_ERROR) {  
 			return DB_LOGIN_FAIL;
 		}
-	}
-	SQLDisconnect(hdbc);
 }
 
 
 int get_DB_Info(int ci) {
-	// Connect to data source  
-	retcode = SQLConnect(hdbc, (SQLWCHAR*)L"FineDust", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
-
-	// Allocate statement handle  
-	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+		WCHAR Query[MAX_BUFFER];
 
-		sprintf(buf, "EXEC dbo.user_get_info %s, %s", clients[ci].GetGameId(), clients[ci].GetGamePassword());
-		MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
-		sql_data[strlen(buf)] = '\0';
+		wsprintf((LPWSTR)Query, L"EXEC dbo.user_get_info %s, %s", clients[ci].GetGameId(), clients[ci].GetGamePassword());
 
-		retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
+		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 
 			// Bind columns 1, 2, and 3  
@@ -934,37 +927,27 @@ int get_DB_Info(int ci) {
 #if (DebugMod == TRUE )
 				printf("ID : %s\tX : %d\tY : %d\n", sz_id, db_x, db_y);
 #endif
-				SQLDisconnect(hdbc);
 				return DB_LOGIN_SUCCESS;
 			}
 		}
 
 		if (retcode == SQL_NO_DATA) {
-			SQLDisconnect(hdbc);
 			return DB_NO_DATA;
 		}
 
 		if (retcode == SQL_ERROR) {
-			SQLDisconnect(hdbc);
 			return DB_LOGIN_FAIL;
 		}
-	}
-	SQLDisconnect(hdbc);
+	
 }
 
 void set_DB_Info(int ci) {
-	// Connect to data source  
-	retcode = SQLConnect(hdbc, (SQLWCHAR*)L"FineDust", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
-
-	// Allocate statement handle  
-	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
 
-		sprintf(buf, "EXEC dbo.set_user %s, %s, %s, %f, %f, %f, %d, %d, %d, %d, %d, %d, %d", clients[ci].GetGameId(), clients[ci].GetGamePassword(), clients[ci].GetNickname(), clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp(), clients[ci].GetMaxhp(), clients[ci].GetItem(0), clients[ci].GetItem(1), clients[ci].GetItem(2), clients[ci].GetItem(3), 1);
-		MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
-		sql_data[strlen(buf)] = '\0';
+		WCHAR Query[MAX_BUFFER];
+		wsprintf((LPWSTR)Query, L"EXEC dbo.set_user %s, %s, %s, %f, %f, %f, %d, %d, %d, %d, %d, %d, %d", clients[ci].GetGameId(), clients[ci].GetGamePassword(), clients[ci].GetNickname(), clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp(), clients[ci].GetMaxhp(), clients[ci].GetItem(0), clients[ci].GetItem(1), clients[ci].GetItem(2), clients[ci].GetItem(3), 1);
 
-		retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
+		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 
 
@@ -996,23 +979,15 @@ void set_DB_Info(int ci) {
 			}
 
 		}
-	}
-	SQLDisconnect(hdbc);
 }
 
 void new_DB_Id(int ci) {
-	// Connect to data source  
-	retcode = SQLConnect(hdbc, (SQLWCHAR*)L"FineDust", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
-
-	// Allocate statement handle  
-	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+		WCHAR Query[MAX_BUFFER];
 
-		sprintf(buf, "EXEC dbo.insert_user %s, %s, %s, %f, %f, %f, %d", clients[ci].GetGameId(), clients[ci].GetGamePassword(), clients[ci].GetNickname(), clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp());
-		MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
-		sql_data[strlen(buf)] = '\0';
+		wsprintf((LPWSTR)Query, L"EXEC dbo.insert_user %s, %s, %s, %f, %f, %f, %d", clients[ci].GetGameId(), clients[ci].GetGamePassword(), clients[ci].GetNickname(), clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp());
 
-		retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
+		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 
 			retcode = SQLFetch(hstmt);
@@ -1026,23 +1001,15 @@ void new_DB_Id(int ci) {
 			}
 
 		}
-	}
-	SQLDisconnect(hdbc);
 }
 
 void set_DB_Shutdown(int ci) {
-	// Connect to data source  
-	retcode = SQLConnect(hdbc, (SQLWCHAR*)L"FineDust", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
-
-	// Allocate statement handle  
-	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+		WCHAR Query[MAX_BUFFER];
 
-		//sprintf(buf, "EXEC dbo.shutdown_id %s", g_clients[ci].game_id);
-		MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
-		sql_data[strlen(buf)] = '\0';
+		//sprintf((LPWSTR)buf, "EXEC dbo.shutdown_id %s", g_clients[ci].game_id);
 
-		retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
+		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 			retcode = SQLFetch(hstmt);
 			if (retcode == SQL_ERROR || retcode == SQL_SUCCESS_WITH_INFO) {
@@ -1055,33 +1022,22 @@ void set_DB_Shutdown(int ci) {
 			}
 
 		}
-	}
 	SQLDisconnect(hdbc);
 }
 
 int load_item()
 {
-	retcode = SQLConnect(hdbc, (SQLWCHAR*)L"FineDust", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
-	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
-		sprintf(buf, "EXEC dbo.user_get_info");
-		MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
-		sql_data[strlen(buf)] = '\0';
+		WCHAR Query[MAX_BUFFER];
+		//wsprintf((LPWSTR)Query, L"EXEC dbo.user_get_info");
+		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
 
-		retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 
 			// Bind columns 1, 2, and 3  
 			retcode = SQLBindCol(hstmt, 1, SQL_WCHAR, sz_id, MAX_STR_LEN, &cb_id);
 		}
-	}
 }
-
-int load_monster()
-{
-
-}
-
 
 void autosave_info_db()
 {
