@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <mutex>
 #include <thread>
 #include <vector>
@@ -63,6 +64,9 @@ void worker_thread();
 void do_accept();
 void do_recv(int id);
 void make_obj();
+int load_item();
+void HandleDiagnosticRecord(SQLHANDLE hHandle, SQLSMALLINT hType, RETCODE RetCode);
+void insert_item_db(int id, int type, float x, float y, float z, int draw);
 
 void SendPacket(const int type, const int id, const void *packet, const int packet_size);
 
@@ -115,6 +119,10 @@ int main()
 	for (auto &th : worker_threads)
 		th.join();
 
+	//save_monster, item, player
+
+	
+
 	CloseHandle(g_iocp);
 	SQLCancel(hstmt);
 	SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
@@ -138,7 +146,21 @@ void initialize()
 	}
 
 	init_DB();
-	load_item();
+	int ret = load_item();
+	if (ret == DB_LOGIN_SUCCESS)
+	{
+	}
+	else if (ret == DB_NO_DATA)
+	{
+		make_items();
+	}
+	else
+	{
+
+	}
+
+
+
 }
 void make_items()
 {
@@ -148,6 +170,7 @@ void make_items()
 	items[0].SetId(0);
 	items[0].SetType(1);
 	items[0].SetPos(351, 150, 351);
+	insert_item_db(0, 1, 351, 150, 351, true);
 	for (int i = 1; i < MAX_ITEM; ++i)
 	{
 		float x = float(rand() % 1800 - 900);
@@ -162,11 +185,12 @@ void make_items()
 			--i;
 			continue;
 		}
-		int type = rand() % 2 + 1;
+		int type = rand() % 4 + 1;
 		items[i].SetDraw( true);
 		items[i].SetId(i);
 		items[i].SetType(type);
 		items[i].SetPos(x, 150, z);
+		insert_item_db(i, type, x, 150, z, true);
 	}
 	cout << "아이템 생성 완료" << endl;
 }
@@ -858,9 +882,9 @@ int check_login(string a, string b)
 			retcode = SQLBindCol(hstmt, 1, SQL_WCHAR, sz_id, MAX_STR_LEN, &cb_id);
 			retcode = SQLBindCol(hstmt, 2, SQL_WCHAR, sz_password, MAX_STR_LEN, &cb_password);
 			retcode = SQLBindCol(hstmt, 3, SQL_WCHAR, sz_nickname, MAX_STR_LEN, &cb_nickname);
-			retcode = SQLBindCol(hstmt, 4, SQL_FLOAT, &db_x, MAX_STR_LEN, &cb_x);
-			retcode = SQLBindCol(hstmt, 5, SQL_FLOAT, &db_y, MAX_STR_LEN, &cb_y);
-			retcode = SQLBindCol(hstmt, 6, SQL_FLOAT, &db_z, MAX_STR_LEN, &cb_z);
+			retcode = SQLBindCol(hstmt, 4, SQL_REAL, &db_x, MAX_STR_LEN, &cb_x);
+			retcode = SQLBindCol(hstmt, 5, SQL_REAL, &db_y, MAX_STR_LEN, &cb_y);
+			retcode = SQLBindCol(hstmt, 6, SQL_REAL, &db_z, MAX_STR_LEN, &cb_z);
 			retcode = SQLBindCol(hstmt, 7, SQL_INTEGER, &db_hp, MAX_STR_LEN, &cb_hp);
 			retcode = SQLBindCol(hstmt, 8, SQL_INTEGER, &db_maxhp, MAX_STR_LEN, &cb_maxhp);
 			retcode = SQLBindCol(hstmt, 9, SQL_INTEGER, &db_item[0], MAX_STR_LEN, &cb_item[0]);
@@ -945,7 +969,7 @@ void set_DB_Info(int ci) {
 		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
 
 		WCHAR Query[MAX_BUFFER];
-		wsprintf((LPWSTR)Query, L"EXEC dbo.set_user %s, %s, %s, %f, %f, %f, %d, %d, %d, %d, %d, %d, %d", clients[ci].GetGameId(), clients[ci].GetGamePassword(), clients[ci].GetNickname(), clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp(), clients[ci].GetMaxhp(), clients[ci].GetItem(0), clients[ci].GetItem(1), clients[ci].GetItem(2), clients[ci].GetItem(3), 1);
+		swprintf((LPWSTR)Query, L"EXEC dbo.set_user %s, %s, %s, %f, %f, %f, %d, %d, %d, %d, %d, %d, %d", clients[ci].GetGameId(), clients[ci].GetGamePassword(), clients[ci].GetNickname(), clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp(), clients[ci].GetMaxhp(), clients[ci].GetItem(0), clients[ci].GetItem(1), clients[ci].GetItem(2), clients[ci].GetItem(3), 1);
 
 		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
@@ -985,7 +1009,7 @@ void new_DB_Id(int ci) {
 		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
 		WCHAR Query[MAX_BUFFER];
 
-		wsprintf((LPWSTR)Query, L"EXEC dbo.insert_user %s, %s, %s, %f, %f, %f, %d", clients[ci].GetGameId(), clients[ci].GetGamePassword(), clients[ci].GetNickname(), clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp());
+		swprintf((LPWSTR)Query, L"EXEC dbo.insert_user %s, %s, %s, %f, %f, %f, %d", clients[ci].GetGameId(), clients[ci].GetGamePassword(), clients[ci].GetNickname(), clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp());
 
 		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
@@ -1027,16 +1051,98 @@ void set_DB_Shutdown(int ci) {
 
 int load_item()
 {
-		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
-		WCHAR Query[MAX_BUFFER];
-		//wsprintf((LPWSTR)Query, L"EXEC dbo.user_get_info");
-		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
+	retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+	WCHAR Query[MAX_BUFFER];
 
-		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+	wsprintf((LPWSTR)Query, L"EXEC dbo.get_item_info");
 
-			// Bind columns 1, 2, and 3  
-			retcode = SQLBindCol(hstmt, 1, SQL_WCHAR, sz_id, MAX_STR_LEN, &cb_id);
+	retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+		
+		float db_x, db_y, db_z;
+		int db_id, db_type, db_draw;
+		SQLLEN cb_x = 0, cb_y = 0, cb_z = 0, cb_id = 0, cb_type = 0, cb_draw = 0;
+
+		// Bind columns 1, 2, and 3  
+		retcode = SQLBindCol(hstmt, 1, SQL_INTEGER, &db_id, MAX_STR_LEN, &cb_id);
+		retcode = SQLBindCol(hstmt, 2, SQL_INTEGER, &db_type, MAX_STR_LEN, &cb_type);
+		retcode = SQLBindCol(hstmt, 3, SQL_REAL, &db_x, MAX_STR_LEN, &cb_x);
+		retcode = SQLBindCol(hstmt, 4, SQL_REAL, &db_y, MAX_STR_LEN, &cb_y);
+		retcode = SQLBindCol(hstmt, 5, SQL_REAL, &db_z, MAX_STR_LEN, &cb_z);
+		retcode = SQLBindCol(hstmt, 6, SQL_INTEGER, &db_draw, MAX_STR_LEN, &cb_draw);
+
+		// Fetch and print each row of data. On an error, display a message and exit.  
+		while (true) {
+			retcode = SQLFetch(hstmt);
+			if (retcode == SQL_ERROR || retcode == SQL_SUCCESS_WITH_INFO)
+			{
+				//show_error();
+			}
+			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
+			{
+				//wprintf(L"%d: %S %S %S\n", i + 1, sCustID, szName, szPhone);
+				items[db_id].SetPos(db_x, db_y, db_z);
+				items[db_id].SetType(db_type);
+				items[db_id].SetDraw(db_draw);
+			}
+			else
+				break;
 		}
+		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+#if (DebugMod == TRUE )
+			printf("ID : %s\tX : %d\tY : %d\n", sz_id, db_x, db_y);
+#endif
+			return DB_LOGIN_SUCCESS;
+		}
+	}
+
+	if (retcode == SQL_NO_DATA) {
+		return DB_NO_DATA;
+	}
+
+	if (retcode == SQL_ERROR) {
+		return DB_LOGIN_FAIL;
+	}		
+}
+
+void insert_item_db(int id, int type, float x, float y, float z, int draw)
+{
+	retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+	WCHAR Query[MAX_BUFFER];
+
+	swprintf((LPWSTR)Query, L"EXEC dbo.insert_item %d, %d, %f, %f, %f, %d", id, type, x, y, z, draw);
+
+	retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
+	{
+
+	}
+	if (retcode == SQL_ERROR || retcode == SQL_SUCCESS_WITH_INFO)
+	{
+		HandleDiagnosticRecord(hstmt, SQL_HANDLE_STMT, retcode);
+
+	}
+}
+
+
+void HandleDiagnosticRecord(SQLHANDLE hHandle, SQLSMALLINT hType, RETCODE RetCode)
+{
+	SQLSMALLINT iRec = 0;
+	SQLINTEGER iError;
+	WCHAR wszMessage[1000];
+	WCHAR wszState[SQL_SQLSTATE_SIZE + 1];
+	if (RetCode == SQL_INVALID_HANDLE) {
+		fwprintf(stderr, L"Invalid handle!\n");
+		return;
+	}
+	while (SQLGetDiagRecW(hType, hHandle, ++iRec, wszState, &iError, wszMessage, (SQLSMALLINT)(sizeof(wszMessage) / sizeof(WCHAR)), (SQLSMALLINT *)NULL) == SQL_SUCCESS)
+	{
+		//Hide data truncated..
+		if (wcsncmp(wszState, L"01004", 5))
+		{
+			fwprintf(stderr, L"[%5.5s] %s (%d) \n", wszState, wszMessage, iError);
+		}
+	}
 }
 
 void autosave_info_db()
