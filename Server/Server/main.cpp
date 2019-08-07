@@ -31,7 +31,8 @@ enum DB
 	DB_LOGIN_SUCCESS,
 	DB_ALREADY_LOGIN,
 	DB_NO_DATA,
-	DB_LOGIN_FAIL
+	DB_LOGIN_FAIL,
+	DB_SIGNUP
 };
 
 Player clients[MAX_USER + 1]; // SOCKET이 어떤 SOCKETINFO 인지 알아야한다!!
@@ -49,10 +50,6 @@ SQLHENV henv;
 SQLHDBC hdbc;
 SQLHSTMT hstmt = 0;
 SQLRETURN retcode;
-SQLWCHAR sz_id[MAX_STR_LEN], sz_password[MAX_STR_LEN], sz_nickname[MAX_STR_LEN];
-float db_x, db_y, db_z;
-int db_hp, db_maxhp, db_item[4], db_connect;
-SQLLEN cb_id = 0, cb_password = 0, cb_nickname = 0, cb_x = 0, cb_y = 0, cb_z = 0, cb_hp = 0, cb_maxhp = 0, cb_item[4]{ 0 }, cb_connect = 0;
 
 void error_display(const char *msg, int err_no);
 void initialize();
@@ -74,9 +71,11 @@ void process_packet(const int id, const int packet_size, const char * buf);
 
 //------------------------------packet------------------------------
 void send_login_ok_packet(int id);
+void send_login_fail_packet(int id);
+void send_signup_packet(int id);
 void send_put_player_packet(int id);
 void send_my_status_to_all_packet(int id);
-void send_all_player_packet(int id);
+//void send_all_player_packet(int id);
 void send_remove_player_packet(int to, int obj);
 void send_put_monster_packet(int monster_id);
 void send_put_item_packet(int id);
@@ -90,13 +89,16 @@ void send_init_packet(int id);
 //float db_x, db_y, db_z;
 //int db_hp, db_maxhp, db_item[4], db_connect;
 void init_DB();
+void set_login_off(int ci);
 int get_DB_Info(int ci);
 void set_DB_Info(int ci);
 void set_DB_Shutdown(int ci);
 void new_DB_Id(int ci);
-int check_login(string a, string b);
+int check_login(string a, string b, int id);
 void autosave_info_db();
 //--------------------------------DB-------------------------------
+
+wchar_t* ConvertCtoWC(const char *str);
 
 int main()
 {
@@ -212,6 +214,7 @@ void disconnect(int id)
 	closesocket(clients[id].sock.socket);
 	clients[id].sock.connected = false;
 	clients[id].SetUnlock();
+	set_login_off(id);
 	for (int i = 1; i <= MAX_USER; ++i) {
 		if (false == clients[i].sock.connected) continue;
 		send_remove_player_packet(i,id);
@@ -502,34 +505,30 @@ void process_packet(const int id, const int packet_size, const char * buf)
 		char game_pw[10];
 		strcpy(game_id, a.c_str());
 		strcpy(game_pw, b.c_str());
+		clients[id].SetGameId(game_id);
+		clients[id].SetGamePassword(game_pw);
 
-		int ret = check_login(a, b);
+		int ret = check_login(a, b, id);
 		if (ret == DB::DB_LOGIN_SUCCESS)
 		{
-			clients[id].SetLock();
-			clients[id].SetGameId(game_id);
-			clients[id].SetGamePassword(game_pw);
-			clients[id].SetPos(db_x, db_y, db_z);
-			clients[id].SetHp(db_hp);
-			clients[id].SetMaxhp(db_maxhp);
-			clients[id].SetItem(0, db_item[0]);
-			clients[id].SetItem(1, db_item[1]);
-			clients[id].SetItem(2, db_item[2]);
-			clients[id].SetItem(3, db_item[3]);
-			clients[id].SetUnlock();
+			send_login_ok_packet(id);
+
 			send_init_packet(id);
 			send_put_player_packet(id);
 		}
 		else if (ret == DB::DB_ALREADY_LOGIN)
 		{
-
+			
 		}
-		else if (ret == DB::DB_NO_DATA)
+		else if (ret == DB::DB_SIGNUP)
 		{
+			send_init_packet(id);
+			send_put_player_packet(id);
+			send_signup_packet(id);
 		}
-		else
+		else if (ret == DB::DB_LOGIN_FAIL)
 		{
-
+			disconnect(id);
 		}
 	}
 		break;
@@ -585,19 +584,24 @@ void send_login_ok_packet(int id)
 	clients[id].SetLock();
 	int i = clients[id].GetId();
 	int hp = clients[id].GetHp();
-	int ani = clients[id].GetAnimator();
-	float x = clients[id].GetDirX();
-	float z = clients[id].GetDirZ();
 	auto name = builder.CreateString(clients[id].GetName());
-	float h = clients[id].GetHorizontal();
-	float v = clients[id].GetVertical();
 	auto pos = clients[id].GetPos();
-	auto rot = clients[id].GetRotation();
 	clients[id].SetUnlock();
-	auto data = CreateClient_info(builder, i, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x,rot.y,rot.z));
+	auto data = CreateClient_info(builder, i, hp, 0, 0, 0, 0, 0, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(0,0,0));
 	builder.Finish(data);
-	SendPacket(SC_ID, id, builder.GetBufferPointer(), builder.GetSize());
+	SendPacket(SC_LOGIN_SUCCESS, id, builder.GetBufferPointer(), builder.GetSize());
 }
+
+void send_login_fail_packet(int id)
+{
+	SendPacket(SC_LOGIN_FAIL, id, 0, 0);
+}
+
+void send_signup_packet(int id)
+{
+	SendPacket(SC_SIGNUP, id, 0, 0);
+}
+
 void send_put_player_packet(int id)
 {
 	flatbuffers::FlatBufferBuilder builder;
@@ -628,49 +632,49 @@ void send_put_player_packet(int id)
 		clients[to].SetUnlock();
 	}
 }
-void send_all_player_packet(int to)
-{
-	flatbuffers::FlatBufferBuilder builder;
-	builder.Clear();
-	std::vector<flatbuffers::Offset<Client_info>> clients_data;
-
-	for (int i = 1; i<=MAX_USER;++i)
-	{
-		clients[i].SetLock();
-		if (clients[i].sock.connected == false || clients[i].GetHp() == 0)
-		{
-			clients[i].SetUnlock();
-			continue;
-		}
-		if (clients[i].GetId() == to)
-		{
-			clients[i].SetUnlock();
-			continue;
-		}
-		int id = clients[i].GetId();
-		int hp = clients[i].GetHp();
-		int ani = clients[i].GetAnimator();
-		float x = clients[i].GetDirX();
-		float z = clients[i].GetDirZ();
-		auto name = builder.CreateString(clients[i].GetName());
-		float h = clients[i].GetHorizontal();
-		float v = clients[i].GetVertical();
-		auto pos = clients[i].GetPos();
-		auto rot = clients[i].GetRotation();
-		
-		clients[i].SetUnlock();
-
-		auto data = CreateClient_info(builder, id, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
-		clients_data.emplace_back(data);
-	}
-	if (clients_data.size() == 0)
-		return;
-	auto full_data = builder.CreateVector(clients_data);
-	auto p = CreateClient_Collection(builder, full_data);
-	builder.Finish(p);
-
-	SendPacket(SC_ALL_PLAYER_DATA, to, builder.GetBufferPointer(), builder.GetSize());
-}
+//void send_all_player_packet(int to)
+//{
+//	flatbuffers::FlatBufferBuilder builder;
+//	builder.Clear();
+//	std::vector<flatbuffers::Offset<Client_info>> clients_data;
+//
+//	for (int i = 1; i<=MAX_USER;++i)
+//	{
+//		clients[i].SetLock();
+//		if (clients[i].sock.connected == false || clients[i].GetHp() == 0)
+//		{
+//			clients[i].SetUnlock();
+//			continue;
+//		}
+//		if (clients[i].GetId() == to)
+//		{
+//			clients[i].SetUnlock();
+//			continue;
+//		}
+//		int id = clients[i].GetId();
+//		int hp = clients[i].GetHp();
+//		int ani = clients[i].GetAnimator();
+//		float x = clients[i].GetDirX();
+//		float z = clients[i].GetDirZ();
+//		auto name = builder.CreateString(clients[i].GetName());
+//		float h = clients[i].GetHorizontal();
+//		float v = clients[i].GetVertical();
+//		auto pos = clients[i].GetPos();
+//		auto rot = clients[i].GetRotation();
+//		
+//		clients[i].SetUnlock();
+//
+//		auto data = CreateClient_info(builder, id, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
+//		clients_data.emplace_back(data);
+//	}
+//	if (clients_data.size() == 0)
+//		return;
+//	auto full_data = builder.CreateVector(clients_data);
+//	auto p = CreateClient_Collection(builder, full_data);
+//	builder.Finish(p);
+//
+//	SendPacket(SC_ALL_PLAYER_DATA, to, builder.GetBufferPointer(), builder.GetSize());
+//}
 void send_my_status_to_all_packet(int id)
 {
 	flatbuffers::FlatBufferBuilder builder;
@@ -843,11 +847,14 @@ void init_DB()
 
 }
 
-void set_login_on(int ci)
+void set_login_off(int ci)
 {
 	retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
 	WCHAR Query[MAX_BUFFER];
-	wsprintf((LPWSTR)Query, L"EXEC dbo.user_get_info %s, %s", clients[ci].GetGameId(), clients[ci].GetGamePassword());
+
+	wchar_t * game_id = ConvertCtoWC(clients[ci].GetGameId());
+
+	swprintf((LPWSTR)Query, L"EXEC dbo.user_logout %s, %f, %f, %f, %d, %d, %d, %d, %d, %d", game_id, clients[ci].GetXPos(), clients[ci].GetXPos(), clients[ci].GetXPos(), clients[ci].GetHp(), clients[ci].GetItem(0), clients[ci].GetItem(1), clients[ci].GetItem(2), clients[ci].GetItem(3), clients[ci].GetType());
 	//sprintf(buf, "EXEC dbo.user_get_info %s, %s", clients[ci].GetGameId(), clients[ci].GetGamePassword());
 	//MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
 	//sql_data[strlen(buf)] = '\0';
@@ -860,19 +867,24 @@ void set_login_on(int ci)
 }
   
 
-int check_login(string a, string b)
+int check_login(string a, string b, int id)
 {
 		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
 		WCHAR Query[MAX_BUFFER];
+		
+		wchar_t * game_id = ConvertCtoWC(a.c_str());
+		wchar_t * game_pw = ConvertCtoWC(b.c_str());
 
-		wsprintf((LPWSTR)Query, L"EXEC dbo.user_login %s, %s", a, b);
+		swprintf((LPWSTR)Query, L"EXEC dbo.user_login %s, %s", game_id, game_pw);
 		retcode = SQLExecDirect(hstmt, (SQLWCHAR*)Query, SQL_NTS);
-		//sprintf(buf, "EXEC dbo.user_login %s, %s", a, b);
-		//MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
-		//sql_data[strlen(buf)] = '\0';
 
-		//retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+
+
+			SQLWCHAR sz_id[MAX_STR_LEN], sz_password[MAX_STR_LEN], sz_nickname[MAX_STR_LEN];
+			float db_x, db_y, db_z;
+			int db_hp, db_maxhp, db_item[4], db_connect, db_character;
+			SQLLEN cb_id = 0, cb_password = 0, cb_nickname = 0, cb_x = 0, cb_y = 0, cb_z = 0, cb_hp = 0, cb_maxhp = 0, cb_item[4]{ 0 }, cb_connect = 0, cb_character = 0;
 
 			// Bind columns 1, 2, and 3  
 			retcode = SQLBindCol(hstmt, 1, SQL_WCHAR, sz_id, MAX_STR_LEN, &cb_id);
@@ -888,12 +900,24 @@ int check_login(string a, string b)
 			retcode = SQLBindCol(hstmt, 11, SQL_INTEGER, &db_item[2], MAX_STR_LEN, &cb_item[2]);
 			retcode = SQLBindCol(hstmt, 12, SQL_INTEGER, &db_item[3], MAX_STR_LEN, &cb_item[3]);
 			retcode = SQLBindCol(hstmt, 13, SQL_INTEGER, &db_connect, MAX_STR_LEN, &cb_connect);
+			retcode = SQLBindCol(hstmt, 14, SQL_INTEGER, &db_character, MAX_STR_LEN, &cb_character);
 
 			// Fetch and print each row of data. On an error, display a message and exit.  
 
 			retcode = SQLFetch(hstmt);
-
 			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+
+			clients[id].SetLock();
+			clients[id].SetPos(db_x, db_y, db_z);
+			clients[id].SetHp(db_hp);
+			clients[id].SetMaxhp(db_maxhp);
+			clients[id].SetItem(0, db_item[0]);
+			clients[id].SetItem(1, db_item[1]);
+			clients[id].SetItem(2, db_item[2]);
+			clients[id].SetItem(3, db_item[3]);
+			clients[id].SetDraw(true);
+			clients[id].SetUnlock();
+
 				if (db_connect)
 				{
 					//연결끊기 후
@@ -902,14 +926,15 @@ int check_login(string a, string b)
 				//connect 1로 바꾸기
 				return DB_LOGIN_SUCCESS;
 			}
+			else if (retcode == SQL_ERROR)
+			{
+				return DB_SIGNUP;
+			}
 		}
+		if (retcode == SQL_ERROR)
+		{
 
-		if (retcode == SQL_NO_DATA) {
-			//아이디 비번 추가하기
-			return DB_NO_DATA;
-		}
-
-		if (retcode == SQL_ERROR) {  
+			HandleDiagnosticRecord(hstmt, SQL_HANDLE_STMT, retcode);
 			return DB_LOGIN_FAIL;
 		}
 }
@@ -924,13 +949,18 @@ int get_DB_Info(int ci) {
 		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 
+			SQLWCHAR sz_id[MAX_STR_LEN], sz_password[MAX_STR_LEN], sz_nickname[MAX_STR_LEN];
+			float db_x, db_y, db_z;
+			int db_hp, db_maxhp, db_item[4], db_connect, db_character;
+			SQLLEN cb_id = 0, cb_password = 0, cb_nickname = 0, cb_x = 0, cb_y = 0, cb_z = 0, cb_hp = 0, cb_maxhp = 0, cb_item[4]{ 0 }, cb_connect = 0, cb_character = 0;
+
 			// Bind columns 1, 2, and 3  
 			retcode = SQLBindCol(hstmt, 1, SQL_WCHAR, sz_id, MAX_STR_LEN, &cb_id);
 			retcode = SQLBindCol(hstmt, 2, SQL_WCHAR, sz_password, MAX_STR_LEN, &cb_password);
 			retcode = SQLBindCol(hstmt, 3, SQL_WCHAR, sz_nickname, MAX_STR_LEN, &cb_nickname);
-			retcode = SQLBindCol(hstmt, 4, SQL_FLOAT, &db_x, MAX_STR_LEN, &cb_x);
-			retcode = SQLBindCol(hstmt, 5, SQL_FLOAT, &db_y, MAX_STR_LEN, &cb_y);
-			retcode = SQLBindCol(hstmt, 6, SQL_FLOAT, &db_z, MAX_STR_LEN, &cb_z);
+			retcode = SQLBindCol(hstmt, 4, SQL_REAL, &db_x, MAX_STR_LEN, &cb_x);
+			retcode = SQLBindCol(hstmt, 5, SQL_REAL, &db_y, MAX_STR_LEN, &cb_y);
+			retcode = SQLBindCol(hstmt, 6, SQL_REAL, &db_z, MAX_STR_LEN, &cb_z);
 			retcode = SQLBindCol(hstmt, 7, SQL_INTEGER, &db_hp, MAX_STR_LEN, &cb_hp);
 			retcode = SQLBindCol(hstmt, 8, SQL_INTEGER, &db_maxhp, MAX_STR_LEN, &cb_maxhp);
 			retcode = SQLBindCol(hstmt, 9, SQL_INTEGER, &db_item[0], MAX_STR_LEN, &cb_item[0]);
@@ -938,6 +968,7 @@ int get_DB_Info(int ci) {
 			retcode = SQLBindCol(hstmt, 11, SQL_INTEGER, &db_item[2], MAX_STR_LEN, &cb_item[2]);
 			retcode = SQLBindCol(hstmt, 12, SQL_INTEGER, &db_item[3], MAX_STR_LEN, &cb_item[3]);
 			retcode = SQLBindCol(hstmt, 13, SQL_INTEGER, &db_connect, MAX_STR_LEN, &cb_connect);
+			retcode = SQLBindCol(hstmt, 14, SQL_INTEGER, &db_character, MAX_STR_LEN, &cb_character);
 
 			// Fetch and print each row of data. On an error, display a message and exit.  
 
@@ -971,13 +1002,18 @@ void set_DB_Info(int ci) {
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 
 
+			SQLWCHAR sz_id[MAX_STR_LEN], sz_password[MAX_STR_LEN], sz_nickname[MAX_STR_LEN];
+			float db_x, db_y, db_z;
+			int db_hp, db_maxhp, db_item[4], db_connect, db_character;
+			SQLLEN cb_id = 0, cb_password = 0, cb_nickname = 0, cb_x = 0, cb_y = 0, cb_z = 0, cb_hp = 0, cb_maxhp = 0, cb_item[4]{ 0 }, cb_connect = 0, cb_character = 0;
+
 			// Bind columns 1, 2, and 3  
 			retcode = SQLBindCol(hstmt, 1, SQL_WCHAR, sz_id, MAX_STR_LEN, &cb_id);
 			retcode = SQLBindCol(hstmt, 2, SQL_WCHAR, sz_password, MAX_STR_LEN, &cb_password);
 			retcode = SQLBindCol(hstmt, 3, SQL_WCHAR, sz_nickname, MAX_STR_LEN, &cb_nickname);
-			retcode = SQLBindCol(hstmt, 4, SQL_FLOAT, &db_x, MAX_STR_LEN, &cb_x);
-			retcode = SQLBindCol(hstmt, 5, SQL_FLOAT, &db_y, MAX_STR_LEN, &cb_y);
-			retcode = SQLBindCol(hstmt, 6, SQL_FLOAT, &db_z, MAX_STR_LEN, &cb_z);
+			retcode = SQLBindCol(hstmt, 4, SQL_REAL, &db_x, MAX_STR_LEN, &cb_x);
+			retcode = SQLBindCol(hstmt, 5, SQL_REAL, &db_y, MAX_STR_LEN, &cb_y);
+			retcode = SQLBindCol(hstmt, 6, SQL_REAL, &db_z, MAX_STR_LEN, &cb_z);
 			retcode = SQLBindCol(hstmt, 7, SQL_INTEGER, &db_hp, MAX_STR_LEN, &cb_hp);
 			retcode = SQLBindCol(hstmt, 8, SQL_INTEGER, &db_maxhp, MAX_STR_LEN, &cb_maxhp);
 			retcode = SQLBindCol(hstmt, 9, SQL_INTEGER, &db_item[0], MAX_STR_LEN, &cb_item[0]);
@@ -985,6 +1021,7 @@ void set_DB_Info(int ci) {
 			retcode = SQLBindCol(hstmt, 11, SQL_INTEGER, &db_item[2], MAX_STR_LEN, &cb_item[2]);
 			retcode = SQLBindCol(hstmt, 12, SQL_INTEGER, &db_item[3], MAX_STR_LEN, &cb_item[3]);
 			retcode = SQLBindCol(hstmt, 13, SQL_INTEGER, &db_connect, MAX_STR_LEN, &cb_connect);
+			retcode = SQLBindCol(hstmt, 14, SQL_INTEGER, &db_character, MAX_STR_LEN, &cb_character);
 
 			// Fetch and print each row of data. On an error, display a message and exit.  
 
@@ -1153,6 +1190,15 @@ void autosave_info_db()
 			save_time = std::chrono::high_resolution_clock::now();
 		}
 	}
+}
+
+wchar_t* ConvertCtoWC(const char *str)
+{
+	assert(str);
+	int nLen = strlen(str) + 1;
+	WCHAR* wText = (LPWSTR)new WCHAR[sizeof(WCHAR)*nLen];
+	int RetVal = MultiByteToWideChar(949, 0, str, -1, wText, nLen);
+	return wText;
 }
 
 

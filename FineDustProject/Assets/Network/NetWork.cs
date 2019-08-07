@@ -62,6 +62,8 @@ namespace Game.Network
 
         public static int Client_id = -1;         // 자신의 클라이언트 아이디
 
+        public static int SceneNum = 0;
+
         float deltaTime = 0.0f;     // FPS 측정
 
         private static bool serverConnect = false;  // 서버 연결을 했는지 체크
@@ -334,7 +336,6 @@ namespace Game.Network
                 int remove_item = recvPacket[0];
                 item_data[remove_item].set_draw(false);
             }
-
             else if (type == Game.Protocol.Protocol.SC_INIT_DATA)
             {
                 ByteBuffer recv_buf = new ByteBuffer(recvPacket);
@@ -394,6 +395,18 @@ namespace Game.Network
                         item_data[id].set_draw(true);
                     }
                 }
+            }
+            else if(type == Game.Protocol.Protocol.SC_LOGIN_SUCCESS)
+            {
+                SceneNum = 2;
+            }
+            else if (type == Game.Protocol.Protocol.SC_LOGIN_FAIL)
+            {
+                
+            }
+            else if(type == Game.Protocol.Protocol.SC_SIGNUP)
+            {
+                SceneNum = 1;
             }
         }
 

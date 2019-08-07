@@ -66,3 +66,16 @@ table Login{
 id:string;
 password:string;
 }
+
+table Login_my_DB{
+id:int;
+name:string;
+position:Vec3;
+hp:int;
+maxHp:int;
+item1:int;
+item2:int;
+item3:int;
+item4:int;
+character:int;
+}

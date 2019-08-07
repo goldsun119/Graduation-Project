@@ -16,6 +16,9 @@ namespace Game.Protocol
         public static int SC_REMOVE_ITEM =			9;
         public static int SC_PUT_IN_BAG			 =	    10;
         public static int SC_INIT_DATA			 =	    11;
+        public static int SC_LOGIN_SUCCESS =       12;
+        public static int SC_LOGIN_FAIL =              13;
+        public static int SC_SIGNUP =                     14;
 
         public static int CS_INFO =                         1;
         public static int CS_GET_ITEM =                 2;

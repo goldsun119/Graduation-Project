@@ -31,7 +31,9 @@ constexpr int SC_PUT_ITEM =				8;
 constexpr int SC_REMOVE_ITEM =			9;
 constexpr int SC_PUT_IN_BAG =				10;
 constexpr int SC_INIT_DATA				 =	11;
-
+constexpr int SC_LOGIN_SUCCESS =		12;
+constexpr int SC_LOGIN_FAIL =				13;
+constexpr int SC_SIGNUP =					14;
 
 #pragma pack(push, 1)
 
