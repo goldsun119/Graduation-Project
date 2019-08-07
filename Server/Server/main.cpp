@@ -154,10 +154,6 @@ void initialize()
 	{
 		make_items();
 	}
-	else
-	{
-
-	}
 
 
 
@@ -1058,7 +1054,7 @@ int load_item()
 
 	retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
 	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-		
+
 		float db_x, db_y, db_z;
 		int db_id, db_type, db_draw;
 		SQLLEN cb_x = 0, cb_y = 0, cb_z = 0, cb_id = 0, cb_type = 0, cb_draw = 0;
@@ -1088,21 +1084,16 @@ int load_item()
 			else
 				break;
 		}
-		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-#if (DebugMod == TRUE )
-			printf("ID : %s\tX : %d\tY : %d\n", sz_id, db_x, db_y);
-#endif
+		if (items.size() <= 0)
+		{
+			return DB_NO_DATA;
+		}
+		else
+		{
+			cout << "아이템 불러오기 완료" << endl;
 			return DB_LOGIN_SUCCESS;
 		}
 	}
-
-	if (retcode == SQL_NO_DATA) {
-		return DB_NO_DATA;
-	}
-
-	if (retcode == SQL_ERROR) {
-		return DB_LOGIN_FAIL;
-	}		
 }
 
 void insert_item_db(int id, int type, float x, float y, float z, int draw)
