@@ -512,24 +512,38 @@ void process_packet(const int id, const int packet_size, const char * buf)
 		if (ret == DB::DB_LOGIN_SUCCESS)
 		{
 			send_login_ok_packet(id);
-
 			send_init_packet(id);
 			send_put_player_packet(id);
 		}
 		else if (ret == DB::DB_ALREADY_LOGIN)
 		{
-			
+			disconnect(id);
 		}
 		else if (ret == DB::DB_SIGNUP)
 		{
-			send_init_packet(id);
-			send_put_player_packet(id);
+			//send_init_packet(id);
+			//send_put_player_packet(id);
 			send_signup_packet(id);
 		}
 		else if (ret == DB::DB_LOGIN_FAIL)
 		{
 			disconnect(id);
 		}
+	}
+		break;
+	case CS_CHARACTER_SELECT:
+	{
+		if (buf[11] == 1)
+		{
+			clients[id].SetType(1);
+		}
+		else if (buf[11] == 2)
+		{
+			clients[id].SetType(2);
+		}
+		send_login_ok_packet(id);
+		send_init_packet(id);
+		send_put_player_packet(id);
 	}
 		break;
 	case CS_INFO:
@@ -583,11 +597,17 @@ void send_login_ok_packet(int id)
 	builder.Clear();
 	clients[id].SetLock();
 	int i = clients[id].GetId();
-	int hp = clients[id].GetHp();
 	auto name = builder.CreateString(clients[id].GetName());
 	auto pos = clients[id].GetPos();
+	int hp = clients[id].GetHp();
+	int mhp = clients[id].GetMaxhp();
+	int i1 = clients[id].GetItem(0);
+	int i2 = clients[id].GetItem(1);
+	int i3 = clients[id].GetItem(2);
+	int i4 = clients[id].GetItem(3);
+	int t = clients[id].GetType();
 	clients[id].SetUnlock();
-	auto data = CreateClient_info(builder, i, hp, 0, 0, 0, 0, 0, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(0,0,0));
+	auto data = CreateLogin_my_DB(builder, i, name, &Vec3(pos.x, pos.y, pos.z), hp, mhp, i1, i2, i3, i4, t);
 	builder.Finish(data);
 	SendPacket(SC_LOGIN_SUCCESS, id, builder.GetBufferPointer(), builder.GetSize());
 }
@@ -787,11 +807,11 @@ void send_init_packet(int id)
 			clients[i].SetUnlock();
 			continue;
 		}
-		//if (clients[i].GetId() == id)
-		//{
-		//	clients[i].SetUnlock();
-		//	continue;
-		//}
+		if (i== id)
+		{
+			clients[i].SetUnlock();
+			continue;
+		}
 		int id = clients[i].GetId();
 		int hp = clients[i].GetHp();
 		int ani = clients[i].GetAnimator();
@@ -854,7 +874,7 @@ void set_login_off(int ci)
 
 	wchar_t * game_id = ConvertCtoWC(clients[ci].GetGameId());
 
-	swprintf((LPWSTR)Query, L"EXEC dbo.user_logout %s, %f, %f, %f, %d, %d, %d, %d, %d, %d", game_id, clients[ci].GetXPos(), clients[ci].GetXPos(), clients[ci].GetXPos(), clients[ci].GetHp(), clients[ci].GetItem(0), clients[ci].GetItem(1), clients[ci].GetItem(2), clients[ci].GetItem(3), clients[ci].GetType());
+	swprintf((LPWSTR)Query, L"EXEC dbo.user_logout %s, %f, %f, %f, %d, %d, %d, %d, %d, %d", game_id, clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp(), clients[ci].GetItem(0), clients[ci].GetItem(1), clients[ci].GetItem(2), clients[ci].GetItem(3), clients[ci].GetType());
 	//sprintf(buf, "EXEC dbo.user_get_info %s, %s", clients[ci].GetGameId(), clients[ci].GetGamePassword());
 	//MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
 	//sql_data[strlen(buf)] = '\0';

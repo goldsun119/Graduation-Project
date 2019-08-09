@@ -86,7 +86,16 @@ public class Charactor_Select : MonoBehaviour
 
     public void ChangeScene()
     {
-        SceneManager.LoadScene(2);
+        if (Game.Network.NetWork.SceneNum == 1)
+        {
+            Game.Network.NetWork.SendSelectCharacter(s_num);
+            SceneManager.LoadScene(1);
+        }
+        else if (Game.Network.NetWork.SceneNum == 2)
+        {
+            Game.Network.NetWork.SendSelectCharacter(s_num);
+            SceneManager.LoadScene(2);
+        }
     }
 
 }

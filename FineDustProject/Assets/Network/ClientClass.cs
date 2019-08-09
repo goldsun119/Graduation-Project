@@ -18,6 +18,8 @@ namespace Game.Class
         private bool connect;
         private bool draw;
         private string name;
+        private int character;
+        private int[] item = new int[4];
 
         //private bool prefab;    // 클라이언트 프리팹이 만들어졌는지 확인
         //public GameObject player;   // 프리팹을 위한 게임 오브젝트
@@ -36,6 +38,8 @@ namespace Game.Class
         public bool get_connect() { return this.connect; }
         public bool get_draw() { return this.draw; }
         public string get_name() { return this.name; }
+        public int get_char() { return this.character; }
+        public int get_item(int index) { return this.item[index]; }
         //public bool get_prefab() { return this.prefab; }
         //public bool get_activePlayer() { return this.activePlayer; }
 
@@ -51,6 +55,8 @@ namespace Game.Class
         public void set_connect(bool value) { this.connect = value; }
         public void set_draw(bool value) { this.draw = value; }
         public void set_name(string name) { this.name = name; }
+        public void set_char(int value) { this.character = value; }
+        public void set_item(int value, int index) { this.item[index] = value; }    
         //public void set_prefab(bool value) { this.prefab = value; }
         //public void set_activePlayer(bool value) { this.activePlayer = value; }
 
@@ -99,6 +105,25 @@ namespace Game.Class
             this.name = name;
             this.position = pos;
             this.rotation = rot;
+            this.connect = true;
+            //this.prefab = false;
+            //this.player = null;
+            ////this.script = null;
+            //this.activePlayer = true;
+        }
+
+
+        public ClientClass(int id, string name, Vector3 pos, int hp, int i1, int i2, int i3, int i4, int ch)
+        {
+            this.id = id;
+            this.name = name;
+            this.position = pos;
+            this.hp = hp;
+            this.item[0] = i1;
+            this.item[1] = i2;
+            this.item[2] = i3;
+            this.item[3] = i4;
+            this.character = ch;
             this.connect = true;
             //this.prefab = false;
             //this.player = null;

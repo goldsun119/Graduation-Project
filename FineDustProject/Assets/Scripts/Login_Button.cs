@@ -33,8 +33,13 @@ public class Login_Button : MonoBehaviour
     {
         //Debug.Log(server_ip_text);
 
-        if (login_ok == true)
+        //if (login_ok == true)
+        //    SceneManager.LoadScene(1);
+
+        if (Game.Network.NetWork.SceneNum == 1)
             SceneManager.LoadScene(1);
+        else if (Game.Network.NetWork.SceneNum == 2)
+            SceneManager.LoadScene(2);
     }
     
 
@@ -56,6 +61,9 @@ public class Login_Button : MonoBehaviour
 
     public void ChangeScene()
     {
-        SceneManager.LoadScene(2);
+        if (Game.Network.NetWork.SceneNum == 1)
+            SceneManager.LoadScene(1);
+        else if (Game.Network.NetWork.SceneNum == 2)
+            SceneManager.LoadScene(2);
     }
 }

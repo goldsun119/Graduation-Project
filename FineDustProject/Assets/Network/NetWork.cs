@@ -371,6 +371,7 @@ namespace Game.Network
                     else
                     {
                         client_data.Add(id, new ClientClass(id, hp, ani, x, z, h, v, n, p, r));
+                        ClientClass iter = client_data[id];
                         client_data[id].set_draw(true);
                     }
                 }
@@ -398,6 +399,40 @@ namespace Game.Network
             }
             else if(type == Game.Protocol.Protocol.SC_LOGIN_SUCCESS)
             {
+                ByteBuffer recv_buf = new ByteBuffer(recvPacket);
+                Login_my_DB get_data = Login_my_DB.GetRootAsLogin_my_DB(recv_buf);
+                Client_id = get_data.Id;
+                new_player_id = get_data.Id;
+                int id = get_data.Id;
+                string n = get_data.Name;
+                Vector3 p = new Vector3(get_data.Position.Value.X, get_data.Position.Value.Y, get_data.Position.Value.Z);
+                int hp = get_data.Hp;
+                int mhp = get_data.MaxHp;
+                int i1 = get_data.Item1;
+                int i2 = get_data.Item2;
+                int i3 = get_data.Item3;
+                int i4 = get_data.Item4;
+                int character = get_data.Character;
+
+                if (client_data.ContainsKey(id))
+                {
+                    ClientClass iter = client_data[id];
+                    iter.set_name(n);
+                    iter.set_pos(p);
+                    iter.set_hp(hp);
+                    iter.set_item(i1, 0);
+                    iter.set_item(i2, 1);
+                    iter.set_item(i3, 2);
+                    iter.set_item(i4, 3);
+                    iter.set_char(character);
+                    iter.set_draw(true);
+                }
+                else
+                {
+                    client_data.Add(id, new ClientClass(id, n, p, hp, i1, i2, i3, i4, character));
+                    client_data[id].set_draw(true);
+                }
+
                 SceneNum = 2;
             }
             else if (type == Game.Protocol.Protocol.SC_LOGIN_FAIL)
@@ -600,6 +635,12 @@ namespace Game.Network
         public static void SendLoginInfo(string id, string pw)
         {
             Sendbyte = sF.makeLoginInfoPacket(id, pw);
+            Send_Packet(Sendbyte);
+        }
+
+        public static void SendSelectCharacter(int num)
+        {
+            Sendbyte = sF.makeCharacterSelectPacket(num);
             Send_Packet(Sendbyte);
         }
     }

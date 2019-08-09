@@ -24,6 +24,7 @@ namespace Game.Protocol
         public static int CS_GET_ITEM =                 2;
         public static int CS_MONSTER_STATUS =   3;
         public static int CS_LOGIN                       = 4;
+        public static int CS_CHARACTER_SELECT= 5;
 
         public static int MAX_USER = 4;   // 0번째는 버림
 

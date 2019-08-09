@@ -55,6 +55,9 @@ public class PlayerStatus : MonoBehaviour
         hp = 100;
         coroutine = HPControl();
         StartCoroutine(coroutine);
+        position = Game.Network.NetWork.client_data[ID].get_pos();
+        hp = Game.Network.NetWork.client_data[ID].get_hp();
+
     }
 
     // Update is called once per frame
