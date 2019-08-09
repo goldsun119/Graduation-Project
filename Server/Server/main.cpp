@@ -793,8 +793,9 @@ void send_init_packet(int id)
 		int i = items[item_id].GetId();
 		int t = items[item_id].GetType();
 		auto pos = items[item_id].GetPos();
+		int d = items[item_id].GetDraw();
 		items[item_id].SetUnlock();
-		auto data = CreateItem_info(builder, i, t, &Vec3(pos.x, pos.y, pos.z));
+		auto data = CreateItem_info(builder, i, t, &Vec3(pos.x, pos.y, pos.z), d);
 		items_data.emplace_back(data);
 	}
 	auto full_items_data = builder.CreateVector(items_data);

@@ -20,11 +20,13 @@ public struct Item_info : IFlatbufferObject
   public int Id { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
   public int Type { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
   public Vec3? Position { get { int o = __p.__offset(8); return o != 0 ? (Vec3?)(new Vec3()).__assign(o + __p.bb_pos, __p.bb) : null; } }
+  public int Draw { get { int o = __p.__offset(10); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
 
-  public static void StartItem_info(FlatBufferBuilder builder) { builder.StartObject(3); }
+  public static void StartItem_info(FlatBufferBuilder builder) { builder.StartObject(4); }
   public static void AddId(FlatBufferBuilder builder, int id) { builder.AddInt(0, id, 0); }
   public static void AddType(FlatBufferBuilder builder, int type) { builder.AddInt(1, type, 0); }
   public static void AddPosition(FlatBufferBuilder builder, Offset<Vec3> positionOffset) { builder.AddStruct(2, positionOffset.Value, 0); }
+  public static void AddDraw(FlatBufferBuilder builder, int draw) { builder.AddInt(3, draw, 0); }
   public static Offset<Item_info> EndItem_info(FlatBufferBuilder builder) {
     int o = builder.EndObject();
     return new Offset<Item_info>(o);

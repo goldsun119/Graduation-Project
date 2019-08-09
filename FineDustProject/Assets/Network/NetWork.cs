@@ -315,19 +315,26 @@ namespace Game.Network
                     int id = get_all_data.Data(i).Value.Id;
                     int t = get_all_data.Data(i).Value.Type;
                     Vector3 p = new Vector3(get_all_data.Data(i).Value.Position.Value.X, get_all_data.Data(i).Value.Position.Value.Y, get_all_data.Data(i).Value.Position.Value.Z);
-
+                    int d = get_all_data.Data(i).Value.Draw;
+                    
                     if (item_data.ContainsKey(id))
                     {
                         ItemClass iter = item_data[id];
                         iter.set_id(id);
                         iter.set_type(t);
                         iter.set_pos(p);
-                        iter.set_draw(true);
+                        if(d==0)
+                            iter.set_draw(false);
+                        else if(d==1)
+                            iter.set_draw(true);
                     }
                     else
                     {
                         item_data.Add(id, new ItemClass(id, t, p));
-                        item_data[id].set_draw(true);
+                        if(d==0)
+                            item_data[id].set_draw(false);
+                        else if(d==1)
+                            item_data[id].set_draw(true);
                     }
                 }
             }

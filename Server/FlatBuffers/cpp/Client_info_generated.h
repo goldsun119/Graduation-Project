@@ -469,7 +469,8 @@ struct Item_info FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum {
     VT_ID = 4,
     VT_TYPE = 6,
-    VT_POSITION = 8
+    VT_POSITION = 8,
+    VT_DRAW = 10
   };
   int32_t id() const {
     return GetField<int32_t>(VT_ID, 0);
@@ -480,11 +481,15 @@ struct Item_info FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const Vec3 *position() const {
     return GetStruct<const Vec3 *>(VT_POSITION);
   }
+  int32_t draw() const {
+    return GetField<int32_t>(VT_DRAW, 0);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int32_t>(verifier, VT_ID) &&
            VerifyField<int32_t>(verifier, VT_TYPE) &&
            VerifyField<Vec3>(verifier, VT_POSITION) &&
+           VerifyField<int32_t>(verifier, VT_DRAW) &&
            verifier.EndTable();
   }
 };
@@ -500,6 +505,9 @@ struct Item_infoBuilder {
   }
   void add_position(const Vec3 *position) {
     fbb_.AddStruct(Item_info::VT_POSITION, position);
+  }
+  void add_draw(int32_t draw) {
+    fbb_.AddElement<int32_t>(Item_info::VT_DRAW, draw, 0);
   }
   explicit Item_infoBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -517,8 +525,10 @@ inline flatbuffers::Offset<Item_info> CreateItem_info(
     flatbuffers::FlatBufferBuilder &_fbb,
     int32_t id = 0,
     int32_t type = 0,
-    const Vec3 *position = 0) {
+    const Vec3 *position = 0,
+    int32_t draw = 0) {
   Item_infoBuilder builder_(_fbb);
+  builder_.add_draw(draw);
   builder_.add_position(position);
   builder_.add_type(type);
   builder_.add_id(id);
@@ -883,7 +893,27 @@ inline flatbuffers::Offset<Login_my_DB> CreateLogin_my_DBDirect(
       item4,
       character);
 }
+inline const Game::Protocol::Client_info *GetClientView(const void *buf) {
+	return flatbuffers::GetRoot<Game::Protocol::Client_info>(buf);
+}
+inline const Game::Protocol::Monster_info *GetMonsterView(const void *buf) {
+	return flatbuffers::GetRoot<Game::Protocol::Monster_info>(buf);
+}
+inline const Game::Protocol::Item_info *GetItemView(const void *buf) {
+	return flatbuffers::GetRoot<Game::Protocol::Item_info>(buf);
+}
 
+inline const Game::Protocol::Eat_Item *GetEatView(const void *buf) {
+	return flatbuffers::GetRoot<Game::Protocol::Eat_Item>(buf);
+}
+
+inline const Game::Protocol::Login *GetLoginView(const void *buf) {
+	return flatbuffers::GetRoot<Game::Protocol::Login>(buf);
+}
+
+inline const Game::Protocol::Login_my_DB *GetDBdataView(const void *buf) {
+	return flatbuffers::GetRoot<Game::Protocol::Login_my_DB>(buf);
+}
 }  // namespace Protocol
 }  // namespace Game
 

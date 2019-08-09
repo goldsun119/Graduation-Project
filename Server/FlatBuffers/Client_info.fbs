@@ -48,6 +48,7 @@ table Item_info{
 id:int;
 type:int;
 position:Vec3;
+draw:int;
 }
 
 table Eat_Item{
