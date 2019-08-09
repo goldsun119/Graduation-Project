@@ -40,6 +40,19 @@ position:Vec3;
 rotation:Vec3;
 }
 
+table DB_Monster{
+id:int;
+position:Vec3;
+alive:int;
+initPos:Vec3;
+hp:int;
+maxhp:int;
+}
+
+table DBMonster_Collection{
+data:[DB_Monster];
+}
+
 table Item_Collection{
 data:[Item_info];
 }

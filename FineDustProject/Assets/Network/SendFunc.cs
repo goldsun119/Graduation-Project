@@ -79,6 +79,25 @@ namespace Game.Network
             return real_packet;
         }
 
+
+        public byte[] makeMonsterInfoPacket(int id)
+        {
+            FlatBufferBuilder fbb = new FlatBufferBuilder(1);
+            fbb.Clear();
+            Monster_info.StartMonster_info(fbb);
+            //Monster_info.AddId(fbb, )
+            var endOffset = Monster_info.EndMonster_info(fbb);
+            fbb.Finish(endOffset.Value);
+
+            byte[] packet = fbb.SizedByteArray();
+            byte[] magic_packet = makePacketinfo(packet.Length, CS_LOGIN);
+            byte[] real_packet = new byte[packet.Length + 8];
+            System.Buffer.BlockCopy(magic_packet, 0, real_packet, 0, magic_packet.Length);
+            System.Buffer.BlockCopy(packet, 0, real_packet, 8, packet.Length);
+
+            return real_packet;
+        }
+
         public byte[] makeCharacterSelectPacket(int num)
         {
             byte[] packet = BitConverter.GetBytes(num);

@@ -64,6 +64,8 @@ namespace Game.Network
 
         public static int SceneNum = 0;
 
+        public static int calculate_monster = -1;
+
         float deltaTime = 0.0f;     // FPS 측정
 
         private static bool serverConnect = false;  // 서버 연결을 했는지 체크
@@ -517,6 +519,9 @@ namespace Game.Network
                 }
                 else
                 {
+                    serverConnect = false;
+                    Login_Button.login_ok = false;
+                    sock.Close();
                     Debug.Log("서버와 연결이 끊어졌습니다.");
                 }
             }
@@ -602,7 +607,7 @@ namespace Game.Network
 
         public void connectSocket()
         {
-            if (serverConnect == false)
+           // if (serverConnect == false)
             {     // Mode가 0이 될 경우 = 플레이어가 로그인 한 이후
                 sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 sock.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
@@ -649,6 +654,11 @@ namespace Game.Network
         {
             Sendbyte = sF.makeCharacterSelectPacket(num);
             Send_Packet(Sendbyte);
+        }
+
+        public static void SendMonsterInfo(int id)
+        {
+            //Sendbyte;
         }
     }
 }

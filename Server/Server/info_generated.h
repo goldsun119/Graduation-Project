@@ -19,6 +19,10 @@ namespace Game {
 
 		struct Monster_info;
 
+		struct DB_Monster;
+
+		struct DBMonster_Collection;
+
 		struct Item_Collection;
 
 		struct Item_info;
@@ -413,6 +417,146 @@ namespace Game {
 			builder_.add_hp(hp);
 			builder_.add_id(id);
 			return builder_.Finish();
+		}
+
+		struct DB_Monster FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+			enum {
+				VT_ID = 4,
+				VT_POSITION = 6,
+				VT_ALIVE = 8,
+				VT_INITPOS = 10,
+				VT_HP = 12,
+				VT_MAXHP = 14
+			};
+			int32_t id() const {
+				return GetField<int32_t>(VT_ID, 0);
+			}
+			const Vec3 *position() const {
+				return GetStruct<const Vec3 *>(VT_POSITION);
+			}
+			int32_t alive() const {
+				return GetField<int32_t>(VT_ALIVE, 0);
+			}
+			const Vec3 *initPos() const {
+				return GetStruct<const Vec3 *>(VT_INITPOS);
+			}
+			int32_t hp() const {
+				return GetField<int32_t>(VT_HP, 0);
+			}
+			int32_t maxhp() const {
+				return GetField<int32_t>(VT_MAXHP, 0);
+			}
+			bool Verify(flatbuffers::Verifier &verifier) const {
+				return VerifyTableStart(verifier) &&
+					VerifyField<int32_t>(verifier, VT_ID) &&
+					VerifyField<Vec3>(verifier, VT_POSITION) &&
+					VerifyField<int32_t>(verifier, VT_ALIVE) &&
+					VerifyField<Vec3>(verifier, VT_INITPOS) &&
+					VerifyField<int32_t>(verifier, VT_HP) &&
+					VerifyField<int32_t>(verifier, VT_MAXHP) &&
+					verifier.EndTable();
+			}
+		};
+
+		struct DB_MonsterBuilder {
+			flatbuffers::FlatBufferBuilder &fbb_;
+			flatbuffers::uoffset_t start_;
+			void add_id(int32_t id) {
+				fbb_.AddElement<int32_t>(DB_Monster::VT_ID, id, 0);
+			}
+			void add_position(const Vec3 *position) {
+				fbb_.AddStruct(DB_Monster::VT_POSITION, position);
+			}
+			void add_alive(int32_t alive) {
+				fbb_.AddElement<int32_t>(DB_Monster::VT_ALIVE, alive, 0);
+			}
+			void add_initPos(const Vec3 *initPos) {
+				fbb_.AddStruct(DB_Monster::VT_INITPOS, initPos);
+			}
+			void add_hp(int32_t hp) {
+				fbb_.AddElement<int32_t>(DB_Monster::VT_HP, hp, 0);
+			}
+			void add_maxhp(int32_t maxhp) {
+				fbb_.AddElement<int32_t>(DB_Monster::VT_MAXHP, maxhp, 0);
+			}
+			explicit DB_MonsterBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+				: fbb_(_fbb) {
+				start_ = fbb_.StartTable();
+			}
+			DB_MonsterBuilder &operator=(const DB_MonsterBuilder &);
+			flatbuffers::Offset<DB_Monster> Finish() {
+				const auto end = fbb_.EndTable(start_);
+				auto o = flatbuffers::Offset<DB_Monster>(end);
+				return o;
+			}
+		};
+
+		inline flatbuffers::Offset<DB_Monster> CreateDB_Monster(
+			flatbuffers::FlatBufferBuilder &_fbb,
+			int32_t id = 0,
+			const Vec3 *position = 0,
+			int32_t alive = 0,
+			const Vec3 *initPos = 0,
+			int32_t hp = 0,
+			int32_t maxhp = 0) {
+			DB_MonsterBuilder builder_(_fbb);
+			builder_.add_maxhp(maxhp);
+			builder_.add_hp(hp);
+			builder_.add_initPos(initPos);
+			builder_.add_alive(alive);
+			builder_.add_position(position);
+			builder_.add_id(id);
+			return builder_.Finish();
+		}
+
+		struct DBMonster_Collection FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+			enum {
+				VT_DATA = 4
+			};
+			const flatbuffers::Vector<flatbuffers::Offset<DB_Monster>> *data() const {
+				return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<DB_Monster>> *>(VT_DATA);
+			}
+			bool Verify(flatbuffers::Verifier &verifier) const {
+				return VerifyTableStart(verifier) &&
+					VerifyOffset(verifier, VT_DATA) &&
+					verifier.VerifyVector(data()) &&
+					verifier.VerifyVectorOfTables(data()) &&
+					verifier.EndTable();
+			}
+		};
+
+		struct DBMonster_CollectionBuilder {
+			flatbuffers::FlatBufferBuilder &fbb_;
+			flatbuffers::uoffset_t start_;
+			void add_data(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<DB_Monster>>> data) {
+				fbb_.AddOffset(DBMonster_Collection::VT_DATA, data);
+			}
+			explicit DBMonster_CollectionBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+				: fbb_(_fbb) {
+				start_ = fbb_.StartTable();
+			}
+			DBMonster_CollectionBuilder &operator=(const DBMonster_CollectionBuilder &);
+			flatbuffers::Offset<DBMonster_Collection> Finish() {
+				const auto end = fbb_.EndTable(start_);
+				auto o = flatbuffers::Offset<DBMonster_Collection>(end);
+				return o;
+			}
+		};
+
+		inline flatbuffers::Offset<DBMonster_Collection> CreateDBMonster_Collection(
+			flatbuffers::FlatBufferBuilder &_fbb,
+			flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<DB_Monster>>> data = 0) {
+			DBMonster_CollectionBuilder builder_(_fbb);
+			builder_.add_data(data);
+			return builder_.Finish();
+		}
+
+		inline flatbuffers::Offset<DBMonster_Collection> CreateDBMonster_CollectionDirect(
+			flatbuffers::FlatBufferBuilder &_fbb,
+			const std::vector<flatbuffers::Offset<DB_Monster>> *data = nullptr) {
+			return Game::Protocol::CreateDBMonster_Collection(
+				_fbb,
+				data ? _fbb.CreateVector<flatbuffers::Offset<DB_Monster>>(*data) : 0);
 		}
 
 		struct Item_Collection FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
@@ -913,6 +1057,10 @@ namespace Game {
 
 		inline const Game::Protocol::Login_my_DB *GetDBdataView(const void *buf) {
 			return flatbuffers::GetRoot<Game::Protocol::Login_my_DB>(buf);
+		}
+
+		inline const Game::Protocol::DB_Monster *GetDBMonsterView(const void *buf) {
+			return flatbuffers::GetRoot<Game::Protocol::DB_Monster>(buf);
 		}
 	}  // namespace Protocol
 }  // namespace Game

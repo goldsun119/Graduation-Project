@@ -57,6 +57,7 @@ void make_items();
 int get_new_id();
 
 void disconnect(int id);
+void already_login_disconnect(int id);
 void worker_thread();
 void do_accept();
 void do_recv(int id);
@@ -221,6 +222,16 @@ void disconnect(int id)
 	}
 	cout << "立加辆丰 ID:" << id << endl;
 }
+
+void already_login_disconnect(int id)
+{
+	clients[id].SetLock();
+	closesocket(clients[id].sock.socket);
+	clients[id].sock.connected = false;
+	clients[id].SetUnlock();
+	cout << "立加辆丰 ID:" << id << endl;
+}
+
 void worker_thread()
 {
 	while (true)
@@ -517,7 +528,7 @@ void process_packet(const int id, const int packet_size, const char * buf)
 		}
 		else if (ret == DB::DB_ALREADY_LOGIN)
 		{
-			disconnect(id);
+			already_login_disconnect(id);
 		}
 		else if (ret == DB::DB_SIGNUP)
 		{

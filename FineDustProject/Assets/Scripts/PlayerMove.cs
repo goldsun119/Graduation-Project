@@ -20,6 +20,7 @@ public class PlayerMove : MonoBehaviour
         player = playerObj.GetComponent<PlayerStatus>();
         rigid = GetComponent<Rigidbody>();
         CMgr = GameObject.Find("Players").GetComponent<CameraMgr>();
+
     }
 
     // Update is called once per frame

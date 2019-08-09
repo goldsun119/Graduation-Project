@@ -7,6 +7,7 @@ namespace Game.Class
     public class MonsterClass
     {
         private int id;
+        private int chase_id;
         private int hp;
         private int animator;
         private float dirX;
@@ -16,6 +17,7 @@ namespace Game.Class
         private bool draw;
         
         public int get_id() { return this.id; }
+        public int get_chase_id() { return this.chase_id; }
         public int get_hp() { return this.hp; }
         public int get_animator() { return this.animator; }
         public float get_dirX() { return this.dirX; }
@@ -25,6 +27,7 @@ namespace Game.Class
         public bool get_draw() { return this.draw; }
         
         public void set_id(int value) { this.id = value; }
+        public void set_chase_id(int value) { this.chase_id = value; }
         public void set_hp(int value) { this.hp = value; }
         public void set_animator(int value) { this.animator = value; }
         public void set_dirX(float value) { this.dirX = value; }

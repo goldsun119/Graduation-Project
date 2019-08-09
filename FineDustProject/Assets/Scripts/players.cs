@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class players : MonoBehaviour
 {
-    int last_id = 0;
+    int login = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,14 +25,23 @@ public class players : MonoBehaviour
                 PlayerStatus playerStatus = playerObj.GetComponent<PlayerStatus>();
                 if (Game.Network.NetWork.client_data.ContainsKey(i))
                 {
-                    //    playerStatus.position = Game.Network.NetWork.client_data[i].get_pos();
-                    //    playerStatus.rotation = Game.Network.NetWork.client_data[i].get_rot();
-                    playerStatus.draw = Game.Network.NetWork.client_data[i].get_draw();
+                //    playerStatus.rotation = Game.Network.NetWork.client_data[i].get_rot();
+                playerStatus.draw = Game.Network.NetWork.client_data[i].get_draw();
                 }
-                if (playerStatus.draw)
-                    playerObj.SetActive(true);
-                else
-                    playerObj.SetActive(false);
+            if (playerStatus.draw)
+            {
+                playerObj.SetActive(true);
+                if (login < 1)
+                {
+                    playerStatus.position = Game.Network.NetWork.client_data[i].get_pos();
+                    login++;
+                }
+
+            }
+            else
+            {
+                playerObj.SetActive(false);
+            }
             //        last_id = Game.Network.NetWork.new_player_id;
             }
         //}
