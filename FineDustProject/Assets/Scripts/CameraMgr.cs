@@ -38,6 +38,8 @@ public class CameraMgr : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        string a = "Player(" + Game.Network.NetWork.Client_id.ToString() + ")";
+        playerObj = GameObject.Find("Players").transform.Find(a).gameObject;
         player = playerObj.GetComponent<PlayerStatus>();
 
         if (Input.GetKeyUp(KeyCode.V))

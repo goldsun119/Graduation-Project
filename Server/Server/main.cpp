@@ -873,6 +873,8 @@ void init_DB()
 				if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 					std::cout << std::endl << "DB Connected" << std::endl;
 				}
+				if (retcode == SQL_ERROR)
+					HandleDiagnosticRecord(hstmt, SQL_HANDLE_STMT, retcode);
 			}
 		}
 	}

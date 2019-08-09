@@ -5,6 +5,8 @@ using UnityEngine;
 public class players : MonoBehaviour
 {
     int login = 0;
+    public GameObject playerPrefab;
+    public GameObject playerObj;
 
     // Start is called before the first frame update
     void Start()
@@ -20,8 +22,21 @@ public class players : MonoBehaviour
             for (int i = 1; i <= Game.Protocol.Protocol.MAX_USER; ++i)
             {
                 string a = "Player(" + i.ToString() + ")";
-                //GameObject playerObj = transform.GetChild(id-1).gameObject;
-                GameObject playerObj = transform.Find(a).gameObject;
+            //GameObject playerObj = transform.GetChild(id-1).gameObject;
+            Transform tmp = transform.Find(a);
+            if (tmp == null)
+            {
+                GameObject player = Instantiate(playerPrefab,
+                                                    Game.Network.NetWork.client_data[i].get_pos(),
+                                                    Quaternion.identity);
+                player.name = a;
+                player.transform.parent = transform;
+                playerObj = transform.Find(a).gameObject;
+            }
+            else
+            {
+                playerObj = transform.Find(a).gameObject;
+            }
                 PlayerStatus playerStatus = playerObj.GetComponent<PlayerStatus>();
                 if (Game.Network.NetWork.client_data.ContainsKey(i))
                 {
@@ -33,7 +48,7 @@ public class players : MonoBehaviour
                 playerObj.SetActive(true);
                 if (login < 1)
                 {
-                    playerStatus.position = Game.Network.NetWork.client_data[i].get_pos();
+                    //playerStatus.position = Game.Network.NetWork.client_data[i].get_pos();
                     login++;
                 }
 
