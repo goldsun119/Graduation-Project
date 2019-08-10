@@ -115,7 +115,7 @@ int main()
 	thread accept_thread{ do_accept };
 
 	point = std::chrono::high_resolution_clock::now();
-	thread make_thread{ make_obj };
+	//thread make_thread{ make_obj };
 	thread save_thread{ autosave_info_db };
 
 	accept_thread.join();
@@ -978,7 +978,10 @@ int get_DB_Info(int ci) {
 		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
 		WCHAR Query[MAX_BUFFER];
 
-		wsprintf((LPWSTR)Query, L"EXEC dbo.user_get_info %s, %s", clients[ci].GetGameId(), clients[ci].GetGamePassword());
+		wchar_t * game_id = ConvertCtoWC(clients[ci].GetGameId());
+		wchar_t * game_pw = ConvertCtoWC(clients[ci].GetGamePassword());
+
+		swprintf((LPWSTR)Query, L"EXEC dbo.user_get_info %s, %s", game_id, game_pw);
 
 		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
@@ -1030,7 +1033,11 @@ void set_DB_Info(int ci) {
 		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
 
 		WCHAR Query[MAX_BUFFER];
-		swprintf((LPWSTR)Query, L"EXEC dbo.set_user %s, %s, %s, %f, %f, %f, %d, %d, %d, %d, %d, %d, %d", clients[ci].GetGameId(), clients[ci].GetGamePassword(), clients[ci].GetNickname(), clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp(), clients[ci].GetMaxhp(), clients[ci].GetItem(0), clients[ci].GetItem(1), clients[ci].GetItem(2), clients[ci].GetItem(3), 1);
+
+		wchar_t * game_id = ConvertCtoWC(clients[ci].GetGameId());
+		wchar_t * game_pw = ConvertCtoWC(clients[ci].GetGamePassword());
+
+		swprintf((LPWSTR)Query, L"EXEC dbo.set_user %s, %s, %s, %f, %f, %f, %d, %d, %d, %d, %d, %d, %d", game_id, game_pw, clients[ci].GetNickname(), clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp(), clients[ci].GetMaxhp(), clients[ci].GetItem(0), clients[ci].GetItem(1), clients[ci].GetItem(2), clients[ci].GetItem(3), 1);
 
 		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
@@ -1076,7 +1083,11 @@ void new_DB_Id(int ci) {
 		retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
 		WCHAR Query[MAX_BUFFER];
 
-		swprintf((LPWSTR)Query, L"EXEC dbo.insert_user %s, %s, %s, %f, %f, %f, %d", clients[ci].GetGameId(), clients[ci].GetGamePassword(), clients[ci].GetNickname(), clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp());
+		wchar_t * game_id = ConvertCtoWC(clients[ci].GetGameId());
+		wchar_t * game_pw = ConvertCtoWC(clients[ci].GetGamePassword());
+		wchar_t * nick = ConvertCtoWC(clients[ci].GetNickname());
+
+		swprintf((LPWSTR)Query, L"EXEC dbo.insert_user %s, %s, %s, %f, %f, %f, %d", game_id, game_pw, nick, clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp());
 
 		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
@@ -1207,6 +1218,27 @@ void HandleDiagnosticRecord(SQLHANDLE hHandle, SQLSMALLINT hType, RETCODE RetCod
 	}
 }
 
+void db_set_pos(int id)
+{
+	retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+	WCHAR Query[MAX_BUFFER];
+
+	wchar_t * game_id = ConvertCtoWC(clients[id].GetGameId());
+
+	swprintf((LPWSTR)Query, L"EXEC dbo.user_set_pos %s, %f, %f, %f ", game_id, clients[id].GetXPos(), clients[id].GetYPos(), clients[id].GetZPos());
+
+	retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
+	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
+	{
+
+	}
+	if (retcode == SQL_ERROR || retcode == SQL_SUCCESS_WITH_INFO)
+	{
+		HandleDiagnosticRecord(hstmt, SQL_HANDLE_STMT, retcode);
+
+	}
+}
+
 void autosave_info_db()
 {
 	std::chrono::high_resolution_clock::time_point save_time = std::chrono::high_resolution_clock::now();
@@ -1218,7 +1250,7 @@ void autosave_info_db()
 			{
 				if (clients[i].sock.connected)
 				{
-					//DB_SQL_SET_POS(i);
+					db_set_pos(i);
 				}
 			}
 			save_time = std::chrono::high_resolution_clock::now();
