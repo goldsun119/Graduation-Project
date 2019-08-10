@@ -66,7 +66,10 @@ public class PlayerStatus : MonoBehaviour
             {
                 MoveStatus();
             }
+
             
+
+
         }
         RecvStatus();
     }
@@ -238,7 +241,7 @@ public class PlayerStatus : MonoBehaviour
     void CheatKey()
     {
         if (Input.GetKeyDown(KeyCode.P)) transform.position = new Vector3(0, 30, 360);
-        if (Input.GetKeyDown(KeyCode.O)) transform.position = new Vector3(0, 30, 100);
+        if (Input.GetKeyDown(KeyCode.O)) transform.position = new Vector3(0, 30, 50);
         if (Input.GetKeyDown(KeyCode.L)) transform.position = new Vector3(0, 30, -5);
         //if (Input.GetKeyDown(KeyCode.L)) transform.position = ;
         //if (Input.GetKeyDown(KeyCode.K)) transform.position = MonSpawner.Last_Spawn;

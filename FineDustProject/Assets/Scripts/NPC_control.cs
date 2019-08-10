@@ -9,6 +9,8 @@ public class NPC_control : MonoBehaviour
     public PlayerStatus player;
     public bool NPC_ON = false;
 
+    public GameObject UI_conversation;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -16,6 +18,7 @@ public class NPC_control : MonoBehaviour
         string a = "Player(" + Game.Network.NetWork.Client_id.ToString() + ")";
         player = GameObject.Find("Players").transform.Find(a).gameObject.GetComponent<PlayerStatus>();
         is_collision = false;
+        UI_conversation.SetActive(false);
     }
 
     // Update is called once per frame
@@ -26,11 +29,16 @@ public class NPC_control : MonoBehaviour
             if (Input.GetKeyUp(KeyCode.F) && NPC_ON == true)
             {
                 NPC_ON = false;
+                CMgr.NPCCamOff(this.gameObject);
+                player.is_move = true;
+                UI_conversation.SetActive(false);
             }
             else if (Input.GetKeyUp(KeyCode.F) && NPC_ON == false)
             {
                 NPC_ON = true;
-                player.is_move = true;
+                player.Ani_State_Walk_Run = PlayerStatus.ANI_TYPE.IDEL;
+                UI_conversation.SetActive(true);
+                //player.is_move = true;
             }
         }
 

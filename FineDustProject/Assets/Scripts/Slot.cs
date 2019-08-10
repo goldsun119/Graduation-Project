@@ -39,6 +39,9 @@ public class Slot : MonoBehaviour
         // 폰트의 크기를 부모 객체의 x지름 / 2 만큼으로 지정해준다.
         ItemImg = transform.GetChild(0).GetComponent<Image>();
         SlotImg = transform.GetComponent<Image>();
+
+        SlotImg.enabled = false;
+        ItemImg.enabled = false;
     }
 
     public void AddItem(Item item)

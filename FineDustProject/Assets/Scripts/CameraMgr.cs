@@ -117,6 +117,27 @@ public class CameraMgr : MonoBehaviour
         NPCCamMove(NPC);
     }
 
+    public void NPCCamOff(GameObject NPC)
+    {
+        NPC_On = false;
+        NPC_Cam.enabled = false;
+        switch (Camera_Num)
+        {
+            case 0:
+                ThirdCamOn();
+                break;
+            case 1:
+                FirstCamOn();
+                break;
+            case 2:
+                IsometricCamOn();
+                break;
+            default:
+                IsometricCamOn();
+                break;
+        }
+    }
+
     void ThirdCamMove()
     {
         Quaternion rotation = Quaternion.Euler(player.rotation.x, player.rotation.y, player.rotation.z);
@@ -149,7 +170,7 @@ public class CameraMgr : MonoBehaviour
     {
         //Quaternion rotation = Quaternion.Euler(NPC.transform.rotation.x, NPC.transform.rotation.y, NPC.transform.rotation.z);
         NPC_Cam.transform.rotation = Quaternion.Euler(NPC.transform.rotation.x + 15, NPC.transform.rotation.y + 180, NPC.transform.rotation.z);
-        NPC_Cam.transform.position = new Vector3(player.position.x, player.position.y + 1.5f, player.position.z + 3.0f);
+        NPC_Cam.transform.position = new Vector3(NPC.transform.position.x, NPC.transform.position.y + 1.4f, NPC.transform.position.z + 2.0f);
     }
 
     void FirstCamMouseMove()

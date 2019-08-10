@@ -82,6 +82,8 @@ public class Inventory : MonoBehaviour
     void Start()
     {
         InvenImg = transform.GetComponent<Image>();
+        InvenImg.enabled = false;
+        ImageRender(false);
     }
 
     void Update()
