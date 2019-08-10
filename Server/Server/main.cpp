@@ -34,6 +34,30 @@ enum DB
 	DB_LOGIN_FAIL,
 	DB_SIGNUP
 };
+//
+//enum EVENT_TYPE {
+//	EV_RECV,
+//	EV_SEND,
+//	EV_MONSTER_POS,
+//	EV_MONSTER_DEAD,
+//	EV_MONSTER_REVIVE
+//	
+//};
+
+struct T_EVENT {
+	std::chrono::high_resolution_clock::time_point start_time;
+	int			do_object;
+	EVENT_TYPE	event_type;
+
+	constexpr bool operator < (const T_EVENT& _Left) const
+	{	// apply operator< to operands
+		return (start_time > _Left.start_time);
+	}
+};
+
+priority_queue <T_EVENT> timer_queue;
+mutex timer_lock;
+void add_timer(EVENT_TYPE ev_type, int object, std::chrono::high_resolution_clock::time_point start_time);
 
 Player clients[MAX_USER + 1]; // SOCKET이 어떤 SOCKETINFO 인지 알아야한다!!
 
@@ -55,13 +79,17 @@ void error_display(const char *msg, int err_no);
 void initialize();
 void make_items();
 int get_new_id();
+float distance(vec3 a, vec3 b);
+
+void process_event(T_EVENT &ev);
+void do_timer();
 
 void disconnect(int id);
 void already_login_disconnect(int id);
 void worker_thread();
 void do_accept();
 void do_recv(int id);
-void make_obj();
+void make_monster();
 int load_item();
 void HandleDiagnosticRecord(SQLHANDLE hHandle, SQLSMALLINT hType, RETCODE RetCode);
 void insert_item_db(int id, int type, float x, float y, float z, int draw);
@@ -82,6 +110,11 @@ void send_put_monster_packet(int monster_id);
 void send_put_item_packet(int id);
 void send_remove_item_packet(int id, int item);
 void send_init_packet(int id);
+void send_monster_dead_packet(int monster);
+void send_monster_revive_packet(int to, int monster);
+void send_monster_target_packet(int to, int monster, int target);
+void send_monster_pos_packet(int to, int monster);
+
 //------------------------------packet------------------------------
 
 
@@ -113,12 +146,12 @@ int main()
 		worker_threads.emplace_back(thread{ worker_thread });
 
 	thread accept_thread{ do_accept };
-
+	thread timer_thread{ do_timer };
 	point = std::chrono::high_resolution_clock::now();
-	//thread make_thread{ make_obj };
 	thread save_thread{ autosave_info_db };
 
 	accept_thread.join();
+	timer_thread.join();
 	for (auto &th : worker_threads)
 		th.join();
 
@@ -158,7 +191,7 @@ void initialize()
 		make_items();
 	}
 
-
+	make_monster();
 
 }
 void make_items()
@@ -193,6 +226,41 @@ void make_items()
 	}
 	cout << "아이템 생성 완료" << endl;
 }
+
+void make_monster()
+{
+	int monster_id = 1;
+
+	srand(unsigned(time(NULL)));
+	monsters[0].SetDraw(true);
+	monsters[0].SetId(0);
+	monsters[0].SetHp(100);
+	monsters[0].SetPos(350, 150, 350);
+	for (monster_id = 1; monster_id < 100; ++monster_id)
+	{
+		float x = float(rand() % 1800 - 900);
+		if (-350 <= x && x <= 350)
+		{
+			--monster_id;
+			continue;
+		}
+		float z = float(rand() % 1800 - 900);
+		if (-350 <= z && z <= 350)
+		{
+			--monster_id;
+			continue;
+		}
+		int type = rand() % 4 + 1;
+		monsters[monster_id].SetDraw(true);
+		monsters[monster_id].SetId(monster_id);
+		monsters[monster_id].SetHp(100);
+		monsters[monster_id].SetPos(x, 150, z);
+		monsters[monster_id].SetInitPos(x, 150, z);
+		//send_put_monster_packet(monster_id);
+	}
+	cout << "몬스터 생성 완료" << endl;
+}
+
 int get_new_id()
 {
 	for (int i = 1; i <= MAX_USER; ++i)
@@ -207,6 +275,15 @@ int get_new_id()
 		clients[i].SetUnlock();
 	}
 	return -1;
+}
+
+float distance(vec3 a, vec3 b)
+{
+	float x = (a.x - b.x) * (a.x - b.x);
+	float y = (a.y - b.y) * (a.y - b.y);
+	float z = (a.z - b.z) * (a.z - b.z);
+
+	return x + y + z;
 }
 
 void disconnect(int id)
@@ -255,7 +332,7 @@ void worker_thread()
 			disconnect(static_cast<int>(key));
 			continue;
 		}
-		if (lpover_ex->is_recv) {
+		if (lpover_ex->event == EV_RECV) {
 			int rest_size = io_byte;
 			char *ptr = lpover_ex->messageBuffer;
 			char packet_size = 0;
@@ -308,11 +385,149 @@ void worker_thread()
 			}
 			do_recv(static_cast<int>(key));
 		}
-		else {
+
+		else if (lpover_ex->event == EV_SEND)
+		{
 			delete lpover_ex;
+		}
+		else if (lpover_ex->event == EV_MONSTER_POS)
+		{
+			T_EVENT ev;
+			ev.do_object = static_cast<int>(key);
+			ev.event_type = EV_MONSTER_POS;
+			process_event(ev);
+		}
+		else if (lpover_ex->event == EV_MONSTER_DEAD)
+		{
+			T_EVENT ev;
+			ev.do_object = static_cast<int>(key);
+			ev.event_type = EV_MONSTER_DEAD;
+			process_event(ev);
+		}
+		else if (lpover_ex->event == EV_MONSTER_REVIVE)
+		{
+			T_EVENT ev;
+			ev.do_object = static_cast<int>(key);
+			ev.event_type = EV_MONSTER_REVIVE;
+			process_event(ev);
 		}
 	}
 }
+
+void process_event(T_EVENT &ev)
+{
+	switch (ev.event_type)
+	{
+	case EV_MONSTER_POS:
+	{
+		//받은 좌표 몬스터에 넣고 데이터 온것
+		//누가 가까운지 계산 20.f
+
+		vec3 shortest = { 0,0,0 };
+		float d = 400.f;
+		int target = 0;
+		for (int player = 1; player < MAX_USER; ++player)
+		{
+			if (clients[player].sock.connected == false)
+				continue;
+			float temp = distance(monsters[ev.do_object].GetPos(), clients[player].GetPos());
+			if (temp < d)
+			{
+				shortest = clients[player].GetPos();
+				d = temp;
+				target = player;
+			}
+			else
+				break;
+		}
+			for (int to = 1; to < MAX_USER; ++to)
+			{
+				if (clients[to].sock.connected == true)
+				{
+					send_monster_pos_packet(to, ev.do_object);
+					if (target != 0)
+					{
+						//타겟이 변경될때 전송
+						send_monster_target_packet(to, ev.do_object, target);
+					}
+				}
+			}
+
+	}
+		break;
+	case EV_MONSTER_DEAD:
+	{
+		monsters[ev.do_object].SetDraw(false);
+		//죽었다고 다른 클라들에게 알리기
+		for (int to = 1; to <= MAX_USER; ++to)
+		{
+			if (clients[to].sock.connected == true)
+				send_monster_dead_packet(ev.do_object);
+		}
+		// 타이머에 1분 뒤로 넣어서 다시 살아나게
+		add_timer(EV_MONSTER_REVIVE, ev.do_object, std::chrono::high_resolution_clock::now() + 60s);
+		monsters[ev.do_object].SetPos(monsters[ev.do_object].GetInitPos());
+		monsters[ev.do_object].SetHp(100);
+		monsters[ev.do_object].SetAnimator(0);
+		monsters[ev.do_object].SetCalculate(0);
+		monsters[ev.do_object].SetDirX(0);
+		monsters[ev.do_object].SetDirZ(0);
+		monsters[ev.do_object].SetTarget(0);
+	}
+	break;
+
+	case EV_MONSTER_REVIVE:
+	{
+		//살아난처리하기
+		monsters[ev.do_object].SetDraw(true);
+		for (int to = 1; to <= MAX_USER; ++to)
+		{
+			if (clients[to].sock.connected == true)
+				send_monster_revive_packet(to, ev.do_object);
+		}
+	}
+	break;
+
+	}
+}
+
+void add_timer(EVENT_TYPE ev_type, int object, std::chrono::high_resolution_clock::time_point start_time)
+{
+	timer_lock.lock();
+	timer_queue.push(T_EVENT{ start_time, object, ev_type});
+	timer_lock.unlock();
+}
+
+void do_timer()
+{
+	auto timer_start = std::chrono::high_resolution_clock::now();
+	while (true)
+	{
+		this_thread::sleep_for(10ms);
+		while (true)
+		{
+			timer_lock.lock();
+			if (timer_queue.empty() == true)
+			{
+				timer_lock.unlock();
+				break;
+			}
+			T_EVENT ev = timer_queue.top();
+			timer_lock.unlock();
+			if (ev.start_time > std::chrono::high_resolution_clock::now())
+				break;
+
+			timer_lock.lock();
+			timer_queue.pop();
+			timer_lock.unlock();
+
+			OVER_EX *over_ex = new OVER_EX;
+			over_ex->event = ev.event_type;
+			PostQueuedCompletionStatus(g_iocp, 1, ev.do_object, &over_ex->overlapped);
+		}
+	}
+}
+
 void do_accept()
 {
 	// Winsock Start - windock.dll 로드
@@ -387,7 +602,7 @@ void do_accept()
 		clients[new_id].sock.socket = clientSocket;
 		clients[new_id].sock.over.dataBuffer.len = MAX_BUFFER;
 		clients[new_id].sock.over.dataBuffer.buf = clients[new_id].sock.over.messageBuffer;
-		clients[new_id].sock.over.is_recv = true;
+		clients[new_id].sock.over.event = EV_RECV;
 		flags = 0;
 
 		CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientSocket), g_iocp, new_id, 0);
@@ -434,25 +649,6 @@ void do_recv(int id)
 		}
 	}
 }
-void make_obj()
-{
-	int monster_id = 0;
-	auto delta = point - std::chrono::high_resolution_clock::now();
-	if (std::chrono::duration_cast<std::chrono::seconds>(delta).count()>60)	// 60초 예시
-	{
-		// monsters map 에 넣기
-			float x = float(rand() % 1800 - 900);
-			float z = float(rand() % 1800 - 900);
-
-			monsters[monster_id].SetDraw(true);
-			monsters[monster_id].SetPos(x, 100, z);
-			monsters[monster_id].SetHp(100);
-
-		send_put_monster_packet(monster_id);
-		point = std::chrono::high_resolution_clock::now();
-		++monster_id;
-	}
-}
 
 
 void SendPacket(const int type, const int id, const void *packet, const int packet_size)
@@ -460,7 +656,7 @@ void SendPacket(const int type, const int id, const void *packet, const int pack
 	if (clients[id].sock.socket != NULL) {
 		OVER_EX *over = new OVER_EX;
 		ZeroMemory(&over->overlapped, sizeof(over->overlapped));
-		over->is_recv = false;
+		over->event = EV_SEND;
 		char p_size[MAX_BUFFER]{ 0 };
 
 		// 클라이언트에게 패킷 전송시 <패킷크기 | 패킷 타입 8바이트 부터 데이터> 으로 전송을 한다.
@@ -591,9 +787,43 @@ void process_packet(const int id, const int packet_size, const char * buf)
 	break;
 	case CS_MONSTER_STATUS:
 	{
+		auto monster_pos = Game::Protocol::GetMonsterView(get_packet);
+		int monster_id = monster_pos->id();
+		int ani = monster_pos->animator();
+		float x = monster_pos->dirX();
+		float z = monster_pos->dirZ();
+		vec3 p = { monster_pos->position()->x(), monster_pos->position()->y(), monster_pos->position()->z() };
+		vec3 r = { monster_pos->rotation()->x(), monster_pos->rotation()->y(), monster_pos->rotation()->z() };
+		
 
+		monsters[monster_id].SetLock();
+
+		monsters[monster_id].SetAnimator(ani);
+		monsters[monster_id].SetDirX(x);
+		monsters[monster_id].SetDirZ(z);
+		monsters[monster_id].SetPos(p);
+		monsters[monster_id].SetRotation(r);
+
+		monsters[monster_id].SetUnlock();
+		//좌표 받아서 넣기
+
+		OVER_EX *over_ex = new OVER_EX;
+		over_ex->event = EV_MONSTER_POS;
+		PostQueuedCompletionStatus(g_iocp, 1, monster_id, &over_ex->overlapped);
 	}
 	break;
+	case CS_ATTACK:
+	{
+		int hp = monsters[buf[11]].GetHp();
+		monsters[buf[11]].SetHp(hp - 20);
+		if (monsters[buf[11]].GetHp() <= 0)
+		{
+			OVER_EX *over_ex = new OVER_EX;
+			over_ex->event = EV_MONSTER_DEAD;
+			PostQueuedCompletionStatus(g_iocp, 1, buf[11], &over_ex->overlapped);
+		}
+	}
+		break;
 	default:
 		break;
 	}
@@ -739,24 +969,7 @@ void send_remove_player_packet(int to, int obj)
 
 void send_put_monster_packet(int monster_id) 
 {
-	flatbuffers::FlatBufferBuilder builder;
-	builder.Clear();
-	monsters[monster_id].SetLock();
-	int i = monsters[monster_id].GetId();
-	int hp = monsters[monster_id].GetHp();
-	int ani = monsters[monster_id].GetAnimator();
-	float x = monsters[monster_id].GetDirX();
-	float z = monsters[monster_id].GetDirZ();
-	auto pos = monsters[monster_id].GetPos();
-	auto rot = monsters[monster_id].GetRotation();
-	monsters[monster_id].SetUnlock();
-	auto data = CreateMonster_info(builder, i, hp, ani, x, z, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
-	builder.Finish(data);
-	for (int to = 1; to <= MAX_USER; ++to)
-	{
-		if (clients[to].sock.connected == true)
-			SendPacket(SC_PUT_MONSTER, to, builder.GetBufferPointer(), builder.GetSize());
-	}
+
 }
 
 void send_put_item_packet(int id)
@@ -811,6 +1024,27 @@ void send_init_packet(int id)
 	}
 	auto full_items_data = builder.CreateVector(items_data);
 
+	for (int monster_id = 0; monster_id < 100; ++monster_id)
+	{
+		monsters[monster_id].SetLock();
+		if (monsters[monster_id].GetDraw() == false)
+		{
+			monsters[monster_id].SetUnlock();
+			continue;
+		}
+		int ani = monsters[monster_id].GetAnimator();
+		int cal = monsters[monster_id].GetCalculate();
+		float x = monsters[monster_id].GetDirX();
+		float z = monsters[monster_id].GetDirZ();
+		int hp = monsters[monster_id].GetHp();
+		auto pos = monsters[monster_id].GetPos();
+		auto rot = monsters[monster_id].GetRotation();
+		int target = monsters[monster_id].GetTarget();
+		monsters[monster_id].SetUnlock();
+		auto data = CreateMonster_info(builder, monster_id, hp, ani, x, z, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z), target, cal);
+		monsters_data.emplace_back(data);
+	}
+	auto full_monsters_data = builder.CreateVector(monsters_data);
 	for (int i = 1; i <= MAX_USER; ++i)
 	{
 		clients[i].SetLock();
@@ -840,14 +1074,75 @@ void send_init_packet(int id)
 		auto data = CreateClient_info(builder, id, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
 		clients_data.emplace_back(data);
 	}
-	if (clients_data.size() == 0)
-		return;
+	//if (clients_data.size() == 0)
+	//	return;
 	auto full_clients_data = builder.CreateVector(clients_data);
-	auto full_monsters_data = builder.CreateVector(monsters_data);
 	auto p = CreateInit_Collection(builder, id, full_items_data, full_monsters_data, full_clients_data);
 	builder.Finish(p);
 	SendPacket(SC_INIT_DATA, id, builder.GetBufferPointer(), builder.GetSize());
+}
 
+void send_monster_dead_packet(int monster)
+{
+	int i = monster;
+	for (int to = 1; to <= MAX_USER; ++to)
+	{
+		if (clients[to].sock.connected == true)
+			SendPacket(SC_REMOVE_MONSTER, to, &i, sizeof(i));
+	}
+}
+
+void send_monster_revive_packet(int to, int monster)
+{
+	flatbuffers::FlatBufferBuilder builder;
+	builder.Clear();
+	monsters[monster].SetLock();
+	int hp = monsters[monster].GetHp();
+	int ani = monsters[monster].GetAnimator();
+	float x = monsters[monster].GetDirX();
+	float z = monsters[monster].GetDirZ();
+	auto pos = monsters[monster].GetPos();
+	auto rot = monsters[monster].GetRotation();
+	int target = monsters[monster].GetTarget();
+	int calculate = monsters[monster].GetCalculate();
+	monsters[monster].SetUnlock();
+	auto data = CreateMonster_info(builder, monster, hp, ani, x, z, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z), target, calculate);
+	builder.Finish(data);
+	SendPacket(SC_REVIVE_MONSTER, to, builder.GetBufferPointer(), builder.GetSize());
+	
+}
+
+void send_monster_target_packet(int to, int monster, int target)
+{
+	int a = monster;
+	int b = target;
+
+	flatbuffers::FlatBufferBuilder builder;
+	builder.Clear();
+	auto data = CreateEat_Item(builder, a, b);
+	builder.Finish(data);
+	SendPacket(SC_MONSTER_TARGET, to, builder.GetBufferPointer(), builder.GetSize());
+}
+
+void send_monster_pos_packet(int to, int monster)
+{
+	flatbuffers::FlatBufferBuilder builder;
+	builder.Clear();
+	monsters[monster].SetLock();
+	int ani = monsters[monster].GetAnimator();
+	float x = monsters[monster].GetDirX();
+	float z = monsters[monster].GetDirZ();
+	int hp = monsters[monster].GetHp();
+	vec3 pos = monsters[monster].GetPos();
+	vec3 rot = monsters[monster].GetRotation();
+	int target = monsters[monster].GetTarget();
+	int calculate = monsters[monster].GetCalculate();
+	monsters[monster].SetUnlock();
+
+	auto data = CreateMonster_info(builder, monster, hp, ani, x, z, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z), target, calculate);
+	builder.Finish(data);
+
+	SendPacket(SC_MONSTER_INFO, to, builder.GetBufferPointer(), builder.GetSize());
 }
 
 
@@ -1241,19 +1536,18 @@ void db_set_pos(int id)
 
 void autosave_info_db()
 {
-	std::chrono::high_resolution_clock::time_point save_time = std::chrono::high_resolution_clock::now();
 	while (true)
 	{
-		if (save_time + 10s <= std::chrono::high_resolution_clock::now())
+		for (int i = 1; i <= MAX_USER; ++i)
 		{
-			for (int i = 1; i <= MAX_USER; ++i)
+			if (clients[i].sock.connected&&clients[i].GetId()!=0)
 			{
-				if (clients[i].sock.connected)
+				if (clients[i].save_time + 10s <= std::chrono::high_resolution_clock::now())
 				{
 					db_set_pos(i);
+					clients[i].save_time = std::chrono::high_resolution_clock::now();
 				}
 			}
-			save_time = std::chrono::high_resolution_clock::now();
 		}
 	}
 }

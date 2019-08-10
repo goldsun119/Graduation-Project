@@ -18,13 +18,17 @@ namespace Game.Protocol
         public static int SC_INIT_DATA			 =	    11;
         public static int SC_LOGIN_SUCCESS =       12;
         public static int SC_LOGIN_FAIL =              13;
-        public static int SC_SIGNUP =                     14;
+        public static  int SC_SIGNUP = 14;
+        public static  int SC_REVIVE_MONSTER = 15;
+        public static  int SC_MONSTER_INFO = 16;
+        public static int SC_MONSTER_TARGET = 17;
 
         public static int CS_INFO =                         1;
         public static int CS_GET_ITEM =                 2;
         public static int CS_MONSTER_STATUS =   3;
         public static int CS_LOGIN                       = 4;
         public static int CS_CHARACTER_SELECT= 5;
+        public static int CS_ATTACK = 6;
 
         public static int MAX_USER = 4;   // 0번째는 버림
 

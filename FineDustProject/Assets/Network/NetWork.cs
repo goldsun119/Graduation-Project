@@ -278,34 +278,39 @@ namespace Game.Network
             }
             else if(type == Game.Protocol.Protocol.SC_PUT_MONSTER)
             {
-                ByteBuffer recv_buf = new ByteBuffer(recvPacket);
-                Monster_info get_data = Monster_info.GetRootAsMonster_info(recv_buf);
-                int id = get_data.Id;
-                int hp = get_data.Hp;
-                int ani = get_data.Animator;
-                float x = get_data.DirX;
-                float z = get_data.DirZ;
-                Vector3 p = new Vector3(get_data.Position.Value.X, get_data.Position.Value.Y, get_data.Position.Value.Z);
-                Vector3 r = new Vector3(get_data.Rotation.Value.X, get_data.Rotation.Value.Y, get_data.Rotation.Value.Z);
+                //ByteBuffer recv_buf = new ByteBuffer(recvPacket);
+                //Monster_info get_data = Monster_info.GetRootAsMonster_info(recv_buf);
+                //int id = get_data.Id;
+                //int hp = get_data.Hp;
+                //int ani = get_data.Animator;
+                //float x = get_data.DirX;
+                //float z = get_data.DirZ;
+                //Vector3 p = new Vector3(get_data.Position.Value.X, get_data.Position.Value.Y, get_data.Position.Value.Z);
+                //Vector3 r = new Vector3(get_data.Rotation.Value.X, get_data.Rotation.Value.Y, get_data.Rotation.Value.Z);
 
-                if (monster_data.ContainsKey(id))
-                {
-                    MonsterClass iter = monster_data[id];
-                    iter.set_hp(hp);
-                    iter.set_pos(p);
-                    iter.set_rot(r);
-                    iter.set_animator(ani);
-                    iter.set_dirX(x);
-                    iter.set_dirZ(z);
-                    iter.set_draw(true);
-                }
-                else
-                {
-                    monster_data.Add(id, new MonsterClass(id, hp, ani, x, z, p, r));
-                    monster_data[id].set_draw(true);
-                }
-                Debug.Log("몬스터 생성 아이디 : " + id);
+                //if (monster_data.ContainsKey(id))
+                //{
+                //    MonsterClass iter = monster_data[id];
+                //    iter.set_hp(hp);
+                //    iter.set_pos(p);
+                //    iter.set_rot(r);
+                //    iter.set_animator(ani);
+                //    iter.set_dirX(x);
+                //    iter.set_dirZ(z);
+                //    iter.set_draw(true);
+                //}
+                //else
+                //{
+                //    monster_data.Add(id, new MonsterClass(id, hp, ani, x, z, p, r));
+                //    monster_data[id].set_draw(true);
+                //}
+                //Debug.Log("몬스터 생성 아이디 : " + id);
 
+            }
+            else if(type == Game.Protocol.Protocol.SC_REMOVE_MONSTER)
+            {
+                int remove_monster = recvPacket[0];
+                monster_data.Remove(remove_monster);
             }
             else if (type == Game.Protocol.Protocol.SC_PUT_ITEM)
             {
@@ -405,6 +410,39 @@ namespace Game.Network
                         item_data[id].set_draw(true);
                     }
                 }
+                for(int i = 0; i<get_all_data.MonsterDataLength; ++i)
+                {
+                    int id = get_all_data.MonsterData(i).Value.Id;
+                    int hp = get_all_data.MonsterData(i).Value.Hp;
+                    Vector3 p = new Vector3(get_all_data.MonsterData(i).Value.Position.Value.X, get_all_data.MonsterData(i).Value.Position.Value.Y, get_all_data.MonsterData(i).Value.Position.Value.Z);
+                    Vector3 r = new Vector3(get_all_data.MonsterData(i).Value.Rotation.Value.X, get_all_data.MonsterData(i).Value.Rotation.Value.Y, get_all_data.MonsterData(i).Value.Rotation.Value.Z);
+                   int target = get_all_data.MonsterData(i).Value.Target;
+                    float x = get_all_data.MonsterData(i).Value.DirX;
+                    float z = get_all_data.MonsterData(i).Value.DirZ;
+                    int cal = get_all_data.MonsterData(i).Value.Calculate;
+                    int ani = get_all_data.MonsterData(i).Value.Animator;
+
+                    if (monster_data.ContainsKey(id))
+                    {
+                        MonsterClass iter =monster_data[id];
+                        iter.set_id(id);
+                        iter.set_hp(hp);
+                        iter.set_pos(p);
+                        iter.set_rot(r);
+                        iter.set_chase_id(target);
+                        iter.set_dirX(x);
+                        iter.set_dirZ(z);
+                        iter.set_calculate_id(cal);
+                        iter.set_animator(ani);
+                        iter.set_draw(true);
+                    }
+                    else
+                    {
+                        monster_data.Add(id, new MonsterClass(id,hp,ani,x,z,p,r,target,cal));
+                        monster_data[id].set_draw(true);
+                        //spawner.Spawn(id, p, monster_data[id]);
+                    }
+                }
             }
             else if(type == Game.Protocol.Protocol.SC_LOGIN_SUCCESS)
             {
@@ -451,6 +489,84 @@ namespace Game.Network
             else if(type == Game.Protocol.Protocol.SC_SIGNUP)
             {
                 SceneNum = 1;
+            }
+            else if (type == Game.Protocol.Protocol.SC_REVIVE_MONSTER)
+            {
+                ByteBuffer recv_buf = new ByteBuffer(recvPacket);
+                Monster_info get_all_data = Monster_info.GetRootAsMonster_info(recv_buf);
+                int id = get_all_data.Id;
+                int hp = get_all_data.Hp;
+                Vector3 p = new Vector3(get_all_data.Position.Value.X, get_all_data.Position.Value.Y, get_all_data.Position.Value.Z);
+                Vector3 r = new Vector3(get_all_data.Rotation.Value.X, get_all_data.Rotation.Value.Y, get_all_data.Rotation.Value.Z);
+                int target = get_all_data.Target;
+                float x = get_all_data.DirX;
+                float z = get_all_data.DirZ;
+                int cal = get_all_data.Calculate;
+                int ani = get_all_data.Animator;
+
+                if (monster_data.ContainsKey(id))
+                {
+                    MonsterClass iter = monster_data[id];
+                    iter.set_id(id);
+                    iter.set_hp(hp);
+                    iter.set_pos(p);
+                    iter.set_rot(r);
+                    iter.set_chase_id(target);
+                    iter.set_dirX(x);
+                    iter.set_dirZ(z);
+                    iter.set_calculate_id(cal);
+                    iter.set_animator(ani);
+                    iter.set_draw(true);
+                }
+                else
+                {
+                    monster_data.Add(id, new MonsterClass(id, hp, ani, x, z, p, r, target, cal));
+                    monster_data[id].set_draw(true);
+                    //spawner.Spawn(id, p, monster_data[id]);
+                }
+            }
+            else if (type == Game.Protocol.Protocol.SC_MONSTER_INFO)
+            {
+                ByteBuffer recv_buf = new ByteBuffer(recvPacket);
+                Monster_info get_all_data = Monster_info.GetRootAsMonster_info(recv_buf);
+                int id = get_all_data.Id;
+                int hp = get_all_data.Hp;
+                Vector3 p = new Vector3(get_all_data.Position.Value.X, get_all_data.Position.Value.Y, get_all_data.Position.Value.Z);
+                Vector3 r = new Vector3(get_all_data.Rotation.Value.X, get_all_data.Rotation.Value.Y, get_all_data.Rotation.Value.Z);
+                int target = get_all_data.Target;
+                float x = get_all_data.DirX;
+                float z = get_all_data.DirZ;
+                int cal = get_all_data.Calculate;
+                int ani = get_all_data.Animator;
+
+                if (monster_data.ContainsKey(id))
+                {
+                    MonsterClass iter = monster_data[id];
+                    iter.set_id(id);
+                    iter.set_hp(hp);
+                    iter.set_pos(p);
+                    iter.set_rot(r);
+                    iter.set_chase_id(target);
+                    iter.set_dirX(x);
+                    iter.set_dirZ(z);
+                    iter.set_calculate_id(cal);
+                    iter.set_animator(ani);
+                    iter.set_draw(true);
+                }
+                else
+                {
+                    monster_data.Add(id, new MonsterClass(id, hp, ani, x, z, p, r, target, cal));
+                    monster_data[id].set_draw(true);
+                    //spawner.Spawn(id, p, monster_data[id]);
+                }
+            }
+            else if (type == Game.Protocol.Protocol.SC_MONSTER_TARGET)
+            {
+                ByteBuffer recv_buf = new ByteBuffer(recvPacket);
+                Eat_Item get_data = Eat_Item.GetRootAsEat_Item(recv_buf);
+                int monster_id = get_data.ItemID;
+                int target = get_data.PlayerID;
+                monster_data[monster_id].set_chase_id(target);
             }
         }
 
@@ -658,7 +774,8 @@ namespace Game.Network
 
         public static void SendMonsterInfo(int id)
         {
-            //Sendbyte;
+            Sendbyte = sF.makeMonsterInfoPacket(monster_data[id].get_id(), monster_data[id].get_animator(), monster_data[id].get_dirX(), monster_data[id].get_dirZ(), monster_data[id].get_pos(), monster_data[id].get_rot());
+            Send_Packet(Sendbyte);
         }
     }
 }

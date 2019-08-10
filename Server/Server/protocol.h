@@ -20,6 +20,8 @@ constexpr int CS_GET_ITEM =				2;
 constexpr int CS_MONSTER_STATUS =	3;
 constexpr int CS_LOGIN						 = 4;
 constexpr int CS_CHARACTER_SELECT = 5;
+constexpr int CS_ATTACK = 6;
+
 
 constexpr int SC_ID =								1;
 constexpr int	SC_PUT_PLAYER =			2;
@@ -35,7 +37,9 @@ constexpr int SC_INIT_DATA				 =	11;
 constexpr int SC_LOGIN_SUCCESS =		12;
 constexpr int SC_LOGIN_FAIL =				13;
 constexpr int SC_SIGNUP =					14;
-
+constexpr int SC_REVIVE_MONSTER = 15;
+constexpr int SC_MONSTER_INFO = 16;
+constexpr int SC_MONSTER_TARGET = 17;
 #pragma pack(push, 1)
 
 // 프로토콜 (서버-<클라)

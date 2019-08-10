@@ -25,6 +25,16 @@ void Monster::SetRotation(vec3 a)
 	rotation = a;
 }
 
+vec3 Monster::GetInitPos()
+{
+	return initPos;
+}
+
+void Monster::SetInitPos(vec3 a)
+{
+	initPos = a;
+}
+
 int Monster::GetAnimator() {
 	return animator;
 }
@@ -50,6 +60,32 @@ int Monster::GetId()
 {
 	return id;
 }
+
+void Monster::SetId(int a)
+{
+	id = a;
+}
+
+int Monster::GetTarget()
+{
+	return target;
+}
+
+void Monster::SetTarget(int a)
+{
+	target = a;
+}
+
+int Monster::GetCalculate()
+{
+	return calculate;
+}
+
+void Monster::SetCalculate(int a)
+{
+	calculate = a;
+}
+
 
 Monster::~Monster()
 {

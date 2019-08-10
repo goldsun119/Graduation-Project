@@ -80,17 +80,22 @@ namespace Game.Network
         }
 
 
-        public byte[] makeMonsterInfoPacket(int id)
+        public byte[] makeMonsterInfoPacket(int id, int ani, float x, float z, Vector3 pos, Vector3 rot)
         {
             FlatBufferBuilder fbb = new FlatBufferBuilder(1);
             fbb.Clear();
             Monster_info.StartMonster_info(fbb);
-            //Monster_info.AddId(fbb, )
+            Monster_info.AddId(fbb, id);
+            Monster_info.AddAnimator(fbb, ani);
+            Monster_info.AddDirX(fbb, x);
+            Monster_info.AddDirZ(fbb, z);
+            Monster_info.AddPosition(fbb, Vec3.CreateVec3(fbb, pos.x, pos.y, pos.z));
+            Monster_info.AddRotation(fbb, Vec3.CreateVec3(fbb, rot.x, rot.y, rot.z));
             var endOffset = Monster_info.EndMonster_info(fbb);
             fbb.Finish(endOffset.Value);
 
             byte[] packet = fbb.SizedByteArray();
-            byte[] magic_packet = makePacketinfo(packet.Length, CS_LOGIN);
+            byte[] magic_packet = makePacketinfo(packet.Length, CS_MONSTER_STATUS);
             byte[] real_packet = new byte[packet.Length + 8];
             System.Buffer.BlockCopy(magic_packet, 0, real_packet, 0, magic_packet.Length);
             System.Buffer.BlockCopy(packet, 0, real_packet, 8, packet.Length);

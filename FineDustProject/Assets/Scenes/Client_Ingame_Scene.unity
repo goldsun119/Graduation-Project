@@ -5200,9 +5200,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   monObj: {fileID: 0}
-  monCnt: 1
   monID: 1
   monMaxCnt: 10
+  monsterPrefab: {fileID: 0}
+  monsterObj: {fileID: 0}
   Last_Spawn: {x: 0, y: 0}
 --- !u!4 &1046176305
 Transform:
@@ -6679,7 +6680,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1592288360}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 595008d1734c8fd48a2693334bd58f59, type: 3}
   m_Name: 
@@ -6699,6 +6700,13 @@ MonoBehaviour:
   default_velocity: 0
   spawnPosition: {x: 0, y: 0, z: 0}
   ID: 0
+  chase_id: 0
+  calculate_id: 0
+  animator: 0
+  dirX: 0
+  dirZ: 0
+  rotation: {x: 0, y: 0, z: 0}
+  position: {x: 0, y: 0, z: 0}
 --- !u!4 &1592288365 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400066, guid: 05ece67478245df4ba45e047cbb37622,
@@ -6721,6 +6729,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &1592288368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1592288360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3227960265e2d554689cfa52f8fd9360, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monObj: {fileID: 0}
+  monID: -1
+  monMaxCnt: 100
+  monsterPrefab: {fileID: 100066, guid: 05ece67478245df4ba45e047cbb37622, type: 3}
+  monsterObj: {fileID: 0}
+  Last_Spawn: {x: 0, y: 0}
 --- !u!1 &1644847484
 GameObject:
   m_ObjectHideFlags: 0
@@ -6825,6 +6851,11 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Monster
       objectReference: {fileID: 0}
+    - target: {fileID: 100066, guid: 05ece67478245df4ba45e047cbb37622, type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000,
+        type: 0}
     - target: {fileID: 400066, guid: 05ece67478245df4ba45e047cbb37622, type: 3}
       propertyPath: m_LocalPosition.x
       value: 51.9

@@ -22,7 +22,10 @@ Player::Player()
 }
 void Player::init(int i)
 {
+	save_time = std::chrono::high_resolution_clock::now();
 	id = i;
+
+
 	switch (id)
 	{
 	case 1:

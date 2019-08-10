@@ -327,7 +327,9 @@ namespace Game {
 				VT_DIRX = 10,
 				VT_DIRZ = 12,
 				VT_POSITION = 14,
-				VT_ROTATION = 16
+				VT_ROTATION = 16,
+				VT_TARGET = 18,
+				VT_CALCULATE = 20
 			};
 			int32_t id() const {
 				return GetField<int32_t>(VT_ID, 0);
@@ -350,6 +352,12 @@ namespace Game {
 			const Vec3 *rotation() const {
 				return GetStruct<const Vec3 *>(VT_ROTATION);
 			}
+			int32_t target() const {
+				return GetField<int32_t>(VT_TARGET, 0);
+			}
+			int32_t calculate() const {
+				return GetField<int32_t>(VT_CALCULATE, 0);
+			}
 			bool Verify(flatbuffers::Verifier &verifier) const {
 				return VerifyTableStart(verifier) &&
 					VerifyField<int32_t>(verifier, VT_ID) &&
@@ -359,6 +367,8 @@ namespace Game {
 					VerifyField<float>(verifier, VT_DIRZ) &&
 					VerifyField<Vec3>(verifier, VT_POSITION) &&
 					VerifyField<Vec3>(verifier, VT_ROTATION) &&
+					VerifyField<int32_t>(verifier, VT_TARGET) &&
+					VerifyField<int32_t>(verifier, VT_CALCULATE) &&
 					verifier.EndTable();
 			}
 		};
@@ -387,6 +397,12 @@ namespace Game {
 			void add_rotation(const Vec3 *rotation) {
 				fbb_.AddStruct(Monster_info::VT_ROTATION, rotation);
 			}
+			void add_target(int32_t target) {
+				fbb_.AddElement<int32_t>(Monster_info::VT_TARGET, target, 0);
+			}
+			void add_calculate(int32_t calculate) {
+				fbb_.AddElement<int32_t>(Monster_info::VT_CALCULATE, calculate, 0);
+			}
 			explicit Monster_infoBuilder(flatbuffers::FlatBufferBuilder &_fbb)
 				: fbb_(_fbb) {
 				start_ = fbb_.StartTable();
@@ -407,8 +423,12 @@ namespace Game {
 			float dirX = 0.0f,
 			float dirZ = 0.0f,
 			const Vec3 *position = 0,
-			const Vec3 *rotation = 0) {
+			const Vec3 *rotation = 0,
+			int32_t target = 0,
+			int32_t calculate = 0) {
 			Monster_infoBuilder builder_(_fbb);
+			builder_.add_calculate(calculate);
+			builder_.add_target(target);
 			builder_.add_rotation(rotation);
 			builder_.add_position(position);
 			builder_.add_dirZ(dirZ);

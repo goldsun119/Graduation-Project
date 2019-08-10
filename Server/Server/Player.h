@@ -2,16 +2,26 @@
 #include "Obj.h"
 #include <winsock2.h>
 #include <mutex>
+#include <chrono>
 #include "protocol.h"
 
 #define MAX_BUFFER        10000
+
+enum EVENT_TYPE {
+	EV_RECV,
+	EV_SEND,
+	EV_MONSTER_POS,
+	EV_MONSTER_DEAD,
+	EV_MONSTER_REVIVE
+
+};
 
 struct OVER_EX
 {
 	WSAOVERLAPPED		overlapped;
 	WSABUF					dataBuffer;
 	char							messageBuffer[MAX_BUFFER];
-	bool							is_recv;
+	EVENT_TYPE			event;
 
 };
 
@@ -44,6 +54,7 @@ private:
 
 public:
 	SOCKETINFO sock;
+	std::chrono::high_resolution_clock::time_point save_time;
 	Player();
 	~Player();
 

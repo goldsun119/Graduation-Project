@@ -24,8 +24,10 @@ public struct Monster_info : IFlatbufferObject
   public float DirZ { get { int o = __p.__offset(12); return o != 0 ? __p.bb.GetFloat(o + __p.bb_pos) : (float)0.0f; } }
   public Vec3? Position { get { int o = __p.__offset(14); return o != 0 ? (Vec3?)(new Vec3()).__assign(o + __p.bb_pos, __p.bb) : null; } }
   public Vec3? Rotation { get { int o = __p.__offset(16); return o != 0 ? (Vec3?)(new Vec3()).__assign(o + __p.bb_pos, __p.bb) : null; } }
+  public int Target { get { int o = __p.__offset(18); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+  public int Calculate { get { int o = __p.__offset(20); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
 
-  public static void StartMonster_info(FlatBufferBuilder builder) { builder.StartObject(7); }
+  public static void StartMonster_info(FlatBufferBuilder builder) { builder.StartObject(9); }
   public static void AddId(FlatBufferBuilder builder, int id) { builder.AddInt(0, id, 0); }
   public static void AddHp(FlatBufferBuilder builder, int hp) { builder.AddInt(1, hp, 0); }
   public static void AddAnimator(FlatBufferBuilder builder, int animator) { builder.AddInt(2, animator, 0); }
@@ -33,6 +35,8 @@ public struct Monster_info : IFlatbufferObject
   public static void AddDirZ(FlatBufferBuilder builder, float dirZ) { builder.AddFloat(4, dirZ, 0.0f); }
   public static void AddPosition(FlatBufferBuilder builder, Offset<Vec3> positionOffset) { builder.AddStruct(5, positionOffset.Value, 0); }
   public static void AddRotation(FlatBufferBuilder builder, Offset<Vec3> rotationOffset) { builder.AddStruct(6, rotationOffset.Value, 0); }
+  public static void AddTarget(FlatBufferBuilder builder, int target) { builder.AddInt(7, target, 0); }
+  public static void AddCalculate(FlatBufferBuilder builder, int calculate) { builder.AddInt(8, calculate, 0); }
   public static Offset<Monster_info> EndMonster_info(FlatBufferBuilder builder) {
     int o = builder.EndObject();
     return new Offset<Monster_info>(o);

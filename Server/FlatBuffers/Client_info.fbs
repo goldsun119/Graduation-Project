@@ -38,6 +38,8 @@ dirX:float;
 dirZ:float;
 position:Vec3;
 rotation:Vec3;
+target:int;
+calculate:int;
 }
 
 table DB_Monster{
