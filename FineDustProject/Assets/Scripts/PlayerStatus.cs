@@ -49,16 +49,30 @@ public class PlayerStatus : MonoBehaviour
     //public int itemCount = 0;
     public MonsterSpawner MonSpawner;
 
+    public void SetLayersRecursively(Transform trans, string name)
+    {
+        trans.gameObject.layer = LayerMask.NameToLayer(name);
+        foreach (Transform child in trans)
+            SetLayersRecursively(child, name);
+    }
+
     void Start()
     {
         CMgr = GetComponent<CameraMgr>();
         hp = 100;
         coroutine = HPControl();
         StartCoroutine(coroutine);
+        if (ID == Game.Network.NetWork.Client_id)
+        {
+            SetLayersRecursively(this.gameObject.transform, "myPlayer");
+        }
+
+
+
     }
 
-    // Update is called once per frame
-    void Update()
+        // Update is called once per frame
+        void Update()
     {
         if (ID == Game.Network.NetWork.Client_id)
         {
@@ -229,6 +243,12 @@ public class PlayerStatus : MonoBehaviour
         {
             isMon = true;
         }
+
+        // 지붕등 충돌
+        if (collision.gameObject.CompareTag("wall"))
+        {
+            SetLayersRecursively(collision.gameObject.transform, "wall");
+        }
     }
 
     void OnCollisionExit(Collision collision)
@@ -236,6 +256,29 @@ public class PlayerStatus : MonoBehaviour
         isPick = false;
         isItem = false;
         isMon = false;
+
+        if (collision.gameObject.CompareTag("wall"))
+        {
+            SetLayersRecursively(collision.gameObject.transform, "Default");
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // 지붕등 충돌
+        if (other.gameObject.CompareTag("wall"))
+        {
+            SetLayersRecursively(other.gameObject.transform, "wall");
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        // 지붕등 충돌
+        if (other.gameObject.CompareTag("wall"))
+        {
+            SetLayersRecursively(other.gameObject.transform, "Default");
+        }
     }
 
     void CheatKey()

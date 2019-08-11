@@ -11,6 +11,7 @@ TagManager:
   - Door
   - Terrain
   - DragImg
+  - wall
   layers:
   - Default
   - TransparentFX
@@ -23,10 +24,10 @@ TagManager:
   - PostProcessing
   - Terrain
   - Static_Object
-  - 
+  - myPlayer
   - MonsterMarker
   - PlayerMarker
-  - 
+  - wall
   - 
   - 
   - 
