@@ -21,7 +21,10 @@ namespace Game.Protocol
         public static  int SC_SIGNUP = 14;
         public static  int SC_REVIVE_MONSTER = 15;
         public static  int SC_MONSTER_INFO = 16;
-        public static int SC_MONSTER_TARGET = 17;
+        public static  int SC_MONSTER_TARGET = 17;
+        public static  int SC_MONSTER_CALCULATE = 18;
+        public static  int SC_COMPLETE_MAKING = 19;
+        public static int SC_END_GAME = 20;
 
         public static int CS_INFO =                         1;
         public static int CS_GET_ITEM =                 2;
@@ -29,6 +32,7 @@ namespace Game.Protocol
         public static int CS_LOGIN                       = 4;
         public static int CS_CHARACTER_SELECT= 5;
         public static int CS_ATTACK = 6;
+        public static int CS_COMPLETE_MAKING = 7;
 
         public static int MAX_USER = 4;   // 0번째는 버림
 

@@ -25,27 +25,7 @@ void Player::init(int i)
 	save_time = std::chrono::high_resolution_clock::now();
 	id = i;
 
-
-	switch (id)
-	{
-	case 1:
-		SetPos(50, 50, 95);
-		break;
-
-	case 2:
-		SetPos(55, 50, 100);
-		break;
-
-	case 3:
-		SetPos(50, 50, 100);
-		break;
-
-	case 4:
-		SetPos(55, 50, 95);
-		break;
-	default:
-		break;
-	}
+	SetPos(60, 30, 60);
 	SetRotation(vec3{0, 0, 0});
 	hp = 100;
 	isDraw = true;

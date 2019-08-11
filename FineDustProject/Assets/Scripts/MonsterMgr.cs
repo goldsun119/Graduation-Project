@@ -67,7 +67,7 @@ public class MonsterMgr : MonoBehaviour
 
         targetRange = 20.0f;
         //HP = 100;
-
+        HP = Game.Network.NetWork.monster_data[ID].get_hp();
         chase_id = Game.Network.NetWork.monster_data[ID].get_chase_id();
         calculate_id = Game.Network.NetWork.monster_data[ID].get_calculate_id();
         animator = Game.Network.NetWork.monster_data[ID].get_animator();
@@ -82,7 +82,7 @@ public class MonsterMgr : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Game.Network.NetWork.monster_data.ContainsKey(ID) == false)
+        if (Game.Network.NetWork.monster_data.ContainsKey(ID) == false || HP <=0)
         {
             Destroy(gameObject);
             Debug.Log("멧돼지 사망");
@@ -98,11 +98,14 @@ public class MonsterMgr : MonoBehaviour
         if(chase_id == Game.Network.NetWork.Client_id)
         {
             target_pos = Game.Network.NetWork.client_data[chase_id].get_pos();
-            nav.SetDestination(target_pos);
+            float d = Vector3.Distance(spawnPosition, transform.position);
+            if(d > 100)   
+                nav.SetDestination(spawnPosition);
+            else
+            {
+                nav.SetDestination(target_pos);
 
-            //    string a = "Player(" + calculate_id.ToString() + ")";
-            //    player_tf = GameObject.FindGameObjectWithTag(a).transform;
-            //    player_st = player_tf.GetComponent<PlayerStatus>();
+            }
             if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.RUN)
                 nav.speed = 20;
             else if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.WALK)
@@ -151,9 +154,9 @@ public class MonsterMgr : MonoBehaviour
 
             Game.Network.NetWork.SendMonsterInfo(ID);
         }
-        else
+        else if(chase_id == 0)
         {
-            if(calculate_id == Game.Network.NetWork.Client_id)//쫓는아이디 != 클라아이디 && 계산아이디가 클라아이디일때
+            if (calculate_id == Game.Network.NetWork.Client_id)//쫓는아이디 != 클라아이디 && 계산아이디가 클라아이디일때
             {
                 if (Vector3.Distance(Random_Position, spawnPosition) > 80)
                 {
@@ -164,6 +167,7 @@ public class MonsterMgr : MonoBehaviour
                     Random_Position.x += Random.Range(-0.5f, 0.5f);
                     Random_Position.z += Random.Range(-0.5f, 0.5f);
                 }
+                nav.SetDestination(Random_Position);
                 var spawn_distance = Vector3.Distance(spawnPosition, transform.position);   // 스폰 영역 밖으로 나갔는지 확인 할 거리
                 if (spawn_distance > 100)
                 {
@@ -175,61 +179,8 @@ public class MonsterMgr : MonoBehaviour
 
                     if (transform.position == spawnPosition)
                         is_BackToSpawn = false;
-                    //Game.Network.NetWork.monster_data[ID].set_animator(animator);
-                    //Game.Network.NetWork.monster_data[ID].set_dirX(dirX);
-                    //Game.Network.NetWork.monster_data[ID].set_dirZ(dirZ);
-                    //Game.Network.NetWork.monster_data[ID].set_rot(rotation);
-                    //Game.Network.NetWork.monster_data[ID].set_pos(position);
-
-                    //Game.Network.NetWork.SendMonsterInfo(ID);
                 }
 
-                //// 플레이어가 몬스터 공격
-                //if (isCollision)
-                //{
-                //    if (Input.GetMouseButtonUp(0)) //0:좌 1:중 2:우
-                //    {
-                //        is_KnockBack = true;
-                //        KnockBack_Time = 0.1f;
-                //        Game.Network.NetWork.SendMonsterAttack(ID);
-                //    }
-                //}
-
-
-
-                //if (is_KnockBack)
-                //{
-                //    transform.Translate((Vector3.back) * KnockBack_Time);
-                //    KnockBack_Time += Time.deltaTime;
-                //    if (KnockBack_Time > 0.3)
-                //    {
-                //        is_KnockBack = false;
-                //        is_Wait = true;
-                //        Waiting_Time = 0.0f;
-                //    }
-
-                //Game.Network.NetWork.monster_data[ID].set_animator(animator);
-                //Game.Network.NetWork.monster_data[ID].set_dirX(dirX);
-                //Game.Network.NetWork.monster_data[ID].set_dirZ(dirZ);
-                //Game.Network.NetWork.monster_data[ID].set_rot(rotation);
-                //Game.Network.NetWork.monster_data[ID].set_pos(position);
-
-                //Game.Network.NetWork.SendMonsterInfo(ID);
-                //}
-
-                //if (is_Wait)
-                //{
-                //    Waiting_Time += Time.deltaTime;
-                //    if (Waiting_Time > 0.5) is_Wait = false;
-
-                //    Game.Network.NetWork.monster_data[ID].set_animator(animator);
-                //    Game.Network.NetWork.monster_data[ID].set_dirX(dirX);
-                //    Game.Network.NetWork.monster_data[ID].set_dirZ(dirZ);
-                //    Game.Network.NetWork.monster_data[ID].set_rot(rotation);
-                //    Game.Network.NetWork.monster_data[ID].set_pos(position);
-
-                //    Game.Network.NetWork.SendMonsterInfo(ID);
-                //}
 
                 position = transform.position;
                 rotation = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
@@ -244,22 +195,18 @@ public class MonsterMgr : MonoBehaviour
             }
             else//쫓는아이디 != 클라 && 계산아이디 != 클라
             {
+                //받은 값 적용시키기
                 transform.position = position;
                 transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
             }
         }
-        
-
-
-
-
-        //if (HP == 0)
-        //{
-        //    Destroy(gameObject);
-        //    Debug.Log("멧돼지 사망");
-        //    //Monster_Spawner.monCnt--;
-        //}
-        
+        else
+        {
+                //받은 값 적용시키기
+                transform.position = position;
+                transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
+            
+        }
     }
 
     void OnCollisionEnter(Collision collision)

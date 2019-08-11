@@ -3,7 +3,7 @@
 constexpr int SERVER_PORT =			9000;
 
 constexpr int MAX_USER =					4;
-constexpr int MAX_ITEM =					100;
+constexpr int MAX_ITEM =					30;
 constexpr int WORLD_WIDTH =			2000;
 constexpr int WORLD_HEIGHT =			2000;
 
@@ -38,8 +38,9 @@ constexpr int SC_SIGNUP =					14;
 constexpr int SC_REVIVE_MONSTER = 15;
 constexpr int SC_MONSTER_INFO = 16;
 constexpr int SC_MONSTER_TARGET = 17;
-constexpr int SC_COMPLETE_MAKING = 18;
-constexpr int SC_END_GAME = 19;
+constexpr int SC_MONSTER_CALCULATE = 18;
+constexpr int SC_COMPLETE_MAKING = 19;
+constexpr int SC_END_GAME = 20;
 #pragma pack(push, 1)
 
 

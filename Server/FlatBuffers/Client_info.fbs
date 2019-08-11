@@ -71,13 +71,6 @@ itemID:int;
 playerID:int;
 }
 
-table Init_Collection{
-id:int;
-itemData:[Item_info];
-MonsterData:[Monster_info];
-clientData:[Client_info];
-}
-
 table Login{
 id:string;
 password:string;
@@ -94,4 +87,18 @@ item2:int;
 item3:int;
 item4:int;
 character:int;
+}
+
+table Init_Collection{
+id:int;
+itemData:[Item_info];
+MonsterData:[Monster_info];
+clientData:[Client_info];
+myData:Login_my_DB;
+}
+table Init_Collection_IM{
+id:int;
+itemData:[Item_info];
+MonsterData:[Monster_info];
+myData:Login_my_DB;
 }

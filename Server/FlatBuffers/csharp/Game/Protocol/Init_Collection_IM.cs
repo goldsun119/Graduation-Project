@@ -8,40 +8,36 @@ namespace Game.Protocol
 using global::System;
 using global::FlatBuffers;
 
-public struct Init_Collection : IFlatbufferObject
+public struct Init_Collection_IM : IFlatbufferObject
 {
   private Table __p;
   public ByteBuffer ByteBuffer { get { return __p.bb; } }
-  public static Init_Collection GetRootAsInit_Collection(ByteBuffer _bb) { return GetRootAsInit_Collection(_bb, new Init_Collection()); }
-  public static Init_Collection GetRootAsInit_Collection(ByteBuffer _bb, Init_Collection obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
+  public static Init_Collection_IM GetRootAsInit_Collection_IM(ByteBuffer _bb) { return GetRootAsInit_Collection_IM(_bb, new Init_Collection_IM()); }
+  public static Init_Collection_IM GetRootAsInit_Collection_IM(ByteBuffer _bb, Init_Collection_IM obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
   public void __init(int _i, ByteBuffer _bb) { __p.bb_pos = _i; __p.bb = _bb; }
-  public Init_Collection __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+  public Init_Collection_IM __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   public int Id { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
   public Item_info? ItemData(int j) { int o = __p.__offset(6); return o != 0 ? (Item_info?)(new Item_info()).__assign(__p.__indirect(__p.__vector(o) + j * 4), __p.bb) : null; }
   public int ItemDataLength { get { int o = __p.__offset(6); return o != 0 ? __p.__vector_len(o) : 0; } }
   public Monster_info? MonsterData(int j) { int o = __p.__offset(8); return o != 0 ? (Monster_info?)(new Monster_info()).__assign(__p.__indirect(__p.__vector(o) + j * 4), __p.bb) : null; }
   public int MonsterDataLength { get { int o = __p.__offset(8); return o != 0 ? __p.__vector_len(o) : 0; } }
-  public Client_info? ClientData(int j) { int o = __p.__offset(10); return o != 0 ? (Client_info?)(new Client_info()).__assign(__p.__indirect(__p.__vector(o) + j * 4), __p.bb) : null; }
-  public int ClientDataLength { get { int o = __p.__offset(10); return o != 0 ? __p.__vector_len(o) : 0; } }
-  public Login_my_DB? MyData { get { int o = __p.__offset(12); return o != 0 ? (Login_my_DB?)(new Login_my_DB()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
+  public Login_my_DB? MyData { get { int o = __p.__offset(10); return o != 0 ? (Login_my_DB?)(new Login_my_DB()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
 
-  public static Offset<Init_Collection> CreateInit_Collection(FlatBufferBuilder builder,
+  public static Offset<Init_Collection_IM> CreateInit_Collection_IM(FlatBufferBuilder builder,
       int id = 0,
       VectorOffset itemDataOffset = default(VectorOffset),
       VectorOffset MonsterDataOffset = default(VectorOffset),
-      VectorOffset clientDataOffset = default(VectorOffset),
       Offset<Login_my_DB> myDataOffset = default(Offset<Login_my_DB>)) {
-    builder.StartObject(5);
-    Init_Collection.AddMyData(builder, myDataOffset);
-    Init_Collection.AddClientData(builder, clientDataOffset);
-    Init_Collection.AddMonsterData(builder, MonsterDataOffset);
-    Init_Collection.AddItemData(builder, itemDataOffset);
-    Init_Collection.AddId(builder, id);
-    return Init_Collection.EndInit_Collection(builder);
+    builder.StartObject(4);
+    Init_Collection_IM.AddMyData(builder, myDataOffset);
+    Init_Collection_IM.AddMonsterData(builder, MonsterDataOffset);
+    Init_Collection_IM.AddItemData(builder, itemDataOffset);
+    Init_Collection_IM.AddId(builder, id);
+    return Init_Collection_IM.EndInit_Collection_IM(builder);
   }
 
-  public static void StartInit_Collection(FlatBufferBuilder builder) { builder.StartObject(5); }
+  public static void StartInit_Collection_IM(FlatBufferBuilder builder) { builder.StartObject(4); }
   public static void AddId(FlatBufferBuilder builder, int id) { builder.AddInt(0, id, 0); }
   public static void AddItemData(FlatBufferBuilder builder, VectorOffset itemDataOffset) { builder.AddOffset(1, itemDataOffset.Value, 0); }
   public static VectorOffset CreateItemDataVector(FlatBufferBuilder builder, Offset<Item_info>[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddOffset(data[i].Value); return builder.EndVector(); }
@@ -51,14 +47,10 @@ public struct Init_Collection : IFlatbufferObject
   public static VectorOffset CreateMonsterDataVector(FlatBufferBuilder builder, Offset<Monster_info>[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddOffset(data[i].Value); return builder.EndVector(); }
   public static VectorOffset CreateMonsterDataVectorBlock(FlatBufferBuilder builder, Offset<Monster_info>[] data) { builder.StartVector(4, data.Length, 4); builder.Add(data); return builder.EndVector(); }
   public static void StartMonsterDataVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(4, numElems, 4); }
-  public static void AddClientData(FlatBufferBuilder builder, VectorOffset clientDataOffset) { builder.AddOffset(3, clientDataOffset.Value, 0); }
-  public static VectorOffset CreateClientDataVector(FlatBufferBuilder builder, Offset<Client_info>[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddOffset(data[i].Value); return builder.EndVector(); }
-  public static VectorOffset CreateClientDataVectorBlock(FlatBufferBuilder builder, Offset<Client_info>[] data) { builder.StartVector(4, data.Length, 4); builder.Add(data); return builder.EndVector(); }
-  public static void StartClientDataVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(4, numElems, 4); }
-  public static void AddMyData(FlatBufferBuilder builder, Offset<Login_my_DB> myDataOffset) { builder.AddOffset(4, myDataOffset.Value, 0); }
-  public static Offset<Init_Collection> EndInit_Collection(FlatBufferBuilder builder) {
+  public static void AddMyData(FlatBufferBuilder builder, Offset<Login_my_DB> myDataOffset) { builder.AddOffset(3, myDataOffset.Value, 0); }
+  public static Offset<Init_Collection_IM> EndInit_Collection_IM(FlatBufferBuilder builder) {
     int o = builder.EndObject();
-    return new Offset<Init_Collection>(o);
+    return new Offset<Init_Collection_IM>(o);
   }
 };
 

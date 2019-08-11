@@ -44,6 +44,14 @@ public class Charactor_Select : MonoBehaviour
         //        target.position = hit.point; // 타겟을 레이캐스트가 충돌된 곳으로 옮긴다.
         //    }
         //}
+
+        //if (Game.Network.NetWork.SceneNum == 1)
+        //{ }
+        //else if (Game.Network.NetWork.SceneNum == 2)
+        //{
+        //    Game.Network.NetWork.SendSelectCharacter(s_num);
+        //    SceneManager.LoadScene(2);
+        //}
     }
 
     public void Select1()
@@ -86,16 +94,14 @@ public class Charactor_Select : MonoBehaviour
 
     public void ChangeScene()
     {
-        if (Game.Network.NetWork.SceneNum == 1)
-        {
-            Game.Network.NetWork.SendSelectCharacter(s_num);
-            SceneManager.LoadScene(1);
-        }
-        else if (Game.Network.NetWork.SceneNum == 2)
-        {
-            Game.Network.NetWork.SendSelectCharacter(s_num);
-            SceneManager.LoadScene(2);
-        }
+        Game.Network.NetWork.SendSelectCharacter(s_num);
+        //if (Game.Network.NetWork.SceneNum == 1)
+        //{
+        //}
+        //else if (Game.Network.NetWork.SceneNum == 2)
+        //{
+        //    SceneManager.LoadScene(2);
+        //}
     }
 
 }

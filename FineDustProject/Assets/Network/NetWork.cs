@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 //---------------------------------------------------------
 using System.Net;
 using System.Net.Sockets;
@@ -122,7 +123,12 @@ namespace Game.Network
         // Update is called once per frame
         void Update()
         {
-            deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
+            if (SceneNum == 0)
+            { }
+            else if (SceneNum == 1)
+                SceneManager.LoadScene(1);
+            else if (SceneNum == 2)
+                SceneManager.LoadScene(2);
         }
 
         private void Awake()
@@ -144,23 +150,95 @@ namespace Game.Network
             if (type == Game.Protocol.Protocol.SC_ID)
             {
                 ByteBuffer recv_buf = new ByteBuffer(recvPacket);
-                Client_info get_data = Client_info.GetRootAsClient_info(recv_buf);
-                Client_id = get_data.Id;
-                new_player_id = get_data.Id;
-                int id = get_data.Id;
-                int hp = get_data.Hp;
-                int ani = get_data.Animator;
-                float x = get_data.DirX;
-                float z = get_data.DirZ;
-                float h = get_data.Horizontal;
-                float v = get_data.Vertical;
-                string n = get_data.Name;
-                Vector3 p = new Vector3(get_data.Position.Value.X, get_data.Position.Value.Y, get_data.Position.Value.Z);
-                Vector3 r = new Vector3(get_data.Rotation.Value.X, get_data.Rotation.Value.Y, get_data.Rotation.Value.Z);
+                var get_all_data = Init_Collection_IM.GetRootAsInit_Collection_IM(recv_buf);
 
-                client_data.Add(id, new ClientClass(id, hp, ani, x, z, h, v, n, p, r));
-                client_data[id].set_draw(true);
-                Debug.Log("클라이언트 아이디 : " + Client_id);
+                for (int i = 0; i < get_all_data.ItemDataLength; ++i)
+                {
+                    //데이터 접근 get_all_data.Data(i).Value.변수
+                    int item_id = get_all_data.ItemData(i).Value.Id;
+                    int item_t = get_all_data.ItemData(i).Value.Type;
+                    Vector3 item_p = new Vector3(get_all_data.ItemData(i).Value.Position.Value.X, get_all_data.ItemData(i).Value.Position.Value.Y, get_all_data.ItemData(i).Value.Position.Value.Z);
+
+                    if (item_data.ContainsKey(item_id))
+                    {
+                        ItemClass iter = item_data[item_id];
+                        iter.set_id(item_id);
+                        iter.set_type(item_t);
+                        iter.set_pos(item_p);
+                        iter.set_draw(true);
+                    }
+                    else
+                    {
+                        item_data.Add(item_id, new ItemClass(item_id, item_t, item_p));
+                        item_data[item_id].set_draw(true);
+                    }
+                }
+                for (int i = 0; i < get_all_data.MonsterDataLength; ++i)
+                {
+                    int monster_id = get_all_data.MonsterData(i).Value.Id;
+                    int monster_hp = get_all_data.MonsterData(i).Value.Hp;
+                    Vector3 monster_p = new Vector3(get_all_data.MonsterData(i).Value.Position.Value.X, get_all_data.MonsterData(i).Value.Position.Value.Y, get_all_data.MonsterData(i).Value.Position.Value.Z);
+                    Vector3 monster_r = new Vector3(get_all_data.MonsterData(i).Value.Rotation.Value.X, get_all_data.MonsterData(i).Value.Rotation.Value.Y, get_all_data.MonsterData(i).Value.Rotation.Value.Z);
+                    int monster_target = get_all_data.MonsterData(i).Value.Target;
+                    float monster_x = get_all_data.MonsterData(i).Value.DirX;
+                    float monster_z = get_all_data.MonsterData(i).Value.DirZ;
+                    int monster_cal = get_all_data.MonsterData(i).Value.Calculate;
+                    int monster_ani = get_all_data.MonsterData(i).Value.Animator;
+
+                    if (monster_data.ContainsKey(monster_id))
+                    {
+                        MonsterClass iter = monster_data[monster_id];
+                        iter.set_id(monster_id);
+                        iter.set_hp(monster_hp);
+                        iter.set_pos(monster_p);
+                        iter.set_rot(monster_r);
+                        iter.set_chase_id(monster_target);
+                        iter.set_dirX(monster_x);
+                        iter.set_dirZ(monster_z);
+                        iter.set_calculate_id(monster_cal);
+                        iter.set_animator(monster_ani);
+                        iter.set_draw(true);
+                    }
+                    else
+                    {
+                        monster_data.Add(monster_id, new MonsterClass(monster_id, monster_hp, monster_ani, monster_x, monster_z, monster_p, monster_r, monster_target, monster_cal));
+                        monster_data[monster_id].set_draw(true);
+                        //spawner.Spawn(id, p, monster_data[id]);
+                    }
+                }
+                Client_id = get_all_data.MyData.Value.Id;
+                new_player_id = get_all_data.MyData.Value.Id;
+                int id = get_all_data.MyData.Value.Id;
+                string n = get_all_data.MyData.Value.Name;
+                Vector3 p = new Vector3(get_all_data.MyData.Value.Position.Value.X, get_all_data.MyData.Value.Position.Value.Y, get_all_data.MyData.Value.Position.Value.Z);
+                int hp = get_all_data.MyData.Value.Hp;
+                int mhp = get_all_data.MyData.Value.MaxHp;
+                int i1 = get_all_data.MyData.Value.Item1;
+                int i2 = get_all_data.MyData.Value.Item2;
+                int i3 = get_all_data.MyData.Value.Item3;
+                int i4 = get_all_data.MyData.Value.Item4;
+                int character = get_all_data.MyData.Value.Character;
+
+                if (client_data.ContainsKey(id))
+                {
+                    ClientClass iter = client_data[id];
+                    iter.set_name(n);
+                    iter.set_pos(p);
+                    iter.set_hp(hp);
+                    iter.set_item(i1, 0);
+                    iter.set_item(i2, 1);
+                    iter.set_item(i3, 2);
+                    iter.set_item(i4, 3);
+                    iter.set_char(character);
+                    iter.set_draw(true);
+                }
+                else
+                {
+                    client_data.Add(id, new ClientClass(id, n, p, hp, i1, i2, i3, i4, character));
+                    client_data[id].set_draw(true);
+                }
+
+                SceneNum = 2;
             }
             else if (type == Game.Protocol.Protocol.SC_PUT_PLAYER)      // 다른 클라가 접속했을 때
             {
@@ -354,112 +432,106 @@ namespace Game.Network
             {
                 ByteBuffer recv_buf = new ByteBuffer(recvPacket);
                 var get_all_data = Init_Collection.GetRootAsInit_Collection(recv_buf);
-                Client_id = get_all_data.Id;
-                new_player_id = get_all_data.Id;
-                for ( int i = 0; i<get_all_data.ClientDataLength;++i)
-                {
-                    int id = get_all_data.ClientData(i).Value.Id;
-                    int hp = get_all_data.ClientData(i).Value.Hp;
-                    int ani = get_all_data.ClientData(i).Value.Animator;
-                    float x = get_all_data.ClientData(i).Value.DirX;
-                    float z = get_all_data.ClientData(i).Value.DirZ;
-                    float h = get_all_data.ClientData(i).Value.Horizontal;
-                    float v = get_all_data.ClientData(i).Value.Vertical;
-                    string n = get_all_data.ClientData(i).Value.Name;
-                    Vector3 p = new Vector3(get_all_data.ClientData(i).Value.Position.Value.X, get_all_data.ClientData(i).Value.Position.Value.Y, get_all_data.ClientData(i).Value.Position.Value.Z);
-                    Vector3 r = new Vector3(get_all_data.ClientData(i).Value.Rotation.Value.X, get_all_data.ClientData(i).Value.Rotation.Value.Y, get_all_data.ClientData(i).Value.Rotation.Value.Z);
+                    for (int i = 0; i < get_all_data.ClientDataLength; ++i)
+                    {
+                        int c_id = get_all_data.ClientData(i).Value.Id;
+                        int c_hp = get_all_data.ClientData(i).Value.Hp;
+                        int c_ani = get_all_data.ClientData(i).Value.Animator;
+                        float c_x = get_all_data.ClientData(i).Value.DirX;
+                        float c_z = get_all_data.ClientData(i).Value.DirZ;
+                        float c_h = get_all_data.ClientData(i).Value.Horizontal;
+                        float c_v = get_all_data.ClientData(i).Value.Vertical;
+                        string c_n = get_all_data.ClientData(i).Value.Name;
+                        Vector3 c_p = new Vector3(get_all_data.ClientData(i).Value.Position.Value.X, get_all_data.ClientData(i).Value.Position.Value.Y, get_all_data.ClientData(i).Value.Position.Value.Z);
+                        Vector3 c_r = new Vector3(get_all_data.ClientData(i).Value.Rotation.Value.X, get_all_data.ClientData(i).Value.Rotation.Value.Y, get_all_data.ClientData(i).Value.Rotation.Value.Z);
 
-                    if (client_data.ContainsKey(id))
-                    {
-                        ClientClass iter = client_data[id];
-                        iter.set_hp(hp);
-                        iter.set_pos(p);
-                        iter.set_rot(r);
-                        iter.set_vertical(v);
-                        iter.set_horizontal(h);
-                        iter.set_animator(ani);
-                        iter.set_dirX(x);
-                        iter.set_dirZ(z);
-                        iter.set_draw(true);
+                        if (client_data.ContainsKey(c_id))
+                        {
+                            ClientClass iter = client_data[c_id];
+                            iter.set_hp(c_hp);
+                            iter.set_pos(c_p);
+                            iter.set_rot(c_r);
+                            iter.set_vertical(c_v);
+                            iter.set_horizontal(c_h);
+                            iter.set_animator(c_ani);
+                            iter.set_dirX(c_x);
+                            iter.set_dirZ(c_z);
+                            iter.set_draw(true);
+                        }
+                        else
+                        {
+                            client_data.Add(c_id, new ClientClass(c_id, c_hp, c_ani, c_x, c_z, c_h, c_v, c_n, c_p, c_r));
+                            ClientClass iter = client_data[c_id];
+                            client_data[c_id].set_draw(true);
+                        }
                     }
-                    else
-                    {
-                        client_data.Add(id, new ClientClass(id, hp, ani, x, z, h, v, n, p, r));
-                        ClientClass iter = client_data[id];
-                        client_data[id].set_draw(true);
-                    }
-                }
+                
                 for (int i = 0; i < get_all_data.ItemDataLength; ++i)
                 {
                     //데이터 접근 get_all_data.Data(i).Value.변수
-                    int id = get_all_data.ItemData(i).Value.Id;
-                    int t = get_all_data.ItemData(i).Value.Type;
-                    Vector3 p = new Vector3(get_all_data.ItemData(i).Value.Position.Value.X, get_all_data.ItemData(i).Value.Position.Value.Y, get_all_data.ItemData(i).Value.Position.Value.Z);
+                    int item_id = get_all_data.ItemData(i).Value.Id;
+                    int item_t = get_all_data.ItemData(i).Value.Type;
+                    Vector3 item_p = new Vector3(get_all_data.ItemData(i).Value.Position.Value.X, get_all_data.ItemData(i).Value.Position.Value.Y, get_all_data.ItemData(i).Value.Position.Value.Z);
 
-                    if (item_data.ContainsKey(id))
+                    if (item_data.ContainsKey(item_id))
                     {
-                        ItemClass iter = item_data[id];
-                        iter.set_id(id);
-                        iter.set_type(t);
-                        iter.set_pos(p);
+                        ItemClass iter = item_data[item_id];
+                        iter.set_id(item_id);
+                        iter.set_type(item_t);
+                        iter.set_pos(item_p);
                         iter.set_draw(true);
                     }
                     else
                     {
-                        item_data.Add(id, new ItemClass(id, t, p));
-                        item_data[id].set_draw(true);
+                        item_data.Add(item_id, new ItemClass(item_id, item_t, item_p));
+                        item_data[item_id].set_draw(true);
                     }
                 }
                 for(int i = 0; i<get_all_data.MonsterDataLength; ++i)
                 {
-                    int id = get_all_data.MonsterData(i).Value.Id;
-                    int hp = get_all_data.MonsterData(i).Value.Hp;
-                    Vector3 p = new Vector3(get_all_data.MonsterData(i).Value.Position.Value.X, get_all_data.MonsterData(i).Value.Position.Value.Y, get_all_data.MonsterData(i).Value.Position.Value.Z);
-                    Vector3 r = new Vector3(get_all_data.MonsterData(i).Value.Rotation.Value.X, get_all_data.MonsterData(i).Value.Rotation.Value.Y, get_all_data.MonsterData(i).Value.Rotation.Value.Z);
-                   int target = get_all_data.MonsterData(i).Value.Target;
-                    float x = get_all_data.MonsterData(i).Value.DirX;
-                    float z = get_all_data.MonsterData(i).Value.DirZ;
-                    int cal = get_all_data.MonsterData(i).Value.Calculate;
-                    int ani = get_all_data.MonsterData(i).Value.Animator;
+                    int monster_id = get_all_data.MonsterData(i).Value.Id;
+                    int monster_hp = get_all_data.MonsterData(i).Value.Hp;
+                    Vector3 monster_p = new Vector3(get_all_data.MonsterData(i).Value.Position.Value.X, get_all_data.MonsterData(i).Value.Position.Value.Y, get_all_data.MonsterData(i).Value.Position.Value.Z);
+                    Vector3 monster_r = new Vector3(get_all_data.MonsterData(i).Value.Rotation.Value.X, get_all_data.MonsterData(i).Value.Rotation.Value.Y, get_all_data.MonsterData(i).Value.Rotation.Value.Z);
+                   int monster_target = get_all_data.MonsterData(i).Value.Target;
+                    float monster_x = get_all_data.MonsterData(i).Value.DirX;
+                    float monster_z = get_all_data.MonsterData(i).Value.DirZ;
+                    int monster_cal = get_all_data.MonsterData(i).Value.Calculate;
+                    int monster_ani = get_all_data.MonsterData(i).Value.Animator;
 
-                    if (monster_data.ContainsKey(id))
+                    if (monster_data.ContainsKey(monster_id))
                     {
-                        MonsterClass iter =monster_data[id];
-                        iter.set_id(id);
-                        iter.set_hp(hp);
-                        iter.set_pos(p);
-                        iter.set_rot(r);
-                        iter.set_chase_id(target);
-                        iter.set_dirX(x);
-                        iter.set_dirZ(z);
-                        iter.set_calculate_id(cal);
-                        iter.set_animator(ani);
+                        MonsterClass iter =monster_data[monster_id];
+                        iter.set_id(monster_id);
+                        iter.set_hp(monster_hp);
+                        iter.set_pos(monster_p);
+                        iter.set_rot(monster_r);
+                        iter.set_chase_id(monster_target);
+                        iter.set_dirX(monster_x);
+                        iter.set_dirZ(monster_z);
+                        iter.set_calculate_id(monster_cal);
+                        iter.set_animator(monster_ani);
                         iter.set_draw(true);
                     }
                     else
                     {
-                        monster_data.Add(id, new MonsterClass(id,hp,ani,x,z,p,r,target,cal));
-                        monster_data[id].set_draw(true);
+                        monster_data.Add(monster_id, new MonsterClass(monster_id, monster_hp, monster_ani, monster_x, monster_z, monster_p, monster_r, monster_target, monster_cal));
+                        monster_data[monster_id].set_draw(true);
                         //spawner.Spawn(id, p, monster_data[id]);
                     }
                 }
-            }
-            else if(type == Game.Protocol.Protocol.SC_LOGIN_SUCCESS)
-            {
-                ByteBuffer recv_buf = new ByteBuffer(recvPacket);
-                Login_my_DB get_data = Login_my_DB.GetRootAsLogin_my_DB(recv_buf);
-                Client_id = get_data.Id;
-                new_player_id = get_data.Id;
-                int id = get_data.Id;
-                string n = get_data.Name;
-                Vector3 p = new Vector3(get_data.Position.Value.X, get_data.Position.Value.Y, get_data.Position.Value.Z);
-                int hp = get_data.Hp;
-                int mhp = get_data.MaxHp;
-                int i1 = get_data.Item1;
-                int i2 = get_data.Item2;
-                int i3 = get_data.Item3;
-                int i4 = get_data.Item4;
-                int character = get_data.Character;
+                Client_id = get_all_data.MyData.Value.Id;
+                new_player_id = get_all_data.MyData.Value.Id;
+                int id = get_all_data.MyData.Value.Id;
+                string n = get_all_data.MyData.Value.Name;
+                Vector3 p = new Vector3(get_all_data.MyData.Value.Position.Value.X, get_all_data.MyData.Value.Position.Value.Y, get_all_data.MyData.Value.Position.Value.Z);
+                int hp = get_all_data.MyData.Value.Hp;
+                int mhp = get_all_data.MyData.Value.MaxHp;
+                int i1 = get_all_data.MyData.Value.Item1;
+                int i2 = get_all_data.MyData.Value.Item2;
+                int i3 = get_all_data.MyData.Value.Item3;
+                int i4 = get_all_data.MyData.Value.Item4;
+                int character = get_all_data.MyData.Value.Character;
 
                 if (client_data.ContainsKey(id))
                 {
@@ -481,6 +553,9 @@ namespace Game.Network
                 }
 
                 SceneNum = 2;
+            }
+            else if(type == Game.Protocol.Protocol.SC_LOGIN_SUCCESS)
+            {
             }
             else if (type == Game.Protocol.Protocol.SC_LOGIN_FAIL)
             {
@@ -568,6 +643,14 @@ namespace Game.Network
                 int target = get_data.PlayerID;
                 monster_data[monster_id].set_chase_id(target);
             }
+            else if (type == Game.Protocol.Protocol.SC_MONSTER_CALCULATE)
+            {
+                ByteBuffer recv_buf = new ByteBuffer(recvPacket);
+                Eat_Item get_data = Eat_Item.GetRootAsEat_Item(recv_buf);
+                int monster_id = get_data.ItemID;
+                int target = get_data.PlayerID;
+                monster_data[monster_id].set_calculate_id(target);
+            }
         }
 
         public static void Send_Packet(byte[] packet)
@@ -631,6 +714,7 @@ namespace Game.Network
                     serverConnect = true;
                     Login_Button.login_ok = true;
                     Debug.Log("서버와 정상적으로 연결 되었습니다.");
+
                     RecieveHeader();//start recieve header
                 }
                 else
