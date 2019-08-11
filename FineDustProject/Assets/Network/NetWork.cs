@@ -160,19 +160,25 @@ namespace Game.Network
                     int item_id = get_all_data.ItemData(i).Value.Id;
                     int item_t = get_all_data.ItemData(i).Value.Type;
                     Vector3 item_p = new Vector3(get_all_data.ItemData(i).Value.Position.Value.X, get_all_data.ItemData(i).Value.Position.Value.Y, get_all_data.ItemData(i).Value.Position.Value.Z);
-
+                    int d = get_all_data.ItemData(i).Value.Draw;
                     if (item_data.ContainsKey(item_id))
                     {
                         ItemClass iter = item_data[item_id];
                         iter.set_id(item_id);
                         iter.set_type(item_t);
                         iter.set_pos(item_p);
-                        iter.set_draw(true);
+                        if (d == 1)
+                            iter.set_draw(true);
+                        else
+                            iter.set_draw(false);
                     }
                     else
                     {
                         item_data.Add(item_id, new ItemClass(item_id, item_t, item_p));
-                        item_data[item_id].set_draw(true);
+                        if (d == 1)
+                            item_data[item_id].set_draw(true);
+                        else
+                            item_data[item_id].set_draw(false);
                     }
                 }
                 for (int i = 0; i < get_all_data.MonsterDataLength; ++i)
@@ -482,19 +488,25 @@ namespace Game.Network
                     int item_id = get_all_data.ItemData(i).Value.Id;
                     int item_t = get_all_data.ItemData(i).Value.Type;
                     Vector3 item_p = new Vector3(get_all_data.ItemData(i).Value.Position.Value.X, get_all_data.ItemData(i).Value.Position.Value.Y, get_all_data.ItemData(i).Value.Position.Value.Z);
-
+                    int d = get_all_data.ItemData(i).Value.Draw;
                     if (item_data.ContainsKey(item_id))
                     {
                         ItemClass iter = item_data[item_id];
                         iter.set_id(item_id);
                         iter.set_type(item_t);
                         iter.set_pos(item_p);
-                        iter.set_draw(true);
+                        if(d == 1)
+                            iter.set_draw(true);
+                        else
+                            iter.set_draw(false);
                     }
                     else
                     {
                         item_data.Add(item_id, new ItemClass(item_id, item_t, item_p));
-                        item_data[item_id].set_draw(true);
+                        if (d == 1)
+                            item_data[item_id].set_draw(true);
+                        else
+                            item_data[item_id].set_draw(false);
                     }
                 }
                 for(int i = 0; i<get_all_data.MonsterDataLength; ++i)

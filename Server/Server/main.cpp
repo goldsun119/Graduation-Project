@@ -1647,6 +1647,7 @@ int load_item()
 			if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
 			{
 				//wprintf(L"%d: %S %S %S\n", i + 1, sCustID, szName, szPhone);
+				items[db_id].SetId(db_id);
 				items[db_id].SetPos(db_x, db_y, db_z);
 				items[db_id].SetType(db_type);
 				items[db_id].SetDraw(db_draw);
