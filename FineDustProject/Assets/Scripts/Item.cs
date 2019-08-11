@@ -49,6 +49,7 @@ public class Item : MonoBehaviour
 
     void Update()
     {
+
         if (Game.Network.NetWork.item_data[ID].get_draw())
         { }
         else
@@ -107,6 +108,19 @@ public class Item : MonoBehaviour
     void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))
+            isCollision = false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+            isCollision = true;
+
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
             isCollision = false;
     }
 }

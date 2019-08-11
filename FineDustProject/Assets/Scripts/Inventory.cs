@@ -112,6 +112,7 @@ public class Inventory : MonoBehaviour
             slot.ImageRender(onoff);
         }
     }
+    
 
     // 아이템을 넣기위해 모든 슬롯을 검사.
     public bool AddItem(Item item)

@@ -42,6 +42,7 @@ public class Slot : MonoBehaviour
 
         SlotImg.enabled = false;
         ItemImg.enabled = false;
+        text.enabled = false;
     }
 
     public void AddItem(Item item)
@@ -94,5 +95,10 @@ public class Slot : MonoBehaviour
     {
         SlotImg.enabled = onoff;
         ItemImg.enabled = onoff;
+        text.enabled = onoff;
+        //if (onoff)
+        //    text.fontSize = (int)(15 * 0.5f);
+        //else
+        //    text.fontSize = 1;
     }
 }

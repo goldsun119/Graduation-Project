@@ -214,17 +214,7 @@ public class PlayerStatus : MonoBehaviour
             Ani_State_Jump = ANI_TYPE.IDEL;
         }
 
-        // 아이템 충돌
-        if (collision.gameObject.CompareTag("Item"))
-        {
-            isItem = true;
-
-            if (Input.GetKey(KeyCode.F))
-            {
-                isPick = true;
-                isItem = false;
-            }
-        }
+        
 
         // 문 충돌
         if (collision.gameObject.CompareTag("Door"))
@@ -254,7 +244,6 @@ public class PlayerStatus : MonoBehaviour
     void OnCollisionExit(Collision collision)
     {
         isPick = false;
-        isItem = false;
         isMon = false;
 
         if (collision.gameObject.CompareTag("wall"))
@@ -265,6 +254,18 @@ public class PlayerStatus : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // 아이템 충돌
+        if (other.gameObject.CompareTag("Item"))
+        {
+            isItem = true;
+
+            if (Input.GetKey(KeyCode.F))
+            {
+                isPick = true;
+                isItem = false;
+            }
+        }
+
         // 지붕등 충돌
         if (other.gameObject.CompareTag("wall"))
         {
@@ -274,6 +275,7 @@ public class PlayerStatus : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        isItem = false;
         // 지붕등 충돌
         if (other.gameObject.CompareTag("wall"))
         {
