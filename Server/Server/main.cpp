@@ -66,7 +66,7 @@ HANDLE g_iocp;
 std::chrono::high_resolution_clock::time_point point;
 std::map <int, Monster> monsters;
 std::map <int, Item> items;
-int contents[5] = { 0,0,0,0,0 };
+int product_complete[5] = { 0,0,0,0,0 };
 
 
 
@@ -116,6 +116,8 @@ void send_monster_revive_packet(int to, int monster);
 void send_monster_target_packet(int to, int monster, int target);
 void send_monster_calculate_packet(int to, int monster, int cal);
 void send_monster_pos_packet(int to, int monster);
+void send_complete_making_packet(int num);
+void send_end_game_packet();
 
 //------------------------------packet------------------------------
 
@@ -514,7 +516,7 @@ void process_event(T_EVENT &ev)
 		send_monster_dead_packet(ev.do_object);
 		
 		// 타이머에 1분 뒤로 넣어서 다시 살아나게
-		add_timer(EV_MONSTER_REVIVE, ev.do_object, std::chrono::high_resolution_clock::now() + 60s);
+		//add_timer(EV_MONSTER_REVIVE, ev.do_object, std::chrono::high_resolution_clock::now() + 60s);
 		monsters[ev.do_object].SetPos(monsters[ev.do_object].GetInitPos());
 		monsters[ev.do_object].SetHp(100);
 		monsters[ev.do_object].SetAnimator(0);
@@ -528,7 +530,7 @@ void process_event(T_EVENT &ev)
 	case EV_MONSTER_REVIVE:
 	{
 		//살아난처리하기
-		monsters[ev.do_object].SetDraw(true);
+		//monsters[ev.do_object].SetDraw(true);
 		for (int to = 1; to <= MAX_USER; ++to)
 		{
 			if (clients[to].sock.connected == true)
@@ -889,6 +891,42 @@ void process_packet(const int id, const int packet_size, const char * buf)
 			over_ex->event = EV_MONSTER_DEAD;
 			PostQueuedCompletionStatus(g_iocp, 1, buf[11], &over_ex->overlapped);
 		}
+	}
+		break;
+	case CS_COMPLETE_MAKING:
+	{
+		if (buf[11] == 1)
+		{
+			product_complete[0] = 1;
+		}
+		else if (buf[11] == 2)
+		{
+			product_complete[1] = 1;
+		}
+		else if (buf[11] == 3)
+		{
+			product_complete[2] = 1;
+		}
+		else if (buf[11] == 4)
+		{
+			product_complete[3] = 1;
+		}
+		else if (buf[11] == 5)
+		{
+			product_complete[4] = 1;
+		}
+		int t = 0;
+		for (int i = 0; i < 5; ++i)
+		{
+			t = product_complete[i];
+			if (t == 1)
+				continue;
+			else break;
+		}
+		if (t == 0)
+			send_complete_making_packet(buf[11]);
+		else
+			send_end_game_packet();
 	}
 		break;
 	default:
@@ -1274,6 +1312,25 @@ void send_monster_pos_packet(int to, int monster)
 	SendPacket(SC_MONSTER_INFO, to, builder.GetBufferPointer(), builder.GetSize());
 }
 
+
+void send_complete_making_packet(int num)
+{
+	int i = num;
+	for (int to = 1; 1 <= MAX_USER; ++to)
+	{
+		if (clients[to].sock.connected == false) continue;
+		SendPacket(SC_COMPLETE_MAKING, to, &i, sizeof(i));
+	}
+}
+void send_end_game_packet()
+{
+	int i = 3;
+	for (int to = 1; 1 <= MAX_USER; ++to)
+	{
+		if (clients[to].sock.connected == false) continue;
+		SendPacket(SC_END_GAME, to, &i, sizeof(i));
+	}
+}
 
 //------------------------------packet------------------------------
 

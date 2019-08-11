@@ -67,6 +67,8 @@ namespace Game.Network
 
         public static int calculate_monster = -1;
 
+        public static int[] product_complete = new int[5] { 0, 0, 0, 0, 0 };
+
         float deltaTime = 0.0f;     // FPS 측정
 
         private static bool serverConnect = false;  // 서버 연결을 했는지 체크
@@ -667,6 +669,17 @@ namespace Game.Network
                 int target = get_data.PlayerID;
                 monster_data[monster_id].set_calculate_id(target);
             }
+            else if (type == Game.Protocol.Protocol.SC_COMPLETE_MAKING)
+            {
+                int complete = recvPacket[0];
+                product_complete[complete] = 1;
+                
+            }
+            else if (type == Game.Protocol.Protocol.SC_END_GAME)
+            {
+                SceneNum = 3;
+            }
+
         }
 
         public static void Send_Packet(byte[] packet)
@@ -881,6 +894,12 @@ namespace Game.Network
         public static void SendMonsterAttack(int id)
         {
             Sendbyte = sF.makeAttackPacket(id);
+            Send_Packet(Sendbyte);
+        }
+
+        public static void SendCompleteMaking(int num)
+        {
+            Sendbyte = sF.makeCompleteMakingPacket(num);
             Send_Packet(Sendbyte);
         }
     }
