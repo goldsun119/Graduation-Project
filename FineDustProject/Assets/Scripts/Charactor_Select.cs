@@ -95,13 +95,13 @@ public class Charactor_Select : MonoBehaviour
     public void ChangeScene()
     {
         Game.Network.NetWork.SendSelectCharacter(s_num);
-        //if (Game.Network.NetWork.SceneNum == 1)
-        //{
-        //}
-        //else if (Game.Network.NetWork.SceneNum == 2)
-        //{
-        //    SceneManager.LoadScene(2);
-        //}
+        if (Game.Network.NetWork.SceneNum == 1)
+        {
+        }
+        else if (Game.Network.NetWork.SceneNum == 2)
+        {
+            SceneManager.LoadScene(2);
+        }
     }
 
 }

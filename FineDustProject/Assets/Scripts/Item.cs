@@ -49,6 +49,20 @@ public class Item : MonoBehaviour
 
     void Update()
     {
+        if (isCollision)
+        {
+            if (Input.GetKey(KeyCode.F))
+            {
+                Game.Network.NetWork.SendEatItem(ID, Game.Network.NetWork.Client_id);
+                AddItem();
+                gameObject.SetActive(false);
+                //Item_Spawner.itemCnt--;
+                //Game.Network.NetWork.item_data[].set_draw(false);
+                //번호 알아서 그거 드로우 끄고 드로우상태에 따라 액티브 트루/폴스로
+
+                Debug.Log("냠");
+            }
+        }
 
         if (Game.Network.NetWork.item_data[ID].get_draw())
         { }
