@@ -25,6 +25,11 @@ public class Inventory : MonoBehaviour
     private float InvenHeight;          // 인밴토리 세로길이.
     private float EmptySlot;            // 빈 슬롯의 개수.
 
+    public Item item1;
+    public Item item2;
+
+    public bool load;
+
     void Awake()
     {
         // 인벤토리 이미지의 가로, 세로 사이즈 셋팅.
@@ -69,11 +74,23 @@ public class Inventory : MonoBehaviour
             }
         }
 
-        // 빈 슬롯 = 슬롯의 숫자.
-        EmptySlot = AllSlot.Count;
-        //Invoke("Init", 0.01f);
-    }
+        //load
 
+        
+            // 빈 슬롯 = 슬롯의 숫자.
+            EmptySlot = AllSlot.Count;
+        //Invoke("Init", 0.01f);
+
+        if (!Game.Network.NetWork.client_data[Game.Network.NetWork.Client_id].get_connect())
+        {
+            load = true;
+        }
+        else 
+            load = false;
+
+
+
+    }
     //void Init()
     //{
     //    ItemIO.Load(AllSlot);
@@ -84,10 +101,55 @@ public class Inventory : MonoBehaviour
         InvenImg = transform.GetComponent<Image>();
         InvenImg.enabled = false;
         ImageRender(false);
+
+        
+        
+
     }
 
     void Update()
     {
+            
+        if (!load)
+        {
+
+            // 슬롯에 총 개수.
+            int slotCount = AllSlot.Count;
+
+            // 넣기위한 아이템이 슬롯에 존재하는지 검사.
+            for (int i = 0; i < slotCount; i++)
+            {
+                // 그 슬롯의 스크립트를 가져온다.
+                Slot slot = AllSlot[i].GetComponent<Slot>();
+
+                if (Game.Network.NetWork.client_data[Game.Network.NetWork.Client_id].get_item_count(i) > 0)
+                {
+                    int count = 0;
+                    while (count < Game.Network.NetWork.client_data[Game.Network.NetWork.Client_id].get_item_count(i))
+                    {
+                        switch (Game.Network.NetWork.client_data[Game.Network.NetWork.Client_id].get_item(i))
+                        {
+                            case 1:
+                                slot.AddItem(item1);
+                                break;
+                            case 2:
+                                slot.AddItem(item2);
+                                break;
+                            default:
+                                break;
+                        }
+                        count++;
+                    }
+                }
+
+                else
+                    continue;
+
+            }
+
+            load = true;
+        }
+
         if (Input.GetKeyDown(KeyCode.I))
         {
             Debug.Log("I누름");
@@ -104,7 +166,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void ImageRender( bool onoff)
+    public void ImageRender(bool onoff)
     {
         for (int i = 0; i < AllSlot.Count; i++)
         {
@@ -112,11 +174,13 @@ public class Inventory : MonoBehaviour
             slot.ImageRender(onoff);
         }
     }
-    
+
 
     // 아이템을 넣기위해 모든 슬롯을 검사.
     public bool AddItem(Item item)
     {
+        //string a = "Player(" + Game.Network.NetWork.Client_id.ToString() + ")";
+
         // 슬롯에 총 개수.
         int slotCount = AllSlot.Count;
 
@@ -134,6 +198,17 @@ public class Inventory : MonoBehaviour
             // 슬롯에 존재하는 아이템의 겹칠수 있는 최대치가 넘지않았을 때. (true일 때)
             if (slot.ItemReturn().type == item.type && slot.ItemMax(item))
             {
+                switch (slot.ItemReturn().type)
+                {
+                    case Item.TYPE.Box:
+                        Game.Network.NetWork.client_data[Game.Network.NetWork.Client_id].get_item_count(i);
+                        break;
+                    case Item.TYPE.Crystal:
+                        Game.Network.NetWork.client_data[Game.Network.NetWork.Client_id].get_item_count(i);
+                        break;
+                    default:
+                        break;
+                }
                 // 슬롯에 아이템을 넣는다.
                 slot.AddItem(item);
                 return true;
@@ -149,12 +224,24 @@ public class Inventory : MonoBehaviour
             if (slot.isSlots())
                 continue;
 
+            switch (slot.ItemReturn().type)
+            {
+                case Item.TYPE.Box:
+                    Game.Network.NetWork.client_data[Game.Network.NetWork.Client_id].get_item(i);
+                    break;
+                case Item.TYPE.Crystal:
+                    Game.Network.NetWork.client_data[Game.Network.NetWork.Client_id].get_item(i);
+                    break;
+                default:
+                    break;
+            }
             slot.AddItem(item);
             return true;
         }
 
         // 위에 조건에 해당되는 것이 없을 때 아이템을 먹지 못함.
         return false;
+
     }
 
     // 거리가 가까운 슬롯의 반환.

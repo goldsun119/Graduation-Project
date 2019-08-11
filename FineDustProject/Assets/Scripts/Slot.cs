@@ -47,6 +47,8 @@ public class Slot : MonoBehaviour
 
     public void AddItem(Item item)
     {
+        
+
         // 스택에 아이템 추가.
         slot.Push(item);
         UpdateInfo(true, item.DefaultImg);
