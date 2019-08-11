@@ -84,10 +84,12 @@ public class PlayerMove : MonoBehaviour
         }
 
         // 점프
-        if (player.Ani_State_Jump == PlayerStatus.ANI_TYPE.IDEL)
+        if (player.Ani_State_Jump == PlayerStatus.ANI_TYPE.JUMP)
         {
             rigid.AddForce(Vector3.up * player.JumpP, ForceMode.Impulse);
-            player.Ani_State_Jump = PlayerStatus.ANI_TYPE.JUMP;
+            player.Ani_State_Jump = PlayerStatus.ANI_TYPE.IDEL;
+            Debug.Log("점프2");
+
         }
 
         // 충돌 - 아이템

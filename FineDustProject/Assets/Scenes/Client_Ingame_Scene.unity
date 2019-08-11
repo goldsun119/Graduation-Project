@@ -7617,6 +7617,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wild_boar_stand
       objectReference: {fileID: 0}
+    - target: {fileID: 4438222355274859888, guid: 2a233d1a1ac0e4844a3b2e6c0cf37ba5,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3078608245255311286, guid: 2a233d1a1ac0e4844a3b2e6c0cf37ba5,
         type: 3}
       propertyPath: m_LocalPosition.x

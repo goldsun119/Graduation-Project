@@ -474,6 +474,10 @@ void process_event(T_EVENT &ev)
 					if (target != 0)
 					{
 						//타겟이 변경될때 전송
+						monsters[ev.do_object].SetLock();
+						monsters[ev.do_object].SetTarget(target);
+						monsters[ev.do_object].SetUnlock();
+
 						send_monster_target_packet(to, ev.do_object, target);
 					}
 				}

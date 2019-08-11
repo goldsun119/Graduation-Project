@@ -186,13 +186,17 @@ public class PlayerStatus : MonoBehaviour
 
         // 점프
         if ((Input.GetKeyDown(KeyCode.Space)) && (Ani_State_Jump == ANI_TYPE.IDEL))
+        {
+            Debug.Log("점프1");
             Ani_State_Jump = ANI_TYPE.JUMP;
+        }
 
         CheatKey();
     }
 
     void OnCollisionEnter(Collision collision)
     {
+        Debug.Log(transform.name + "얘랑" + collision.gameObject.name);
         // 점프 해제
         if (collision.gameObject.CompareTag("Ground"))
         {

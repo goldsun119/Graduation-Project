@@ -141,15 +141,15 @@ public class MonsterMgr : MonoBehaviour
                 if (Waiting_Time > 0.5) is_Wait = false;
 
             }
-           position = transform.position;
-           rotation = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
+            position = transform.position;
+            rotation = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
             Game.Network.NetWork.monster_data[ID].set_animator(animator);
-                Game.Network.NetWork.monster_data[ID].set_dirX(dirX);
-                Game.Network.NetWork.monster_data[ID].set_dirZ(dirZ);
-                Game.Network.NetWork.monster_data[ID].set_rot(rotation);
-                Game.Network.NetWork.monster_data[ID].set_pos(position);
+            Game.Network.NetWork.monster_data[ID].set_dirX(dirX);
+            Game.Network.NetWork.monster_data[ID].set_dirZ(dirZ);
+            Game.Network.NetWork.monster_data[ID].set_rot(rotation);
+            Game.Network.NetWork.monster_data[ID].set_pos(position);
 
-                Game.Network.NetWork.SendMonsterInfo(ID);
+            Game.Network.NetWork.SendMonsterInfo(ID);
         }
         else
         {
@@ -278,22 +278,22 @@ public class MonsterMgr : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-            Debug.Log(other.gameObject.name);
-            if (other.tag == "Player")
+        Debug.Log(other.gameObject.name);
+        if (other.tag == "Player")
+        {
+            Transform other_tf = other.gameObject.transform;
+            PlayerStatus other_st = other_tf.GetComponent<PlayerStatus>();
+
+            if (Vector3.Distance(other_st.transform.position, transform.position)
+                <= Vector3.Distance(player_tf.transform.position, transform.position))
             {
-                Transform other_tf = other.gameObject.transform;
-                PlayerStatus other_st = other_tf.GetComponent<PlayerStatus>();
+                Debug.Log(player_tf.gameObject.name);
+                player_tf = other_tf;
+                player_st = other_st;
 
-                if (Vector3.Distance(other_st.transform.position, transform.position) 
-                    <= Vector3.Distance(player_tf.transform.position, transform.position))
-                {
-                    Debug.Log(player_tf.gameObject.name);
-                    player_tf = other_tf;
-                    player_st = other_st;
-
-                }
-                    is_Tracking = true;
             }
+            is_Tracking = true;
+        }
     }
     //bool CheckDistance()
     //{
