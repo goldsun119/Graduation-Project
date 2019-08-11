@@ -8,7 +8,7 @@ public class MonsterSpawner : MonoBehaviour
 
     //public int monCnt = 1;
     public int monID = -1;
-    public int monMaxCnt = 100;
+    public int monMaxCnt = 10;
 
     public GameObject monsterPrefab;
     public GameObject monsterObj;
@@ -41,7 +41,7 @@ public class MonsterSpawner : MonoBehaviour
             Transform tmp = transform.Find(a);
             if (tmp == null)
             {
-                GameObject monster = Instantiate(monObj,
+                GameObject monster = Instantiate(monsterPrefab,
                                                     Game.Network.NetWork.monster_data[i].get_pos(),
                                                     Quaternion.identity);
                 monster.name = a;

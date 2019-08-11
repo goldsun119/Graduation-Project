@@ -64,7 +64,7 @@ public class MonsterMgr : MonoBehaviour
         player_st = player_tf.GetComponent<PlayerStatus>();
         
         targetRange = 20.0f;
-        //HP = 100;
+        HP = 100;
 
         chase_id = Game.Network.NetWork.monster_data[ID].get_chase_id();
         calculate_id = Game.Network.NetWork.monster_data[ID].get_calculate_id();
