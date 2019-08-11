@@ -42,6 +42,7 @@ public class players : MonoBehaviour
                 {
                 //    playerStatus.rotation = Game.Network.NetWork.client_data[i].get_rot();
                 playerStatus.draw = Game.Network.NetWork.client_data[i].get_draw();
+                playerStatus.ID = i;
                 }
             if (playerStatus.draw)
             {

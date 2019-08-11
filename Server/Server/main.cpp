@@ -66,6 +66,7 @@ HANDLE g_iocp;
 std::chrono::high_resolution_clock::time_point point;
 std::map <int, Monster> monsters;
 std::map <int, Item> items;
+int contents[5] = { 0,0,0,0,0 };
 
 
 
@@ -235,8 +236,27 @@ void make_monster()
 	monsters[0].SetDraw(true);
 	monsters[0].SetId(0);
 	monsters[0].SetHp(100);
-	monsters[0].SetPos(350, 150, 350);
-	for (monster_id = 1; monster_id < 100; ++monster_id)
+	monsters[0].SetPos(70, 30, 70);
+	monsters[0].SetDirX(0);
+	monsters[0].SetDirZ(0);
+	monsters[0].SetAnimator(0);
+	monsters[0].SetCalculate(1);
+	monsters[0].SetInitPos(monsters[0].GetPos());
+	monsters[0].SetTarget(0);
+	monsters[0].SetRotation(vec3(0, 0, 0));
+
+	monsters[1].SetDraw(true);
+	monsters[1].SetId(0);
+	monsters[1].SetHp(100);
+	monsters[1].SetPos(60, 30, 60);
+	monsters[1].SetDirX(0);
+	monsters[1].SetDirZ(0);
+	monsters[1].SetAnimator(0);
+	monsters[1].SetCalculate(1);
+	monsters[1].SetInitPos(monsters[0].GetPos());
+	monsters[1].SetTarget(0);
+	monsters[1].SetRotation(vec3(0, 0, 0));
+	for (monster_id = 2; monster_id < 30; ++monster_id)
 	{
 		float x = float(rand() % 1800 - 900);
 		if (-350 <= x && x <= 350)
@@ -256,6 +276,12 @@ void make_monster()
 		monsters[monster_id].SetHp(100);
 		monsters[monster_id].SetPos(x, 150, z);
 		monsters[monster_id].SetInitPos(x, 150, z);
+		monsters[monster_id].SetDirX(0);
+		monsters[monster_id].SetDirZ(0);
+		monsters[monster_id].SetAnimator(0);
+		monsters[monster_id].SetCalculate(1);
+		monsters[monster_id].SetTarget(0);
+		monsters[monster_id].SetRotation(vec3(0, 0, 0));
 		//send_put_monster_packet(monster_id);
 	}
 	cout << "몬스터 생성 완료" << endl;
@@ -438,9 +464,9 @@ void process_event(T_EVENT &ev)
 				target = player;
 			}
 			else
-				break;
+				continue;
 		}
-			for (int to = 1; to < MAX_USER; ++to)
+			for (int to = 1; to <= MAX_USER; ++to)
 			{
 				if (clients[to].sock.connected == true)
 				{
@@ -465,11 +491,11 @@ void process_event(T_EVENT &ev)
 				send_monster_dead_packet(ev.do_object);
 		}
 		// 타이머에 1분 뒤로 넣어서 다시 살아나게
-		add_timer(EV_MONSTER_REVIVE, ev.do_object, std::chrono::high_resolution_clock::now() + 60s);
+		//add_timer(EV_MONSTER_REVIVE, ev.do_object, std::chrono::high_resolution_clock::now() + 60s);
 		monsters[ev.do_object].SetPos(monsters[ev.do_object].GetInitPos());
 		monsters[ev.do_object].SetHp(100);
 		monsters[ev.do_object].SetAnimator(0);
-		monsters[ev.do_object].SetCalculate(0);
+		monsters[ev.do_object].SetCalculate(1);
 		monsters[ev.do_object].SetDirX(0);
 		monsters[ev.do_object].SetDirZ(0);
 		monsters[ev.do_object].SetTarget(0);
@@ -815,7 +841,9 @@ void process_packet(const int id, const int packet_size, const char * buf)
 	case CS_ATTACK:
 	{
 		int hp = monsters[buf[11]].GetHp();
+		monsters[buf[11]].SetLock();
 		monsters[buf[11]].SetHp(hp - 20);
+		monsters[buf[11]].SetUnlock();
 		if (monsters[buf[11]].GetHp() <= 0)
 		{
 			OVER_EX *over_ex = new OVER_EX;
@@ -956,7 +984,7 @@ void send_my_status_to_all_packet(int id)
 	builder.Finish(data);
 	for (int to = 1; to <= MAX_USER; ++to)
 	{
-		if (clients[to].sock.connected == true&& to != id)
+		if (clients[to].sock.connected == true)
 			SendPacket(SC_PLAYER_STATUS, to, builder.GetBufferPointer(), builder.GetSize());
 	}
 }

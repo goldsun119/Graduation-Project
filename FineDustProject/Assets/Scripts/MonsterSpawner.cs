@@ -8,7 +8,7 @@ public class MonsterSpawner : MonoBehaviour
 
     //public int monCnt = 1;
     public int monID = -1;
-    public int monMaxCnt = 10;
+    public int monMaxCnt = 30;
 
     public GameObject monsterPrefab;
     public GameObject monsterObj;

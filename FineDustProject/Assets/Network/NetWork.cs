@@ -777,5 +777,11 @@ namespace Game.Network
             Sendbyte = sF.makeMonsterInfoPacket(monster_data[id].get_id(), monster_data[id].get_animator(), monster_data[id].get_dirX(), monster_data[id].get_dirZ(), monster_data[id].get_pos(), monster_data[id].get_rot());
             Send_Packet(Sendbyte);
         }
+
+        public static void SendMonsterAttack(int id)
+        {
+            Sendbyte = sF.makeAttackPacket(id);
+            Send_Packet(Sendbyte);
+        }
     }
 }

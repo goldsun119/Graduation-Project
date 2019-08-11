@@ -1,8 +1,5 @@
 #pragma once
-/*
-	방향키, 점프 공격 키 입력
-	아이템 생성, 지우기
-*/
+
 constexpr int SERVER_PORT =			9000;
 
 constexpr int MAX_USER =					4;
@@ -21,6 +18,7 @@ constexpr int CS_MONSTER_STATUS =	3;
 constexpr int CS_LOGIN						 = 4;
 constexpr int CS_CHARACTER_SELECT = 5;
 constexpr int CS_ATTACK = 6;
+constexpr int CS_COMPLETE_MAKING = 7;
 
 
 constexpr int SC_ID =								1;
@@ -40,58 +38,10 @@ constexpr int SC_SIGNUP =					14;
 constexpr int SC_REVIVE_MONSTER = 15;
 constexpr int SC_MONSTER_INFO = 16;
 constexpr int SC_MONSTER_TARGET = 17;
+constexpr int SC_COMPLETE_MAKING = 18;
+constexpr int SC_END_GAME = 19;
 #pragma pack(push, 1)
 
-// 프로토콜 (서버-<클라)
-; struct sc_packet_pos {
-	char size;
-	char type;
-	char id;
-	char x, y;
-};
 
-struct sc_packet_remove_player {
-	char size;
-	char type;
-	char id;
-};
-struct sc_packet_login_ok {
-	char size;
-	char type;
-	char id;
-};
-
-struct sc_packet_put_player {
-	char size;
-	char type;
-	char id;
-	char x, y;
-};
-
-struct sc_packet_remove_item {
-	char size;
-	char type;
-	char id;
-};
-
-; struct sc_packet_item_pos {
-	char size;
-	char type;
-	char id;
-	char x, y;
-};
-
-// 프로토콜 ( 클라 -> 서버)
-struct cs_packet_key_input {
-	char	size;
-	char	type;
-};
-
-struct cs_packet_put_item {
-	char size;
-	char type;
-	char id;
-	char x, y;
-};
 
 #pragma pack(pop)

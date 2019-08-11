@@ -117,6 +117,20 @@ namespace Game.Network
             return real_packet;
         }
 
+        public byte[] makeAttackPacket(int num)
+        {
+            byte[] packet = BitConverter.GetBytes(num);
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(packet);
+            byte[] result = packet;
+            byte[] magic_packet = makePacketinfo(packet.Length, CS_ATTACK);
+            byte[] real_packet = new byte[packet.Length + 8];
+            System.Buffer.BlockCopy(magic_packet, 0, real_packet, 0, magic_packet.Length);
+            System.Buffer.BlockCopy(packet, 0, real_packet, 8, packet.Length);
+
+            return real_packet;
+        }
+
         public byte[] makePacketinfo(int p_size, int type)
         {
             byte[] intBytes = new byte[p_size.ToString().Length + 2];   // 숫자 길이 + | + type
