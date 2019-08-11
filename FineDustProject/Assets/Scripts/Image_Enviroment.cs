@@ -16,17 +16,23 @@ public class Image_Enviroment : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        string a = "Player(" + Game.Network.NetWork.Client_id.ToString() + ")";
-        playerObj = GameObject.Find("Players").transform.Find(a).gameObject;
-        player = playerObj.GetComponent<PlayerStatus>();
-        EL_Image = GetComponent<Image>();
-        Image_resizeing();
+        //string a = "Player(" + Game.Network.NetWork.Client_id.ToString() + ")";
+        //playerObj = GameObject.Find("Players").transform.Find(a).gameObject;
+        //player = playerObj.GetComponent<PlayerStatus>();
+        //EL_Image = GetComponent<Image>();
+        //Image_resizeing();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(player.ID == Game.Network.NetWork.Client_id)
+        string a = "Player(" + Game.Network.NetWork.Client_id.ToString() + ")";
+        playerObj = GameObject.Find("Players").transform.Find(a).gameObject;
+        player = playerObj.GetComponent<PlayerStatus>();
+        EL_Image = GetComponent<Image>();
+        Image_resizeing();
+
+        if (player.ID == Game.Network.NetWork.Client_id)
         switch (player.Enviroment_Level)
         {
             case 0:

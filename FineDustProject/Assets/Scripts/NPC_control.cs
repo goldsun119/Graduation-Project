@@ -21,9 +21,23 @@ public class NPC_control : MonoBehaviour
         UI_conversation.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
+    void Awake()
     {
+        CMgr = GameObject.Find("Players").GetComponent<CameraMgr>();
+        //string a = "Player(" + Game.Network.NetWork.Client_id.ToString() + ")";
+        //player = GameObject.Find("Players").transform.Find(a).gameObject.GetComponent<PlayerStatus>();
+        is_collision = false;
+        UI_conversation.SetActive(false);
+
+    }
+
+        // Update is called once per frame
+        void Update()
+    {
+        string a = "Player(" + Game.Network.NetWork.Client_id.ToString() + ")";
+        player = GameObject.Find("Players").transform.Find(a).gameObject.GetComponent<PlayerStatus>();
+        
+
         if (is_collision)
         {
             if (Input.GetKeyUp(KeyCode.F) && NPC_ON == true)
@@ -65,6 +79,10 @@ public class NPC_control : MonoBehaviour
         if (other.tag == "Player")
         {
             is_collision = false;
+            NPC_ON = false;
+            CMgr.NPCCamOff(this.gameObject);
+            player.is_move = true;
+            UI_conversation.SetActive(false);
         }
     }
 

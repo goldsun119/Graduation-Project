@@ -19,13 +19,13 @@ public class AreaMgr : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        string a = "Player(" + Game.Network.NetWork.Client_id.ToString() + ")";
-        GameObject playerObj = GameObject.Find("Players").transform.Find(a).gameObject;
-        // player_tf = GameObject.FindGameObjectWithTag("Player").transform;   // 플레이어의 정보값
-        // player_st = player_tf.GetComponent<PlayerStatus>();
-        // PlayerStatus playerStatus = 
-        player_st = playerObj.GetComponent<PlayerStatus>();
-        Renderer = GetComponent<MeshRenderer>();
+        //string a = "Player(" + Game.Network.NetWork.Client_id.ToString() + ")";
+        //GameObject playerObj = GameObject.Find("Players").transform.Find(a).gameObject;
+        //// player_tf = GameObject.FindGameObjectWithTag("Player").transform;   // 플레이어의 정보값
+        //// player_st = player_tf.GetComponent<PlayerStatus>();
+        //// PlayerStatus playerStatus = 
+        //player_st = playerObj.GetComponent<PlayerStatus>();
+        //Renderer = GetComponent<MeshRenderer>();
     }
 
     // Update is called once per frame
@@ -35,6 +35,11 @@ public class AreaMgr : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        string a = "Player(" + Game.Network.NetWork.Client_id.ToString() + ")";
+        GameObject playerObj = GameObject.Find("Players").transform.Find(a).gameObject;
+        player_st = playerObj.GetComponent<PlayerStatus>();
+        Renderer = GetComponent<MeshRenderer>();
+
         if (other.gameObject.CompareTag("Player") 
             && (other.gameObject.GetComponent<PlayerStatus>().ID == Game.Network.NetWork.Client_id))
         {

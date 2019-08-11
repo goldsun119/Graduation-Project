@@ -66,14 +66,14 @@ public class PlayerStatus : MonoBehaviour
         if (ID == Game.Network.NetWork.Client_id)
         {
             SetLayersRecursively(this.gameObject.transform, "myPlayer");
+            transform.GetChild(2).gameObject.layer = LayerMask.NameToLayer("PlayerMarker");
         }
         
 
 
     }
-
-        // Update is called once per frame
-        void Update()
+    // Update is called once per frame
+    void Update()
     {
         if (ID == Game.Network.NetWork.Client_id)
         {
@@ -98,7 +98,7 @@ public class PlayerStatus : MonoBehaviour
             else
                 StopCoroutine(coroutine);
 
-            Debug.Log("hp");
+            Debug.Log("hp" + hp);
             yield return new WaitForSeconds(2);//WaitForSeconds객체를 생성해서 반환
                                                //StartCoroutine(HPControl());
         }

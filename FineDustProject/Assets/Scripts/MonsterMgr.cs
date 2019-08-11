@@ -61,9 +61,9 @@ public class MonsterMgr : MonoBehaviour
 
     void Start()
     {
-        player_tf = GameObject.FindGameObjectWithTag("Player").transform;   // 플레이어의 정보값
-        Debug.Log(player_tf.gameObject.name);
-        player_st = player_tf.GetComponent<PlayerStatus>();
+        //player_tf = GameObject.FindGameObjectWithTag("Player").transform;   // 플레이어의 정보값
+        //Debug.Log(player_tf.gameObject.name);
+        //player_st = player_tf.GetComponent<PlayerStatus>();
 
         targetRange = 20.0f;
         //HP = 100;
@@ -82,6 +82,10 @@ public class MonsterMgr : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        player_tf = GameObject.FindGameObjectWithTag("Player").transform;   // 플레이어의 정보값
+        Debug.Log(player_tf.gameObject.name);
+        player_st = player_tf.GetComponent<PlayerStatus>();
+
         if (Game.Network.NetWork.monster_data.ContainsKey(ID) == false || HP <=0)
         {
             Destroy(gameObject);

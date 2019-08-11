@@ -12,6 +12,7 @@ TagManager:
   - Terrain
   - DragImg
   - wall
+  - NPC
   layers:
   - Default
   - TransparentFX
