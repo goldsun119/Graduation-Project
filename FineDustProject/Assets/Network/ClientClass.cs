@@ -20,6 +20,7 @@ namespace Game.Class
         private string name;
         private int character;
         private int[] item = new int[4];
+        private int[] item_count = new int[4];
 
         //private bool prefab;    // 클라이언트 프리팹이 만들어졌는지 확인
         //public GameObject player;   // 프리팹을 위한 게임 오브젝트
@@ -40,6 +41,7 @@ namespace Game.Class
         public string get_name() { return this.name; }
         public int get_char() { return this.character; }
         public int get_item(int index) { return this.item[index]; }
+        public int get_item_count(int index) { return this.item_count[index]; }
         //public bool get_prefab() { return this.prefab; }
         //public bool get_activePlayer() { return this.activePlayer; }
 
@@ -57,6 +59,7 @@ namespace Game.Class
         public void set_name(string name) { this.name = name; }
         public void set_char(int value) { this.character = value; }
         public void set_item(int value, int index) { this.item[index] = value; }    
+        public void set_item_count(int value, int index) { this.item_count[index] = value; }
         //public void set_prefab(bool value) { this.prefab = value; }
         //public void set_activePlayer(bool value) { this.activePlayer = value; }
 
@@ -113,7 +116,7 @@ namespace Game.Class
         }
 
 
-        public ClientClass(int id, string name, Vector3 pos, int hp, int i1, int i2, int i3, int i4, int ch)
+        public ClientClass(int id, string name, Vector3 pos, int hp, int i1, int i2, int i3, int i4, int ch, int ic1, int ic2, int ic3,int ic4)
         {
             this.id = id;
             this.name = name;
@@ -125,6 +128,10 @@ namespace Game.Class
             this.item[3] = i4;
             this.character = ch;
             this.connect = true;
+            this.item_count[0] = ic1;
+            this.item_count[1] = ic2;
+            this.item_count[2] = ic3;
+            this.item_count[3] = ic4;
             //this.prefab = false;
             //this.player = null;
             ////this.script = null;

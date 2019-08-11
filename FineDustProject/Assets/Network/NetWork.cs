@@ -218,6 +218,10 @@ namespace Game.Network
                 int i3 = get_all_data.MyData.Value.Item3;
                 int i4 = get_all_data.MyData.Value.Item4;
                 int character = get_all_data.MyData.Value.Character;
+                int ic1 = get_all_data.MyData.Value.Ic1;
+                int ic2 = get_all_data.MyData.Value.Ic2;
+                int ic3 = get_all_data.MyData.Value.Ic3;
+                int ic4 = get_all_data.MyData.Value.IC4;
 
                 if (client_data.ContainsKey(id))
                 {
@@ -230,11 +234,15 @@ namespace Game.Network
                     iter.set_item(i3, 2);
                     iter.set_item(i4, 3);
                     iter.set_char(character);
+                    iter.set_item_count(ic1, 0);
+                    iter.set_item_count(ic2, 1);
+                    iter.set_item_count(ic3, 2);
+                    iter.set_item_count(ic4, 3);
                     iter.set_draw(true);
                 }
                 else
                 {
-                    client_data.Add(id, new ClientClass(id, n, p, hp, i1, i2, i3, i4, character));
+                    client_data.Add(id, new ClientClass(id, n, p, hp, i1, i2, i3, i4, character, ic1, ic2, ic3, ic4));
                     client_data[id].set_draw(true);
                 }
 
@@ -532,6 +540,10 @@ namespace Game.Network
                 int i3 = get_all_data.MyData.Value.Item3;
                 int i4 = get_all_data.MyData.Value.Item4;
                 int character = get_all_data.MyData.Value.Character;
+                int ic1 = get_all_data.MyData.Value.Ic1;
+                int ic2 = get_all_data.MyData.Value.Ic2;
+                int ic3 = get_all_data.MyData.Value.Ic3;
+                int ic4 = get_all_data.MyData.Value.IC4;
 
                 if (client_data.ContainsKey(id))
                 {
@@ -544,11 +556,15 @@ namespace Game.Network
                     iter.set_item(i3, 2);
                     iter.set_item(i4, 3);
                     iter.set_char(character);
+                    iter.set_item_count(ic1, 0);
+                    iter.set_item_count(ic2, 1);
+                    iter.set_item_count(ic3, 2);
+                    iter.set_item_count(ic4, 3);
                     iter.set_draw(true);
                 }
                 else
                 {
-                    client_data.Add(id, new ClientClass(id, n, p, hp, i1, i2, i3, i4, character));
+                    client_data.Add(id, new ClientClass(id, n, p, hp, i1, i2, i3, i4, character, ic1, ic2, ic3, ic4));
                     client_data[id].set_draw(true);
                 }
 

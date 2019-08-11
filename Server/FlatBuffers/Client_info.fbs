@@ -87,6 +87,10 @@ item2:int;
 item3:int;
 item4:int;
 character:int;
+ic1:int;
+ic2:int;
+ic3:int;
+iC4:int;
 }
 
 table Init_Collection{

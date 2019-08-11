@@ -53,6 +53,7 @@ private:
 	int item[4];
 
 public:
+	int item_count[4];
 	SOCKETINFO sock;
 	std::chrono::high_resolution_clock::time_point save_time;
 	Player();

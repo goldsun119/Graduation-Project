@@ -219,7 +219,7 @@ void make_items()
 			--i;
 			continue;
 		}
-		int type = rand() % 4 + 1;
+		int type = rand() % 3 + 1;
 		items[i].SetDraw( true);
 		items[i].SetId(i);
 		items[i].SetType(type);
@@ -831,7 +831,13 @@ void process_packet(const int id, const int packet_size, const char * buf)
 		auto item_check_info = Game::Protocol::GetEatView(get_packet);
 		int a = item_check_info->itemID();
 		int b = item_check_info->playerID();
-		//db에 아이템 삽입
+		for (int i = 0; i < 4; ++i)
+		{
+			if (clients[b].GetItem(i) == a)
+			{
+				clients[b].item_count[i]++;
+			}
+		}
 		for (int i = 1; i <= MAX_USER; ++i)
 		{
 			if (i == b) continue;
@@ -907,8 +913,12 @@ void send_login_ok_packet(int id)
 	int i3 = clients[id].GetItem(2);
 	int i4 = clients[id].GetItem(3);
 	int t = clients[id].GetType();
+	int ic1 = clients[id].item_count[0];
+	int ic2 = clients[id].item_count[1];
+	int ic3 = clients[id].item_count[2];
+	int ic4 = clients[id].item_count[3];
 	clients[id].SetUnlock();
-	auto data = CreateLogin_my_DB(builder, i, name, &Vec3(pos.x, pos.y, pos.z), hp, mhp, i1, i2, i3, i4, t);
+	auto data = CreateLogin_my_DB(builder, i, name, &Vec3(pos.x, pos.y, pos.z), hp, mhp, i1, i2, i3, i4, t, ic1, ic2, ic3, ic4);
 	builder.Finish(data);
 	SendPacket(SC_LOGIN_SUCCESS, id, builder.GetBufferPointer(), builder.GetSize());
 }
@@ -1150,9 +1160,13 @@ void send_init_packet(int id)
 		int i3 = clients[id].GetItem(2);
 		int i4 = clients[id].GetItem(3);
 		int t = clients[id].GetType();
+		int ic1 = clients[id].item_count[0];
+		int ic2 = clients[id].item_count[1];
+		int ic3 = clients[id].item_count[2];
+		int ic4 = clients[id].item_count[3];
 		clients[id].SetUnlock();
-		auto mydata = CreateLogin_my_DB(builder, i, name, &Vec3(pos.x, pos.y, pos.z), hp, mhp, i1, i2, i3, i4, t);
-	
+		auto mydata = CreateLogin_my_DB(builder, i, name, &Vec3(pos.x, pos.y, pos.z), hp, mhp, i1, i2, i3, i4, t, ic1, ic2, ic3, ic4);
+
 		auto p = CreateInit_Collection_IM(builder, kind, full_items_data, full_monsters_data, mydata);
 		builder.Finish(p);
 		SendPacket(SC_ID, id, builder.GetBufferPointer(), builder.GetSize());
@@ -1172,8 +1186,12 @@ void send_init_packet(int id)
 		int i3 = clients[id].GetItem(2);
 		int i4 = clients[id].GetItem(3);
 		int t = clients[id].GetType();
+		int ic1 = clients[id].item_count[0];
+		int ic2 = clients[id].item_count[1];
+		int ic3 = clients[id].item_count[2];
+		int ic4 = clients[id].item_count[3];
 		clients[id].SetUnlock();
-		auto mydata = CreateLogin_my_DB(builder, i, name, &Vec3(pos.x, pos.y, pos.z), hp, mhp, i1, i2, i3, i4, t);
+		auto mydata = CreateLogin_my_DB(builder, i, name, &Vec3(pos.x, pos.y, pos.z), hp, mhp, i1, i2, i3, i4, t, ic1, ic2, ic3, ic4);
 
 		auto p = CreateInit_Collection(builder, kind, full_items_data, full_monsters_data, full_clients_data, mydata);
 		builder.Finish(p);
@@ -1294,7 +1312,7 @@ void set_login_off(int ci)
 
 	wchar_t * game_id = ConvertCtoWC(clients[ci].GetGameId());
 
-	swprintf((LPWSTR)Query, L"EXEC dbo.user_logout %s, %f, %f, %f, %d, %d, %d, %d, %d, %d", game_id, clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp(), clients[ci].GetItem(0), clients[ci].GetItem(1), clients[ci].GetItem(2), clients[ci].GetItem(3), clients[ci].GetType());
+	swprintf((LPWSTR)Query, L"EXEC dbo.user_logout %s, %f, %f, %f, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", game_id, clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp(), clients[ci].GetItem(0), clients[ci].GetItem(1), clients[ci].GetItem(2), clients[ci].GetItem(3), clients[ci].GetType(), clients[ci].item_count[0], clients[ci].item_count[1], clients[ci].item_count[2], clients[ci].item_count[3]);
 	//sprintf(buf, "EXEC dbo.user_get_info %s, %s", clients[ci].GetGameId(), clients[ci].GetGamePassword());
 	//MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
 	//sql_data[strlen(buf)] = '\0';
@@ -1323,8 +1341,8 @@ int check_login(string a, string b, int id)
 
 			SQLWCHAR sz_id[MAX_STR_LEN], sz_password[MAX_STR_LEN], sz_nickname[MAX_STR_LEN];
 			float db_x, db_y, db_z;
-			int db_hp, db_maxhp, db_item[4], db_connect, db_character;
-			SQLLEN cb_id = 0, cb_password = 0, cb_nickname = 0, cb_x = 0, cb_y = 0, cb_z = 0, cb_hp = 0, cb_maxhp = 0, cb_item[4]{ 0 }, cb_connect = 0, cb_character = 0;
+			int db_hp, db_maxhp, db_item[4], db_connect, db_character, db_icount[4];
+			SQLLEN cb_id = 0, cb_password = 0, cb_nickname = 0, cb_x = 0, cb_y = 0, cb_z = 0, cb_hp = 0, cb_maxhp = 0, cb_item[4]{ 0 }, cb_connect = 0, cb_character = 0, cb_ic[4]{ 0 };
 
 			// Bind columns 1, 2, and 3  
 			retcode = SQLBindCol(hstmt, 1, SQL_WCHAR, sz_id, MAX_STR_LEN, &cb_id);
@@ -1341,6 +1359,10 @@ int check_login(string a, string b, int id)
 			retcode = SQLBindCol(hstmt, 12, SQL_INTEGER, &db_item[3], MAX_STR_LEN, &cb_item[3]);
 			retcode = SQLBindCol(hstmt, 13, SQL_INTEGER, &db_connect, MAX_STR_LEN, &cb_connect);
 			retcode = SQLBindCol(hstmt, 14, SQL_INTEGER, &db_character, MAX_STR_LEN, &cb_character);
+			retcode = SQLBindCol(hstmt, 15, SQL_INTEGER, &db_icount[0], MAX_STR_LEN, &cb_ic[0]);
+			retcode = SQLBindCol(hstmt, 16, SQL_INTEGER, &db_icount[1], MAX_STR_LEN, &cb_ic[1]);
+			retcode = SQLBindCol(hstmt, 17, SQL_INTEGER, &db_icount[2], MAX_STR_LEN, &cb_ic[2]);
+			retcode = SQLBindCol(hstmt, 18, SQL_INTEGER, &db_icount[3], MAX_STR_LEN, &cb_ic[3]);
 
 			// Fetch and print each row of data. On an error, display a message and exit.  
 
@@ -1356,8 +1378,11 @@ int check_login(string a, string b, int id)
 			clients[id].SetItem(2, db_item[2]);
 			clients[id].SetItem(3, db_item[3]);
 			clients[id].SetDraw(true);
+			clients[id].item_count[0] = db_icount[0];
+			clients[id].item_count[1] = db_icount[1];
+			clients[id].item_count[2] = db_icount[2];
+			clients[id].item_count[3] = db_icount[3];
 			clients[id].SetUnlock();
-
 				if (db_connect)
 				{
 					//연결끊기 후

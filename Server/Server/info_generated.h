@@ -824,7 +824,11 @@ namespace Game {
 				VT_ITEM2 = 16,
 				VT_ITEM3 = 18,
 				VT_ITEM4 = 20,
-				VT_CHARACTER = 22
+				VT_CHARACTER = 22,
+				VT_IC1 = 24,
+				VT_IC2 = 26,
+				VT_IC3 = 28,
+				VT_IC4 = 30
 			};
 			int32_t id() const {
 				return GetField<int32_t>(VT_ID, 0);
@@ -856,6 +860,18 @@ namespace Game {
 			int32_t character() const {
 				return GetField<int32_t>(VT_CHARACTER, 0);
 			}
+			int32_t ic1() const {
+				return GetField<int32_t>(VT_IC1, 0);
+			}
+			int32_t ic2() const {
+				return GetField<int32_t>(VT_IC2, 0);
+			}
+			int32_t ic3() const {
+				return GetField<int32_t>(VT_IC3, 0);
+			}
+			int32_t iC4() const {
+				return GetField<int32_t>(VT_IC4, 0);
+			}
 			bool Verify(flatbuffers::Verifier &verifier) const {
 				return VerifyTableStart(verifier) &&
 					VerifyField<int32_t>(verifier, VT_ID) &&
@@ -869,6 +885,10 @@ namespace Game {
 					VerifyField<int32_t>(verifier, VT_ITEM3) &&
 					VerifyField<int32_t>(verifier, VT_ITEM4) &&
 					VerifyField<int32_t>(verifier, VT_CHARACTER) &&
+					VerifyField<int32_t>(verifier, VT_IC1) &&
+					VerifyField<int32_t>(verifier, VT_IC2) &&
+					VerifyField<int32_t>(verifier, VT_IC3) &&
+					VerifyField<int32_t>(verifier, VT_IC4) &&
 					verifier.EndTable();
 			}
 		};
@@ -906,6 +926,18 @@ namespace Game {
 			void add_character(int32_t character) {
 				fbb_.AddElement<int32_t>(Login_my_DB::VT_CHARACTER, character, 0);
 			}
+			void add_ic1(int32_t ic1) {
+				fbb_.AddElement<int32_t>(Login_my_DB::VT_IC1, ic1, 0);
+			}
+			void add_ic2(int32_t ic2) {
+				fbb_.AddElement<int32_t>(Login_my_DB::VT_IC2, ic2, 0);
+			}
+			void add_ic3(int32_t ic3) {
+				fbb_.AddElement<int32_t>(Login_my_DB::VT_IC3, ic3, 0);
+			}
+			void add_iC4(int32_t iC4) {
+				fbb_.AddElement<int32_t>(Login_my_DB::VT_IC4, iC4, 0);
+			}
 			explicit Login_my_DBBuilder(flatbuffers::FlatBufferBuilder &_fbb)
 				: fbb_(_fbb) {
 				start_ = fbb_.StartTable();
@@ -929,8 +961,16 @@ namespace Game {
 			int32_t item2 = 0,
 			int32_t item3 = 0,
 			int32_t item4 = 0,
-			int32_t character = 0) {
+			int32_t character = 0,
+			int32_t ic1 = 0,
+			int32_t ic2 = 0,
+			int32_t ic3 = 0,
+			int32_t iC4 = 0) {
 			Login_my_DBBuilder builder_(_fbb);
+			builder_.add_iC4(iC4);
+			builder_.add_ic3(ic3);
+			builder_.add_ic2(ic2);
+			builder_.add_ic1(ic1);
 			builder_.add_character(character);
 			builder_.add_item4(item4);
 			builder_.add_item3(item3);
@@ -955,7 +995,11 @@ namespace Game {
 			int32_t item2 = 0,
 			int32_t item3 = 0,
 			int32_t item4 = 0,
-			int32_t character = 0) {
+			int32_t character = 0,
+			int32_t ic1 = 0,
+			int32_t ic2 = 0,
+			int32_t ic3 = 0,
+			int32_t iC4 = 0) {
 			return Game::Protocol::CreateLogin_my_DB(
 				_fbb,
 				id,
@@ -967,7 +1011,11 @@ namespace Game {
 				item2,
 				item3,
 				item4,
-				character);
+				character,
+				ic1,
+				ic2,
+				ic3,
+				iC4);
 		}
 
 		struct Init_Collection FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {

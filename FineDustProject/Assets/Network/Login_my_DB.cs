@@ -33,8 +33,12 @@ public struct Login_my_DB : IFlatbufferObject
   public int Item3 { get { int o = __p.__offset(18); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
   public int Item4 { get { int o = __p.__offset(20); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
   public int Character { get { int o = __p.__offset(22); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+  public int Ic1 { get { int o = __p.__offset(24); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+  public int Ic2 { get { int o = __p.__offset(26); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+  public int Ic3 { get { int o = __p.__offset(28); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+  public int IC4 { get { int o = __p.__offset(30); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
 
-  public static void StartLogin_my_DB(FlatBufferBuilder builder) { builder.StartObject(10); }
+  public static void StartLogin_my_DB(FlatBufferBuilder builder) { builder.StartObject(14); }
   public static void AddId(FlatBufferBuilder builder, int id) { builder.AddInt(0, id, 0); }
   public static void AddName(FlatBufferBuilder builder, StringOffset nameOffset) { builder.AddOffset(1, nameOffset.Value, 0); }
   public static void AddPosition(FlatBufferBuilder builder, Offset<Vec3> positionOffset) { builder.AddStruct(2, positionOffset.Value, 0); }
@@ -45,6 +49,10 @@ public struct Login_my_DB : IFlatbufferObject
   public static void AddItem3(FlatBufferBuilder builder, int item3) { builder.AddInt(7, item3, 0); }
   public static void AddItem4(FlatBufferBuilder builder, int item4) { builder.AddInt(8, item4, 0); }
   public static void AddCharacter(FlatBufferBuilder builder, int character) { builder.AddInt(9, character, 0); }
+  public static void AddIc1(FlatBufferBuilder builder, int ic1) { builder.AddInt(10, ic1, 0); }
+  public static void AddIc2(FlatBufferBuilder builder, int ic2) { builder.AddInt(11, ic2, 0); }
+  public static void AddIc3(FlatBufferBuilder builder, int ic3) { builder.AddInt(12, ic3, 0); }
+  public static void AddIC4(FlatBufferBuilder builder, int iC4) { builder.AddInt(13, iC4, 0); }
   public static Offset<Login_my_DB> EndLogin_my_DB(FlatBufferBuilder builder) {
     int o = builder.EndObject();
     return new Offset<Login_my_DB>(o);
