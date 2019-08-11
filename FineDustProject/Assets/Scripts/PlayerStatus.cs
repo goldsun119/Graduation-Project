@@ -49,6 +49,13 @@ public class PlayerStatus : MonoBehaviour
     //public int itemCount = 0;
     public MonsterSpawner MonSpawner;
 
+    public void SetLayersRecursively(Transform trans, string name)
+    {
+        trans.gameObject.layer = LayerMask.NameToLayer(name);
+        foreach (Transform child in trans)
+            SetLayersRecursively(child, name);
+    }
+
     void Start()
     {
         CMgr = GetComponent<CameraMgr>();
@@ -56,11 +63,17 @@ public class PlayerStatus : MonoBehaviour
         coroutine = HPControl();
         StartCoroutine(coroutine);
 
+        if (ID == Game.Network.NetWork.Client_id)
+        {
+            SetLayersRecursively(this.gameObject.transform, "myPlayer");
+        }
+        
+
 
     }
 
-    // Update is called once per frame
-    void Update()
+        // Update is called once per frame
+        void Update()
     {
         if (ID == Game.Network.NetWork.Client_id)
         {
@@ -68,7 +81,10 @@ public class PlayerStatus : MonoBehaviour
             {
                 MoveStatus();
             }
+
             
+
+
         }
         RecvStatus();
     }
@@ -203,17 +219,7 @@ public class PlayerStatus : MonoBehaviour
             Ani_State_Jump = ANI_TYPE.IDEL;
         }
 
-        // 아이템 충돌
-        if (collision.gameObject.CompareTag("Item"))
-        {
-            isItem = true;
-
-            if (Input.GetKey(KeyCode.F))
-            {
-                isPick = true;
-                isItem = false;
-            }
-        }
+        
 
         // 문 충돌
         if (collision.gameObject.CompareTag("Door"))
@@ -232,19 +238,60 @@ public class PlayerStatus : MonoBehaviour
         {
             isMon = true;
         }
+
+        // 지붕등 충돌
+        if (collision.gameObject.CompareTag("wall"))
+        {
+            SetLayersRecursively(collision.gameObject.transform, "wall");
+        }
     }
 
     void OnCollisionExit(Collision collision)
     {
         isPick = false;
-        isItem = false;
         isMon = false;
+
+        if (collision.gameObject.CompareTag("wall"))
+        {
+            SetLayersRecursively(collision.gameObject.transform, "Default");
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // 아이템 충돌
+        if (other.gameObject.CompareTag("Item"))
+        {
+            isItem = true;
+
+            if (Input.GetKey(KeyCode.F))
+            {
+                isPick = true;
+                isItem = false;
+            }
+        }
+
+        // 지붕등 충돌
+        if (other.gameObject.CompareTag("wall"))
+        {
+            SetLayersRecursively(other.gameObject.transform, "wall");
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        isItem = false;
+        // 지붕등 충돌
+        if (other.gameObject.CompareTag("wall"))
+        {
+            SetLayersRecursively(other.gameObject.transform, "Default");
+        }
     }
 
     void CheatKey()
     {
         if (Input.GetKeyDown(KeyCode.P)) transform.position = new Vector3(0, 30, 360);
-        if (Input.GetKeyDown(KeyCode.O)) transform.position = new Vector3(0, 30, 100);
+        if (Input.GetKeyDown(KeyCode.O)) transform.position = new Vector3(0, 30, 50);
         if (Input.GetKeyDown(KeyCode.L)) transform.position = new Vector3(0, 30, -5);
         //if (Input.GetKeyDown(KeyCode.L)) transform.position = ;
         //if (Input.GetKeyDown(KeyCode.K)) transform.position = MonSpawner.Last_Spawn;

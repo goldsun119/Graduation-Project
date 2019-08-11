@@ -1,81 +1,230 @@
 fileFormatVersion: 2
 guid: 05ece67478245df4ba45e047cbb37622
 ModelImporter:
-  serializedVersion: 23
-  fileIDToRecycleName:
-    100000: Bone001
-    100002: Bone002
-    100004: Bone003
-    100006: Bone004
-    100008: Bone005
-    100010: Bone006
-    100012: Bone007
-    100014: Bone008
-    100016: Bone009
-    100018: Bone010
-    100020: Bone011
-    100022: Bone012
-    100024: Bone013
-    100026: Bone014
-    100028: Bone015
-    100030: Bone016
-    100032: Bone017
-    100034: Bone033
-    100036: Bone034
-    100038: Bone035
-    100040: Bone036
-    100042: Bone037
-    100044: Bone038
-    100046: Bone039
-    100048: Bone040
-    100050: Bone041
-    100052: Bone042
-    100054: Bone043
-    100056: Bone044
-    100058: Bone045
-    100060: Bone046
-    100062: Bone047
-    100064: Box001
-    100066: //RootNode
-    400000: Bone001
-    400002: Bone002
-    400004: Bone003
-    400006: Bone004
-    400008: Bone005
-    400010: Bone006
-    400012: Bone007
-    400014: Bone008
-    400016: Bone009
-    400018: Bone010
-    400020: Bone011
-    400022: Bone012
-    400024: Bone013
-    400026: Bone014
-    400028: Bone015
-    400030: Bone016
-    400032: Bone017
-    400034: Bone033
-    400036: Bone034
-    400038: Bone035
-    400040: Bone036
-    400042: Bone037
-    400044: Bone038
-    400046: Bone039
-    400048: Bone040
-    400050: Bone041
-    400052: Bone042
-    400054: Bone043
-    400056: Bone044
-    400058: Bone045
-    400060: Bone046
-    400062: Bone047
-    400064: Box001
-    400066: //RootNode
-    2100000: Standardmaterial
-    4300000: Box001
-    9500000: //RootNode
-    13700000: Box001
-  externalObjects: {}
+  serializedVersion: 25
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: Bone001
+  - first:
+      1: 100002
+    second: Bone002
+  - first:
+      1: 100004
+    second: Bone003
+  - first:
+      1: 100006
+    second: Bone004
+  - first:
+      1: 100008
+    second: Bone005
+  - first:
+      1: 100010
+    second: Bone006
+  - first:
+      1: 100012
+    second: Bone007
+  - first:
+      1: 100014
+    second: Bone008
+  - first:
+      1: 100016
+    second: Bone009
+  - first:
+      1: 100018
+    second: Bone010
+  - first:
+      1: 100020
+    second: Bone011
+  - first:
+      1: 100022
+    second: Bone012
+  - first:
+      1: 100024
+    second: Bone013
+  - first:
+      1: 100026
+    second: Bone014
+  - first:
+      1: 100028
+    second: Bone015
+  - first:
+      1: 100030
+    second: Bone016
+  - first:
+      1: 100032
+    second: Bone017
+  - first:
+      1: 100034
+    second: Bone033
+  - first:
+      1: 100036
+    second: Bone034
+  - first:
+      1: 100038
+    second: Bone035
+  - first:
+      1: 100040
+    second: Bone036
+  - first:
+      1: 100042
+    second: Bone037
+  - first:
+      1: 100044
+    second: Bone038
+  - first:
+      1: 100046
+    second: Bone039
+  - first:
+      1: 100048
+    second: Bone040
+  - first:
+      1: 100050
+    second: Bone041
+  - first:
+      1: 100052
+    second: Bone042
+  - first:
+      1: 100054
+    second: Bone043
+  - first:
+      1: 100056
+    second: Bone044
+  - first:
+      1: 100058
+    second: Bone045
+  - first:
+      1: 100060
+    second: Bone046
+  - first:
+      1: 100062
+    second: Bone047
+  - first:
+      1: 100064
+    second: Box001
+  - first:
+      1: 100066
+    second: //RootNode
+  - first:
+      4: 400000
+    second: Bone001
+  - first:
+      4: 400002
+    second: Bone002
+  - first:
+      4: 400004
+    second: Bone003
+  - first:
+      4: 400006
+    second: Bone004
+  - first:
+      4: 400008
+    second: Bone005
+  - first:
+      4: 400010
+    second: Bone006
+  - first:
+      4: 400012
+    second: Bone007
+  - first:
+      4: 400014
+    second: Bone008
+  - first:
+      4: 400016
+    second: Bone009
+  - first:
+      4: 400018
+    second: Bone010
+  - first:
+      4: 400020
+    second: Bone011
+  - first:
+      4: 400022
+    second: Bone012
+  - first:
+      4: 400024
+    second: Bone013
+  - first:
+      4: 400026
+    second: Bone014
+  - first:
+      4: 400028
+    second: Bone015
+  - first:
+      4: 400030
+    second: Bone016
+  - first:
+      4: 400032
+    second: Bone017
+  - first:
+      4: 400034
+    second: Bone033
+  - first:
+      4: 400036
+    second: Bone034
+  - first:
+      4: 400038
+    second: Bone035
+  - first:
+      4: 400040
+    second: Bone036
+  - first:
+      4: 400042
+    second: Bone037
+  - first:
+      4: 400044
+    second: Bone038
+  - first:
+      4: 400046
+    second: Bone039
+  - first:
+      4: 400048
+    second: Bone040
+  - first:
+      4: 400050
+    second: Bone041
+  - first:
+      4: 400052
+    second: Bone042
+  - first:
+      4: 400054
+    second: Bone043
+  - first:
+      4: 400056
+    second: Bone044
+  - first:
+      4: 400058
+    second: Bone045
+  - first:
+      4: 400060
+    second: Bone046
+  - first:
+      4: 400062
+    second: Bone047
+  - first:
+      4: 400064
+    second: Box001
+  - first:
+      4: 400066
+    second: //RootNode
+  - first:
+      21: 2100000
+    second: Standardmaterial
+  - first:
+      43: 4300000
+    second: Box001
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: Box001
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Standardmaterial
+    second: {fileID: 2100000, guid: ec9d84e2051eb494ca2c3c7e62080572, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -117,18 +266,19 @@ ModelImporter:
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
     preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 0.01
-    hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -137,10 +287,11 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -150,6 +301,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
