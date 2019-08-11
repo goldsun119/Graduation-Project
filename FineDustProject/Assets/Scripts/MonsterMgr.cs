@@ -98,7 +98,7 @@ public class MonsterMgr : MonoBehaviour
         chase_id = Game.Network.NetWork.monster_data[ID].get_chase_id();
         calculate_id = Game.Network.NetWork.monster_data[ID].get_calculate_id();
         animator = Game.Network.NetWork.monster_data[ID].get_animator();
-
+        HP = Game.Network.NetWork.monster_data[ID].get_hp();
         if(chase_id == Game.Network.NetWork.Client_id)
         {
             target_pos = Game.Network.NetWork.client_data[chase_id].get_pos();
