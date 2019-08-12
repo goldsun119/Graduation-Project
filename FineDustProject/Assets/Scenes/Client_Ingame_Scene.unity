@@ -1339,8 +1339,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 9
   m_Type: 1
-  m_Color: {r: 0.9528302, g: 0.90580255, b: 0.7775454, a: 1}
-  m_Intensity: 1
+  m_Color: {r: 0.7924528, g: 0.74002755, b: 0.6018156, a: 1}
+  m_Intensity: 0.7
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -1385,7 +1385,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 1.39e-43, z: 0, w: 0}
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -2655,6 +2655,10 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 4294967295
       objectReference: {fileID: 0}
+    - target: {fileID: 127200, guid: 75d22a9f51e44df4586949f661dc1170, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 450104, guid: 75d22a9f51e44df4586949f661dc1170, type: 3}
       propertyPath: m_LocalPosition.x
       value: 42.194458
@@ -3779,6 +3783,21 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 4294967295
       objectReference: {fileID: 0}
+    - target: {fileID: -4226763642013218926, guid: 8bc177f309347cc4f8c3916d4671f657,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 3283ebd2cde673148ba67d55c0102d8d, type: 2}
+    - target: {fileID: -2481132544745135193, guid: 8bc177f309347cc4f8c3916d4671f657,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 42acbcce1cf31b947b7bece2eab610d0, type: 2}
+    - target: {fileID: -8197882186632826010, guid: 8bc177f309347cc4f8c3916d4671f657,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 51332b0b5dc8475468c0e7018e48fd7d, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8bc177f309347cc4f8c3916d4671f657, type: 3}
 --- !u!1001 &356425179
@@ -9399,6 +9418,10 @@ PrefabInstance:
       propertyPath: m_NavMeshLayer
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 681e41ee1260343b395ca58745c94870, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 681e41ee1260343b395ca58745c94870, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0
@@ -10475,6 +10498,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_TagString
       value: Door
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 436b766aabb9aeb419f87ecc2e0e47f3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -6057140222963153312, guid: 436b766aabb9aeb419f87ecc2e0e47f3,
         type: 3}
@@ -11842,6 +11870,10 @@ PrefabInstance:
     - target: {fileID: 127200, guid: 75d22a9f51e44df4586949f661dc1170, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 127200, guid: 75d22a9f51e44df4586949f661dc1170, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 450104, guid: 75d22a9f51e44df4586949f661dc1170, type: 3}
       propertyPath: m_LocalPosition.x
@@ -13909,6 +13941,11 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 4294967295
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 92b8681fc7177f641b94a62e6d554266,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -1504981713932161579, guid: 92b8681fc7177f641b94a62e6d554266,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -15401,7 +15438,7 @@ PrefabInstance:
     - target: {fileID: 6504213039728254174, guid: 97384bdc4bfc2bf47afd548da1775481,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7789189498325282509, guid: 97384bdc4bfc2bf47afd548da1775481,
         type: 3}
