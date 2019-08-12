@@ -50,10 +50,10 @@ private:
 	char nickname[10];
 	char game_password[10];
 	char game_id[10];
-	int item[4];
+	int item[4] = { 0,0,0,0 };
 
 public:
-	int item_count[4];
+	int item_count[4] = { 0,0,0,0 };
 	SOCKETINFO sock;
 	std::chrono::high_resolution_clock::time_point save_time;
 	Player();

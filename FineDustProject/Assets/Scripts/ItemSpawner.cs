@@ -58,6 +58,9 @@ public class ItemSpawner : MonoBehaviour
             case 1:
                 item = Instantiate(itemObj1, spawnPos, Quaternion.identity);
                 break;
+            case 2:
+                item = Instantiate(itemObj0, spawnPos, Quaternion.identity);
+                break;
             default:
                 break;
 

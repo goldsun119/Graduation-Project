@@ -80,15 +80,10 @@ public class Inventory : MonoBehaviour
             // 빈 슬롯 = 슬롯의 숫자.
             EmptySlot = AllSlot.Count;
         //Invoke("Init", 0.01f);
-
-        if (!Game.Network.NetWork.client_data[Game.Network.NetWork.Client_id].get_connect())
-        {
-            load = true;
-        }
-        else 
+        
             load = false;
 
-
+        
 
     }
     //void Init()
@@ -103,13 +98,33 @@ public class Inventory : MonoBehaviour
         ImageRender(false);
 
         
-        
+
 
     }
 
     void Update()
     {
-            
+        Load();
+
+
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            Debug.Log("I누름");
+            if (InvenImg.enabled)
+            {
+                InvenImg.enabled = false;
+                ImageRender(false);
+            }
+            else
+            {
+                InvenImg.enabled = true;
+                ImageRender(true);
+            }
+        }
+    }
+
+    public void Load()
+    {
         if (!load)
         {
 
@@ -150,22 +165,7 @@ public class Inventory : MonoBehaviour
             load = true;
         }
 
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            Debug.Log("I누름");
-            if (InvenImg.enabled)
-            {
-                InvenImg.enabled = false;
-                ImageRender(false);
-            }
-            else
-            {
-                InvenImg.enabled = true;
-                ImageRender(true);
-            }
-        }
     }
-
     public void ImageRender(bool onoff)
     {
         for (int i = 0; i < AllSlot.Count; i++)
@@ -198,19 +198,20 @@ public class Inventory : MonoBehaviour
             // 슬롯에 존재하는 아이템의 겹칠수 있는 최대치가 넘지않았을 때. (true일 때)
             if (slot.ItemReturn().type == item.type && slot.ItemMax(item))
             {
-                switch (slot.ItemReturn().type)
-                {
-                    case Item.TYPE.Box:
-                        Game.Network.NetWork.client_data[Game.Network.NetWork.Client_id].get_item_count(i);
-                        break;
-                    case Item.TYPE.Crystal:
-                        Game.Network.NetWork.client_data[Game.Network.NetWork.Client_id].get_item_count(i);
-                        break;
-                    default:
-                        break;
-                }
-                // 슬롯에 아이템을 넣는다.
-                slot.AddItem(item);
+                int c = 0;
+                //슬롯에 아이템을 넣는다.
+                //switch (slot.ItemReturn().type)
+                //{
+                //    case Item.TYPE.Box:
+                //        c = Game.Network.NetWork.client_data[Game.Network.NetWork.Client_id].get_item_count(i);
+                //        break;
+                //    case Item.TYPE.Crystal:
+                //        c = Game.Network.NetWork.client_data[Game.Network.NetWork.Client_id].get_item_count(i);
+                //        break;
+                //    default:
+                //        break;
+                //}
+               slot.AddItem(item);
                 return true;
             }
         }
@@ -224,17 +225,17 @@ public class Inventory : MonoBehaviour
             if (slot.isSlots())
                 continue;
 
-            switch (slot.ItemReturn().type)
-            {
-                case Item.TYPE.Box:
-                    Game.Network.NetWork.client_data[Game.Network.NetWork.Client_id].get_item(i);
-                    break;
-                case Item.TYPE.Crystal:
-                    Game.Network.NetWork.client_data[Game.Network.NetWork.Client_id].get_item(i);
-                    break;
-                default:
-                    break;
-            }
+            //switch (slot.ItemReturn().type)
+            //{
+            //    case Item.TYPE.Box:
+            //        Game.Network.NetWork.client_data[Game.Network.NetWork.Client_id].get_item(i);
+            //        break;
+            //    case Item.TYPE.Crystal:
+            //        Game.Network.NetWork.client_data[Game.Network.NetWork.Client_id].get_item(i);
+            //        break;
+            //    default:
+            //        break;
+            //}
             slot.AddItem(item);
             return true;
         }

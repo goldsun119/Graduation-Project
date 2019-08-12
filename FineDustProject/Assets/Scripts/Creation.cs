@@ -22,7 +22,7 @@ public class Creation : MonoBehaviour
     void Start()
     {
         Iv = GameObject.FindGameObjectWithTag("Inventory").GetComponent<Inventory>();
-
+        
         it1 = Iv.gameObject.transform.GetChild(0).GetComponent<Slot>();
         it2 = Iv.gameObject.transform.GetChild(1).GetComponent<Slot>();
 
@@ -63,13 +63,17 @@ public class Creation : MonoBehaviour
             img.gameObject.SetActive(true);
             it1.ItemUse();
             text.text = it1.slot.Count.ToString() + "/1";
-        }
+            bb.gameObject.SetActive(false);
+
+
+}
 
         if (it2.ItemReturn().type == Item.TYPE.Box && it2.slot.Count >= 1)
         {
             img.gameObject.SetActive(true);
             it2.ItemUse();
             text.text = it2.slot.Count.ToString() + "/1";
+            bb.gameObject.SetActive(false);
         }
     }
 
