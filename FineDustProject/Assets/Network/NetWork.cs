@@ -204,12 +204,12 @@ namespace Game.Network
                         iter.set_dirX(monster_x);
                         iter.set_dirZ(monster_z);
                         iter.set_calculate_id(monster_cal);
-                        iter.set_animator(monster_ani);
+                        iter.set_animator(monster_hp);
                         iter.set_draw(true);
                     }
                     else
                     {
-                        monster_data.Add(monster_id, new MonsterClass(monster_id, monster_hp, monster_ani, monster_x, monster_z, monster_p, monster_r, monster_target, monster_cal));
+                        monster_data.Add(monster_id, new MonsterClass(monster_id, monster_hp, monster_hp, monster_x, monster_z, monster_p, monster_r, monster_target, monster_cal));
                         monster_data[monster_id].set_draw(true);
                         //spawner.Spawn(id, p, monster_data[id]);
                     }
@@ -532,12 +532,12 @@ namespace Game.Network
                         iter.set_dirX(monster_x);
                         iter.set_dirZ(monster_z);
                         iter.set_calculate_id(monster_cal);
-                        iter.set_animator(monster_ani);
+                        iter.set_animator(monster_hp);
                         iter.set_draw(true);
                     }
                     else
                     {
-                        monster_data.Add(monster_id, new MonsterClass(monster_id, monster_hp, monster_ani, monster_x, monster_z, monster_p, monster_r, monster_target, monster_cal));
+                        monster_data.Add(monster_id, new MonsterClass(monster_id, monster_hp, monster_hp, monster_x, monster_z, monster_p, monster_r, monster_target, monster_cal));
                         monster_data[monster_id].set_draw(true);
                         //spawner.Spawn(id, p, monster_data[id]);
                     }
@@ -899,7 +899,7 @@ namespace Game.Network
 
         public static void SendMonsterInfo(int id)
         {
-            Sendbyte = sF.makeMonsterInfoPacket(monster_data[id].get_id(), monster_data[id].get_animator(), monster_data[id].get_dirX(), monster_data[id].get_dirZ(), monster_data[id].get_pos(), monster_data[id].get_rot());
+            Sendbyte = sF.makeMonsterInfoPacket(monster_data[id].get_id(), monster_data[id].get_hp(), monster_data[id].get_dirX(), monster_data[id].get_dirZ(), monster_data[id].get_pos(), monster_data[id].get_rot());
             Send_Packet(Sendbyte);
         }
 

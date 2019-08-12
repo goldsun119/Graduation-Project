@@ -243,7 +243,7 @@ void make_monster()
 	monsters[0].SetPos(70, 30, 70);
 	monsters[0].SetDirX(0);
 	monsters[0].SetDirZ(0);
-	monsters[0].SetAnimator(0);
+	monsters[0].SetAnimator(100);
 	monsters[0].SetCalculate(1);
 	monsters[0].SetInitPos(monsters[0].GetPos());
 	monsters[0].SetTarget(0);
@@ -255,7 +255,7 @@ void make_monster()
 	monsters[1].SetPos(60, 30, 60);
 	monsters[1].SetDirX(0);
 	monsters[1].SetDirZ(0);
-	monsters[1].SetAnimator(0);
+	monsters[1].SetAnimator(100);
 	monsters[1].SetCalculate(1);
 	monsters[1].SetInitPos(monsters[0].GetPos());
 	monsters[1].SetTarget(0);
@@ -282,7 +282,7 @@ void make_monster()
 		monsters[monster_id].SetInitPos(x, 150, z);
 		monsters[monster_id].SetDirX(0);
 		monsters[monster_id].SetDirZ(0);
-		monsters[monster_id].SetAnimator(0);
+		monsters[monster_id].SetAnimator(100);
 		monsters[monster_id].SetCalculate(1);
 		monsters[monster_id].SetTarget(0);
 		monsters[monster_id].SetRotation(vec3(0, 0, 0));
@@ -511,19 +511,7 @@ void process_event(T_EVENT &ev)
 		break;
 	case EV_MONSTER_DEAD:
 	{
-		monsters[ev.do_object].SetDraw(false);
-		//죽었다고 다른 클라들에게 알리기
-		send_monster_dead_packet(ev.do_object);
-		
-		// 타이머에 1분 뒤로 넣어서 다시 살아나게
-		//add_timer(EV_MONSTER_REVIVE, ev.do_object, std::chrono::high_resolution_clock::now() + 60s);
-		monsters[ev.do_object].SetPos(monsters[ev.do_object].GetInitPos());
-		monsters[ev.do_object].SetHp(100);
-		monsters[ev.do_object].SetAnimator(0);
-		monsters[ev.do_object].SetCalculate(1);
-		monsters[ev.do_object].SetDirX(0);
-		monsters[ev.do_object].SetDirZ(0);
-		monsters[ev.do_object].SetTarget(0);
+
 	}
 	break;
 
@@ -854,16 +842,23 @@ void process_packet(const int id, const int packet_size, const char * buf)
 		if (get_packet == "") break;
 		auto monster_pos = Game::Protocol::GetMonsterView(get_packet);
 		int monster_id = monster_pos->id();
-		int ani = monster_pos->animator();
+		int hp = monster_pos->animator();
 		float x = monster_pos->dirX();
 		float z = monster_pos->dirZ();
-		vec3 p = { monster_pos->position()->x(), monster_pos->position()->y(), monster_pos->position()->z() };
-		vec3 r = { monster_pos->rotation()->x(), monster_pos->rotation()->y(), monster_pos->rotation()->z() };
+		vec3 p = { 0,0,0 };
+		vec3 r = { 0,0,0 };
+		if (monster_pos->position()->x() != NULL || monster_pos->position()->y() != NULL || monster_pos->position()->z() != NULL)
+		{
+			p = { monster_pos->position()->x(), monster_pos->position()->y(), monster_pos->position()->z() };
+		}
+		if (monster_pos->rotation()->x() != NULL || monster_pos->rotation()->y() != NULL || monster_pos->rotation()->z() != NULL)
+			r = { monster_pos->rotation()->x(), monster_pos->rotation()->y(), monster_pos->rotation()->z() };
 		
 
 		monsters[monster_id].SetLock();
 
-		monsters[monster_id].SetAnimator(ani);
+		monsters[monster_id].SetAnimator(hp);
+		monsters[monster_id].SetHp(hp);
 		monsters[monster_id].SetDirX(x);
 		monsters[monster_id].SetDirZ(z);
 		monsters[monster_id].SetPos(p);
@@ -880,17 +875,20 @@ void process_packet(const int id, const int packet_size, const char * buf)
 	break;
 	case CS_ATTACK:
 	{
-		int hp = monsters[buf[11]].GetHp();
-		monsters[buf[11]].SetLock();
-		monsters[buf[11]].SetHp(hp - 20);
-		monsters[buf[11]].SetUnlock();
-		send_my_status_to_all_packet(id);
-		if (monsters[buf[11]].GetHp() <= 0)
-		{
-			OVER_EX *over_ex = new OVER_EX;
-			over_ex->event = EV_MONSTER_DEAD;
-			PostQueuedCompletionStatus(g_iocp, 1, buf[11], &over_ex->overlapped);
-		}
+			monsters[buf[11]].SetDraw(false);
+			//죽었다고 다른 클라들에게 알리기
+			send_monster_dead_packet(buf[11]);
+
+			// 타이머에 1분 뒤로 넣어서 다시 살아나게
+			//add_timer(EV_MONSTER_REVIVE, ev.do_object, std::chrono::high_resolution_clock::now() + 60s);
+			monsters[buf[11]].SetPos(monsters[buf[11]].GetInitPos());
+			monsters[buf[11]].SetHp(100);
+			monsters[buf[11]].SetAnimator(0);
+			monsters[buf[11]].SetCalculate(1);
+			monsters[buf[11]].SetDirX(0);
+			monsters[buf[11]].SetDirZ(0);
+			monsters[buf[11]].SetTarget(0);
+		
 	}
 		break;
 	case CS_COMPLETE_MAKING:
