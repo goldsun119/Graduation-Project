@@ -7791,7 +7791,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monObj: {fileID: 0}
   monID: 1
-  monMaxCnt: 10
+  monMaxCnt: 50
   monsterPrefab: {fileID: 6504213039728254174, guid: 97384bdc4bfc2bf47afd548da1775481,
     type: 3}
   monsterObj: {fileID: 0}

@@ -3,7 +3,8 @@
 constexpr int SERVER_PORT =			9000;
 
 constexpr int MAX_USER =					4;
-constexpr int MAX_ITEM =					30;
+constexpr int MAX_MONSTER =			50;
+constexpr int MAX_ITEM =					100;
 constexpr int WORLD_WIDTH =			2000;
 constexpr int WORLD_HEIGHT =			2000;
 

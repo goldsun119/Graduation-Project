@@ -8,7 +8,7 @@ public class MonsterSpawner : MonoBehaviour
 
     //public int monCnt = 1;
     public int monID = -1;
-    public int monMaxCnt = 30;
+    public int monMaxCnt = 100;
 
     public GameObject monsterPrefab;
     public GameObject monsterObj;
@@ -32,7 +32,11 @@ public class MonsterSpawner : MonoBehaviour
         //}
         for (int i = 0; i < monMaxCnt; ++i)
         {
-            if (Game.Network.NetWork.monster_data.ContainsKey(i) == false)
+            if(Game.Network.NetWork.monster_data.ContainsKey(i) == false)
+            {
+                continue;
+            }
+            if (Game.Network.NetWork.monster_data[i].get_hp()<=0 || Game.Network.NetWork.monster_data[i].get_draw() == false)
             {
                 continue;
             }

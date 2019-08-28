@@ -9,7 +9,7 @@ public class ItemSpawner : MonoBehaviour
 
     public int itemCnt = 0;
     public int itemID = 0;
-    public int itemMaxCnt = 30;
+    public int itemMaxCnt = 100;
 
 
     // Start is called before the first frame update
@@ -21,7 +21,7 @@ public class ItemSpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Game.Network.NetWork.item_data.Count == 30)
+        if (Game.Network.NetWork.item_data.Count == 100)
         {
             if (itemCnt < itemMaxCnt)
             {

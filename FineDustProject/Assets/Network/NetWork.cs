@@ -671,7 +671,17 @@ namespace Game.Network
                 Eat_Item get_data = Eat_Item.GetRootAsEat_Item(recv_buf);
                 int monster_id = get_data.ItemID;
                 int target = get_data.PlayerID;
-                monster_data[monster_id].set_chase_id(target);
+                if(target == 0)
+                {
+                    monster_data[monster_id].set_chase_id(target);
+                    monster_data[monster_id].set_calculate_id(1);
+                }
+                else
+                {
+
+                    monster_data[monster_id].set_chase_id(target);
+                    monster_data[monster_id].set_calculate_id(target);
+                }
             }
             else if (type == Game.Protocol.Protocol.SC_MONSTER_CALCULATE)
             {

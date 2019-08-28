@@ -134,6 +134,8 @@ void set_DB_Shutdown(int ci);
 void new_DB_Id(int ci);
 int check_login(string a, string b, int id);
 void autosave_info_db();
+
+mutex query_lock;
 //--------------------------------DB-------------------------------
 
 wchar_t* ConvertCtoWC(const char *str);
@@ -189,11 +191,12 @@ void initialize()
 	int ret = load_item();
 	if (ret == DB_LOGIN_SUCCESS)
 	{
+		cout << "아이템 불러오기 완료" << endl;
 	}
 	else if (ret == DB_NO_DATA)
 	{
 		make_items();
-	}
+	}  
 
 	make_monster();
 
@@ -202,33 +205,217 @@ void make_items()
 {
 	// 좌표범위
 	srand(unsigned(time(NULL)));
-	items[0].SetDraw(true);
-	items[0].SetId(0);
-	items[0].SetType(1);
-	items[0].SetPos(351, 150, 351);
-	insert_item_db(0, 1, 351, 150, 351, true);
-	for (int i = 1; i < MAX_ITEM; ++i)
+	int item_id = 0;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(1);
+	items[item_id].SetPos(-41, 30, 370);
+
+	item_id = 1;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(2);
+	items[item_id].SetPos(-49, 30, 360);
+
+	item_id = 2;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(3);
+	items[item_id].SetPos(-1, 30, 395);
+
+	item_id = 3;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(2);
+	items[item_id].SetPos(44, 30, 394);
+
+	item_id = 4;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(1);
+	items[item_id].SetPos(57, 30, 359);
+
+	item_id = 5;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(1);
+	items[item_id].SetPos(35, 30, 410);
+
+	item_id = 6;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(2);
+	items[item_id].SetPos(40, 30, 415);
+
+	item_id = 7;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(3);
+	items[item_id].SetPos(45, 30, 423);
+
+	item_id = 8;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(3);
+	items[item_id].SetPos(5.9, 30, 427);
+
+	item_id = 9;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(2);
+	items[item_id].SetPos(30, 30, 445);
+
+	item_id = 10;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(1);
+	items[item_id].SetPos(61, 30, 452);
+
+	item_id = 11;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(1);
+	items[item_id].SetPos(77, 30, 476);
+
+	item_id = 12;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(2);
+	items[item_id].SetPos(97, 30, 476);
+
+	item_id = 13;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(3);
+	items[item_id].SetPos(107, 30, 465);
+
+	item_id = 14;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(3);
+	items[item_id].SetPos(124, 30, 456);
+
+	item_id = 15;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(2);
+	items[item_id].SetPos(129, 30, 444);
+
+	item_id = 16;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(1);
+	items[item_id].SetPos(116, 30, 426);
+
+	item_id = 17;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(1);
+	items[item_id].SetPos(133, 30, 411);
+
+	item_id = 18;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(2);
+	items[item_id].SetPos(123, 30, 389);
+
+	item_id = 19;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(3);
+	items[item_id].SetPos(149, 30, 380);
+
+	item_id = 20;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(3);
+	items[item_id].SetPos(141, 30, 365);
+
+	item_id = 4;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(2);
+	items[item_id].SetPos(126, 30, 349);
+
+	item_id = 21;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(1);
+	items[item_id].SetPos(105, 30, 347);
+
+	item_id = 22;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(1);
+	items[item_id].SetPos(-35, 30, 416);
+
+	item_id = 23;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(2);
+	items[item_id].SetPos(-22, 30, 437);
+
+	item_id = 24;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(3);
+	items[item_id].SetPos(-50, 30, 429);
+
+	item_id = 25;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(3);
+	items[item_id].SetPos(-31, 30, 455);
+
+	item_id = 26;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(2);
+	items[item_id].SetPos(-15, 30, 463);
+
+	item_id = 27;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(1);
+	items[item_id].SetPos(-36, 30, 385);
+
+	item_id = 28;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(1);
+	items[item_id].SetPos(13, 30, 459);
+
+	item_id = 29;
+	items[item_id].SetDraw(true);
+	items[item_id].SetId(item_id);
+	items[item_id].SetType(3);
+	items[item_id].SetPos(-10, 30, 466);
+
+	for (int i = 0; i < 30; ++i)
 	{
-		float x = float(rand() % 1800 - 900);
-		if (-350 <= x && x <= 350)
-		{
-			--i;
-			continue;
-		}
-		float z = float(rand() % 1800 - 900);
-		if (-350 <= z && z <= 350)
-		{
-			--i;
-			continue;
-		}
-		int type = rand() % 3 + 1;
-		items[i].SetDraw( true);
-		items[i].SetId(i);
-		items[i].SetType(type);
-		items[i].SetPos(x, 150, z);
-		insert_item_db(i, type, x, 150, z, true);
+		insert_item_db(i, items[i].GetType(), items[i].GetXPos(), items[i].GetYPos(), items[i].GetZPos(), true);
 	}
-	cout << "아이템 생성 완료" << endl;
+
+	for (item_id = 30; item_id < MAX_ITEM; ++item_id)
+	{
+		items[item_id].SetDraw(true);
+		items[item_id].SetId(item_id);
+		int r = rand() % 3 + 1;
+		items[item_id].SetType(r);
+
+		float x = float(rand() % 1000 - 500);
+		float z = float(rand() % 1000 - 500);
+		if (-350 <= z && z <= 350 && -350 <= x && x <= 350)
+		{
+			--item_id;
+			continue;
+		}
+
+		items[item_id].SetPos(x, 30, z);
+		insert_item_db(item_id, items[item_id].GetType(), items[item_id].GetXPos(), items[item_id].GetYPos(), items[item_id].GetZPos(), true);
+	}
+
+	cout << "아이템 랜덤 생성 및 db저장 완료" << endl;
 }
 
 void make_monster()
@@ -240,7 +427,7 @@ void make_monster()
 	monsters[0].SetDraw(true);
 	monsters[0].SetId(0);
 	monsters[0].SetHp(100);
-	monsters[0].SetPos(70, 30, 70);
+	monsters[0].SetPos(121, 30, 373);
 	monsters[0].SetDirX(0);
 	monsters[0].SetDirZ(0);
 	monsters[0].SetAnimator(100);
@@ -250,36 +437,68 @@ void make_monster()
 	monsters[0].SetRotation(vec3(0, 0, 0));
 
 	monsters[1].SetDraw(true);
-	monsters[1].SetId(0);
+	monsters[1].SetId(1);
 	monsters[1].SetHp(100);
-	monsters[1].SetPos(60, 30, 60);
+	monsters[1].SetPos(-5, 30, 458);
 	monsters[1].SetDirX(0);
 	monsters[1].SetDirZ(0);
 	monsters[1].SetAnimator(100);
 	monsters[1].SetCalculate(1);
-	monsters[1].SetInitPos(monsters[0].GetPos());
+	monsters[1].SetInitPos(monsters[1].GetPos());
 	monsters[1].SetTarget(0);
 	monsters[1].SetRotation(vec3(0, 0, 0));
-	for (monster_id = 2; monster_id < 30; ++monster_id)
+
+	monsters[2].SetDraw(true);
+	monsters[2].SetId(2);
+	monsters[2].SetHp(100);
+	monsters[2].SetPos(137, 30, 400);
+	monsters[2].SetDirX(0);
+	monsters[2].SetDirZ(0);
+	monsters[2].SetAnimator(100);
+	monsters[2].SetCalculate(1);
+	monsters[2].SetInitPos(monsters[2].GetPos());
+	monsters[2].SetTarget(0);
+	monsters[2].SetRotation(vec3(0, 0, 0));
+
+
+	monsters[3].SetDraw(true);
+	monsters[3].SetId(3);
+	monsters[3].SetHp(100);
+	monsters[3].SetPos(42, 30, 490);
+	monsters[3].SetDirX(0);
+	monsters[3].SetDirZ(0);
+	monsters[3].SetAnimator(100);
+	monsters[3].SetCalculate(1);
+	monsters[3].SetInitPos(monsters[3].GetPos());
+	monsters[3].SetTarget(0);
+	monsters[3].SetRotation(vec3(0, 0, 0));
+
+
+	monsters[4].SetDraw(true);
+	monsters[4].SetId(4);
+	monsters[4].SetHp(100);
+	monsters[4].SetPos(218, 30, 341);
+	monsters[4].SetDirX(0);
+	monsters[4].SetDirZ(0);
+	monsters[4].SetAnimator(100);
+	monsters[4].SetCalculate(1);
+	monsters[4].SetInitPos(monsters[4].GetPos());
+	monsters[4].SetTarget(0);
+	monsters[4].SetRotation(vec3(0, 0, 0));
+	for (monster_id = 5; monster_id < MAX_MONSTER; ++monster_id)
 	{
-		float x = float(rand() % 1800 - 900);
-		if (-350 <= x && x <= 350)
+		float x = float(rand() % 1000 - 500);
+		float z = float(rand() % 1000 - 500);
+		if (-350 <= z && z <= 350 && -350 <= x && x <= 350)
 		{
 			--monster_id;
 			continue;
 		}
-		float z = float(rand() % 1800 - 900);
-		if (-350 <= z && z <= 350)
-		{
-			--monster_id;
-			continue;
-		}
-		int type = rand() % 4 + 1;
 		monsters[monster_id].SetDraw(true);
 		monsters[monster_id].SetId(monster_id);
 		monsters[monster_id].SetHp(100);
-		monsters[monster_id].SetPos(x, 150, z);
-		monsters[monster_id].SetInitPos(x, 150, z);
+		monsters[monster_id].SetPos(x, 30, z);
+		monsters[monster_id].SetInitPos(x, 30, z);
 		monsters[monster_id].SetDirX(0);
 		monsters[monster_id].SetDirZ(0);
 		monsters[monster_id].SetAnimator(100);
@@ -492,6 +711,7 @@ void process_event(T_EVENT &ev)
 						//타겟이 변경될때 전송
 						monsters[ev.do_object].SetLock();
 						monsters[ev.do_object].SetTarget(target);
+						monsters[ev.do_object].SetCalculate(target);
 						monsters[ev.do_object].SetUnlock();
 
 						send_monster_target_packet(to, ev.do_object, target);
@@ -501,6 +721,7 @@ void process_event(T_EVENT &ev)
 					{
 						monsters[ev.do_object].SetLock();
 						monsters[ev.do_object].SetTarget(target);
+						monsters[ev.do_object].SetCalculate(1);
 						monsters[ev.do_object].SetUnlock();
 						send_monster_target_packet(to, ev.do_object, target);
 					}
@@ -1132,7 +1353,7 @@ void send_init_packet(int id)
 	}
 	auto full_items_data = builder.CreateVector(items_data);
 
-	for (int monster_id = 0; monster_id < 30; ++monster_id)
+	for (int monster_id = 0; monster_id < MAX_MONSTER; ++monster_id)
 	{
 		monsters[monster_id].SetLock();
 		if (monsters[monster_id].GetDraw() == false)
@@ -1367,12 +1588,14 @@ void set_login_off(int ci)
 
 	wchar_t * game_id = ConvertCtoWC(clients[ci].GetGameId());
 
+	query_lock.lock();
 	swprintf((LPWSTR)Query, L"EXEC dbo.user_logout %s, %f, %f, %f, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", game_id, clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp(), clients[ci].GetItem(0), clients[ci].GetItem(1), clients[ci].GetItem(2), clients[ci].GetItem(3), clients[ci].GetType(), clients[ci].item_count[0], clients[ci].item_count[1], clients[ci].item_count[2], clients[ci].item_count[3]);
 	//sprintf(buf, "EXEC dbo.user_get_info %s, %s", clients[ci].GetGameId(), clients[ci].GetGamePassword());
 	//MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
 	//sql_data[strlen(buf)] = '\0';
 
 	retcode = SQLExecDirect(hstmt, (SQLWCHAR*)Query, SQL_NTS);
+	query_lock.unlock();
 	//retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
 	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) 
 	{
@@ -1388,8 +1611,10 @@ int check_login(string a, string b, int id)
 		wchar_t * game_id = ConvertCtoWC(a.c_str());
 		wchar_t * game_pw = ConvertCtoWC(b.c_str());
 
+		query_lock.lock();
 		swprintf((LPWSTR)Query, L"EXEC dbo.user_login %s, %s", game_id, game_pw);
 		retcode = SQLExecDirect(hstmt, (SQLWCHAR*)Query, SQL_NTS);
+		query_lock.unlock();
 
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 
@@ -1467,9 +1692,11 @@ int get_DB_Info(int ci) {
 		wchar_t * game_id = ConvertCtoWC(clients[ci].GetGameId());
 		wchar_t * game_pw = ConvertCtoWC(clients[ci].GetGamePassword());
 
+		query_lock.lock();
 		swprintf((LPWSTR)Query, L"EXEC dbo.user_get_info %s, %s", game_id, game_pw);
 
 		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
+		query_lock.unlock();
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 
 			SQLWCHAR sz_id[MAX_STR_LEN], sz_password[MAX_STR_LEN], sz_nickname[MAX_STR_LEN];
@@ -1523,9 +1750,11 @@ void set_DB_Info(int ci) {
 		wchar_t * game_id = ConvertCtoWC(clients[ci].GetGameId());
 		wchar_t * game_pw = ConvertCtoWC(clients[ci].GetGamePassword());
 
+		query_lock.lock();
 		swprintf((LPWSTR)Query, L"EXEC dbo.set_user %s, %s, %s, %f, %f, %f, %d, %d, %d, %d, %d, %d, %d", game_id, game_pw, clients[ci].GetNickname(), clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp(), clients[ci].GetMaxhp(), clients[ci].GetItem(0), clients[ci].GetItem(1), clients[ci].GetItem(2), clients[ci].GetItem(3), 1);
 
 		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
+		query_lock.unlock();
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 
 
@@ -1573,9 +1802,11 @@ void new_DB_Id(int ci) {
 		wchar_t * game_pw = ConvertCtoWC(clients[ci].GetGamePassword());
 		wchar_t * nick = ConvertCtoWC(clients[ci].GetNickname());
 
+		query_lock.lock();
 		swprintf((LPWSTR)Query, L"EXEC dbo.insert_user %s, %s, %s, %f, %f, %f, %d", game_id, game_pw, nick, clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp());
 
 		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
+		query_lock.unlock();
 		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 
 			retcode = SQLFetch(hstmt);
@@ -1618,9 +1849,11 @@ int load_item()
 	retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
 	WCHAR Query[MAX_BUFFER];
 
+	query_lock.lock();
 	wsprintf((LPWSTR)Query, L"EXEC dbo.get_item_info");
 
 	retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
+	query_lock.unlock();
 	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
 
 		float db_x, db_y, db_z;
@@ -1659,7 +1892,6 @@ int load_item()
 		}
 		else
 		{
-			cout << "아이템 불러오기 완료" << endl;
 			return DB_LOGIN_SUCCESS;
 		}
 	}
@@ -1670,9 +1902,11 @@ void insert_item_db(int id, int type, float x, float y, float z, int draw)
 	retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
 	WCHAR Query[MAX_BUFFER];
 
+	query_lock.lock();
 	swprintf((LPWSTR)Query, L"EXEC dbo.insert_item %d, %d, %f, %f, %f, %d", id, type, x, y, z, draw);
 
 	retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
+	query_lock.unlock();
 	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
 	{
 
@@ -1712,9 +1946,11 @@ void db_set_pos(int id)
 
 	wchar_t * game_id = ConvertCtoWC(clients[id].GetGameId());
 
+	query_lock.lock();
 	swprintf((LPWSTR)Query, L"EXEC dbo.user_set_pos %s, %f, %f, %f ", game_id, clients[id].GetXPos(), clients[id].GetYPos(), clients[id].GetZPos());
 
 	retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
+	query_lock.unlock();
 	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
 	{
 

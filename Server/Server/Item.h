@@ -11,7 +11,7 @@ class Item : public Obj
 
 private:
 	int id;
-	int player_id;
+	int player_id = 0;
 
 public:
 	Item();
