@@ -1541,7 +1541,7 @@ void send_monster_pos_packet(int to, int monster)
 void send_complete_making_packet(int num)
 {
 	int i = num;
-	for (int to = 1; 1 <= MAX_USER; ++to)
+	for (int to = 1; to <= MAX_USER; ++to)
 	{
 		if (clients[to].sock.connected == false) continue;
 		SendPacket(SC_COMPLETE_MAKING, to, &i, sizeof(i));
@@ -1550,7 +1550,7 @@ void send_complete_making_packet(int num)
 void send_end_game_packet()
 {
 	int i = 3;
-	for (int to = 1; 1 <= MAX_USER; ++to)
+	for (int to = 1; to <= MAX_USER; ++to)
 	{
 		if (clients[to].sock.connected == false) continue;
 		SendPacket(SC_END_GAME, to, &i, sizeof(i));
