@@ -162,8 +162,11 @@ int main()
 		th.join();
 
 	//save_monster, item, player
-
-
+	for (int i = 1; i <= MAX_USER; ++i)
+	{
+		if (clients[i].sock.connected == true)
+			set_login_off(i);
+	}
 
 	CloseHandle(g_iocp);
 	SQLCancel(hstmt);

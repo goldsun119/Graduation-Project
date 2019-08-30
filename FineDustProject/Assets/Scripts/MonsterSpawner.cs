@@ -22,12 +22,15 @@ public class MonsterSpawner : MonoBehaviour
     {
         for (int i = 0; i < monMaxCnt; ++i)
         {
-            if(Game.Network.NetWork.monster_data.ContainsKey(i) == false)
+            if (Game.Network.NetWork.monster_data.ContainsKey(i) == false)
             {
                 continue;
             }
-            if (Game.Network.NetWork.monster_data[i].get_hp()<=0 || Game.Network.NetWork.monster_data[i].get_draw() == false)
+            if (Game.Network.NetWork.monster_data[i].get_hp() <= 0 || Game.Network.NetWork.monster_data[i].get_draw() == false)
             {
+                string name = "Monster(" + i.ToString() + ")";
+                monsterObj = transform.Find(name).gameObject;
+                Destroy(monsterObj);
                 continue;
             }
             string a = "Monster(" + i.ToString() + ")";
@@ -58,7 +61,7 @@ public class MonsterSpawner : MonoBehaviour
                 monsterStatus.chase_id = Game.Network.NetWork.monster_data[i].get_chase_id();
                 monsterStatus.calculate_id = Game.Network.NetWork.monster_data[i].get_calculate_id();
                 monsterStatus.animator = Game.Network.NetWork.monster_data[i].get_animator();
-                
+
                 //monsterStatus.draw = true;
             }
             else
@@ -67,7 +70,7 @@ public class MonsterSpawner : MonoBehaviour
             }
             //if (monsterStatus.draw)
             //{
-                monsterObj.SetActive(true);
+            monsterObj.SetActive(true);
 
             //}
             //else
@@ -77,4 +80,5 @@ public class MonsterSpawner : MonoBehaviour
             //        last_id = Game.Network.NetWork.new_player_id;
         }
     }
+
 }
