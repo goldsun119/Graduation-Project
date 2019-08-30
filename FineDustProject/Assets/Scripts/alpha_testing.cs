@@ -76,7 +76,7 @@ public class alpha_testing : MonoBehaviour
             // add
             if (!listPrevObstacleObject.Find(delegate (GameObject inObject) { return (inObject.name == obstacleObject.name); }))
             {
-            Debug.Log(obstacleObject.name);
+            //Debug.Log(obstacleObject.name);
                 // changed to transparent
                 string nameShader = "Transparent/VertexLit";
 

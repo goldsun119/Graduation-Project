@@ -95,7 +95,7 @@ public class PlayerMove : MonoBehaviour
         // 충돌 - 아이템
         if (player.isItem)
         {
-            Debug.Log("item collision");
+            //Debug.Log("item collision");
         }
         if (!player.isItem)
         {
@@ -105,7 +105,7 @@ public class PlayerMove : MonoBehaviour
         // 충돌 - 몬스터
         if (player.isMon)
         {
-            Debug.Log("monster collision");
+            //Debug.Log("monster collision");
         }
         if (!player.isMon)
         {

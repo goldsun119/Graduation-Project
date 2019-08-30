@@ -24,7 +24,7 @@ public class PlayerStatus : MonoBehaviour
     //
 
     public float speedT = 0;
-    public float speedR;
+    public float speedR = 3;
     public float JumpP;
 
     public int key_on_num = 0;
@@ -58,6 +58,8 @@ public class PlayerStatus : MonoBehaviour
 
     void Start()
     {
+        speedR = 3;
+
         CMgr = GetComponent<CameraMgr>();
         hp = 100;
         coroutine = HPControl();
@@ -212,7 +214,7 @@ public class PlayerStatus : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log(transform.name + "얘랑" + collision.gameObject.name);
+        //Debug.Log(transform.name + "얘랑" + collision.gameObject.name);
         // 점프 해제
         if (collision.gameObject.CompareTag("Ground"))
         {

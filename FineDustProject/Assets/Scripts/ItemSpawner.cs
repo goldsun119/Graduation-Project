@@ -6,16 +6,18 @@ public class ItemSpawner : MonoBehaviour
 {
     public GameObject itemObj0;
     public GameObject itemObj1;
-
     public int itemCnt = 0;
-    public int itemID = 0;
-    public int itemMaxCnt = 100;
+
+    private int itemID = 0;
+    private int itemMaxCnt = 100;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        itemCnt = 0;
+        itemID = 0;
+        itemMaxCnt = 100;
     }
 
     // Update is called once per frame

@@ -7,7 +7,7 @@ public class Alpha_Change : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Untagged"))
+        if (other.gameObject.CompareTag("sharder_on"))
         {
             string nameShader = "Transparent/VertexLit";
 
@@ -30,7 +30,7 @@ public class Alpha_Change : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.CompareTag("Untagged"))
+        if (other.gameObject.CompareTag("sharder_on"))
         {
             // changed to opaque
             //string nameShader = "Mobile/Unlit (Supports Lightmap)";

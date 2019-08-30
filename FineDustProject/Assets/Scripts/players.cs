@@ -6,7 +6,7 @@ public class players : MonoBehaviour
 {
     int login = 0;
     public GameObject playerPrefab;
-    public GameObject playerObj;
+    private GameObject playerObj;
 
     // Start is called before the first frame update
     void Start()

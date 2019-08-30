@@ -4,18 +4,13 @@ using UnityEngine;
 
 public class AreaMgr : MonoBehaviour
 {
-    public Transform player_tf;
-    public PlayerStatus player_st;
-
-    public bool is_Collide = false;
-    public int Enviroment_Level = 1;
+    private Transform player_tf;
+    private PlayerStatus player_st;
 
     public MeshRenderer Renderer;
-
     public Material Dome_Material_Clear;
     public Material Dome_Material_Fine;
-
-
+    
     // Start is called before the first frame update
     void Start()
     {

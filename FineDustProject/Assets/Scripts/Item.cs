@@ -6,19 +6,18 @@ using UnityEngine.AI;
 public class Item : MonoBehaviour
 {
     public bool isCollision = false;
-    public GameObject player;
-    new Rigidbody rigidbody;
-    ItemSpawner Item_Spawner;
-
     public enum TYPE { Box, Crystal }
 
     public TYPE type;           // 아이템의 타입.
     public Sprite DefaultImg;   // 기본 이미지.
+    public int ID;
     public int MaxCount;        // 겹칠수 있는 최대 숫자.
 
+    private GameObject player;
+    private new Rigidbody rigidbody;
+    private ItemSpawner Item_Spawner;
     private Inventory Iv;
 
-    public int ID;
 
     void Awake()
     {
@@ -44,7 +43,7 @@ public class Item : MonoBehaviour
 
     void Start()
     {
-        MaxCount = 3;
+        MaxCount = 10;
     }
 
     void Update()

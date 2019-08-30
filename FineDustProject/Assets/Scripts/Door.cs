@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Door : MonoBehaviour
 {
-    public Transform player_tf;
-    public GameObject player;
-    public bool isCollision = false;
-    Animator animator;
+    private Transform player_tf;
+    private GameObject player;
+    private bool isCollision = false;
+    private Animator animator;
 
-    public float targetRange = 50.0f;
+    private float targetRange = 50.0f;
 
     // Start is called before the first frame update
     void Start()

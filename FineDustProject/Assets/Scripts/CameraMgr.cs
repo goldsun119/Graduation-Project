@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class CameraMgr : MonoBehaviour
 {
-    GameObject playerObj;
-    PlayerStatus player;
     
     public Camera Third_Cam;
     public Camera First_Cam;
@@ -14,14 +12,16 @@ public class CameraMgr : MonoBehaviour
     public Camera NPC_Cam;
 
     public bool NPC_On;
-    float ver;
+    public int Camera_Num;
 
     // player 넣고 플레이어 받아와서 카메라주기?
 
-    public float mouseSensitivity = 3f;
-    public float upDownRange = 13;
+    private GameObject playerObj;
+    private PlayerStatus player;
+    private float ver;
+    private float mouseSensitivity = 3f;
+    private float upDownRange = 13;
 
-    public int Camera_Num;
 
     void Start()
     {
@@ -47,7 +47,7 @@ public class CameraMgr : MonoBehaviour
         {
             Camera_Num += 1;
             Camera_Num = Camera_Num % 3;
-            Debug.Log(Camera_Num);
+            //Debug.Log(Camera_Num);
         }
 
         MinimapCamMove();
@@ -100,10 +100,6 @@ public class CameraMgr : MonoBehaviour
         First_Cam.enabled = false;
 
         Cursor.lockState = CursorLockMode.None; //: 일반 마우스 커서
-        //Cursor.lockState = CursorLockMode.Confined : 창밖으로 커서가 나가지 못함
-        //Quaternion rotation = Quaternion.Euler(player.rotation.x, player.rotation.y + 45, player.rotation.z);
-        //player.transform.rotation = rotation;
-        //player.transform.position = rotation * player.position;
         IsometricCamMove();
     }
 
@@ -173,13 +169,11 @@ public class CameraMgr : MonoBehaviour
     void IsometricCamMove()
     {
         Isometric_Cam.transform.position = new Vector3(player.position.x - 5, player.position.y + 10f, player.position.z - 5);
-        //Debug.Log(transform.position.x);
-        //Debug.Log(Isometric_Cam.transform.position.x);
+        
     }
 
     void NPCCamMove(GameObject NPC)
     {
-        //Quaternion rotation = Quaternion.Euler(NPC.transform.rotation.x, NPC.transform.rotation.y, NPC.transform.rotation.z);
         NPC_Cam.transform.rotation = Quaternion.Euler(NPC.transform.rotation.x + 15, NPC.transform.rotation.y + 180, NPC.transform.rotation.z);
         NPC_Cam.transform.position = new Vector3(NPC.transform.position.x, NPC.transform.position.y + 1.4f, NPC.transform.position.z + 2.0f);
     }
@@ -188,26 +182,12 @@ public class CameraMgr : MonoBehaviour
     {
         //좌우 회전
         float hor = Input.GetAxis("Mouse X");
-        //Debug.Log("move mouse");
         player.transform.Rotate(Vector3.up * mouseSensitivity * hor);
 
         //상하 회전
-
-        //float ver -= Input.GetAxis("Mouse Y") * mouseSensitivity;
-        //ver = Mathf.Clamp(ver, -upDownRange, upDownRange);
-        //Camera.main.transform.localRotation = Quaternion.Euler(ver, 0f, 0f);
-
         ver += Input.GetAxis("Mouse Y");
-        // Debug.Log(ver + "마우스");
         ver = Mathf.Clamp(ver, -upDownRange, upDownRange);
-        Debug.Log(ver + "마우스");
-        //Camera.main.transform.localRotation = Quaternion.Euler(ver, 0f, 0f);
-        //Debug.Log("move mouse");
-        //First_Cam.transform.rotation = Quaternion.Euler(player.rotation.x, player.rotation.y, player.rotation.z);
         First_Cam.transform.Rotate(Vector3.left * mouseSensitivity * ver);
-        //float ver -= Input.GetAxis("Mouse Y") * mouseSensitivity;
-        //ver = Mathf.Clamp(ver, -upDownRange, upDownRange);
-        //Camera.main.transform.localRotation = Quaternion.Euler(ver, 0f, 0f);
     }
 
 }

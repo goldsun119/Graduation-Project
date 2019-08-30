@@ -13,6 +13,7 @@ TagManager:
   - DragImg
   - wall
   - NPC
+  - sharder_on
   layers:
   - Default
   - TransparentFX

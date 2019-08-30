@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class NPC_control : MonoBehaviour
 {
-    public CameraMgr CMgr;
-    public bool is_collision;
-    public PlayerStatus player;
+    private CameraMgr CMgr;
+    private bool is_collision;
+    private PlayerStatus player;
     public bool NPC_ON = false;
 
     public GameObject UI_conversation;

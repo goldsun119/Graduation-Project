@@ -83,7 +83,7 @@ public class MonsterMgr : MonoBehaviour
     void Update()
     {
         player_tf = GameObject.FindGameObjectWithTag("Player").transform;   // 플레이어의 정보값
-        Debug.Log(player_tf.gameObject.name);
+        //Debug.Log(player_tf.gameObject.name);
         player_st = player_tf.GetComponent<PlayerStatus>();
 
         if (Game.Network.NetWork.monster_data.ContainsKey(ID) == false || HP <=0)
@@ -233,7 +233,7 @@ public class MonsterMgr : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        Debug.Log(other.gameObject.name);
+        //Debug.Log(other.gameObject.name);
         if (other.tag == "Player")
         {
             Transform other_tf = other.gameObject.transform;
@@ -242,7 +242,7 @@ public class MonsterMgr : MonoBehaviour
             if (Vector3.Distance(other_st.transform.position, transform.position)
                 <= Vector3.Distance(player_tf.transform.position, transform.position))
             {
-                Debug.Log(player_tf.gameObject.name);
+                //Debug.Log(player_tf.gameObject.name);
                 player_tf = other_tf;
                 player_st = other_st;
 
