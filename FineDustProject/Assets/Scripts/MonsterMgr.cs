@@ -19,7 +19,7 @@ public class MonsterMgr : MonoBehaviour
     public bool is_Wait = false;
     public bool is_Tracking = false;    // tracking이 on일 때 player의 미세먼지 흡입량을 증가시키기 위해서
     public bool is_BackToSpawn = false;
-    
+
     public float targetRange = 20.0f;
     public float KnockBack_Time = 0.1f;
     public float Waiting_Time = 0.0f;
@@ -83,10 +83,10 @@ public class MonsterMgr : MonoBehaviour
     void Update()
     {
         player_tf = GameObject.FindGameObjectWithTag("Player").transform;   // 플레이어의 정보값
-        //Debug.Log(player_tf.gameObject.name);
+        Debug.Log(player_tf.gameObject.name);
         player_st = player_tf.GetComponent<PlayerStatus>();
 
-        if (Game.Network.NetWork.monster_data.ContainsKey(ID) == false || HP <=0)
+        if (Game.Network.NetWork.monster_data.ContainsKey(ID) == false || HP <= 0)
         {
             Destroy(gameObject);
             Debug.Log("멧돼지 사망");
@@ -99,71 +99,9 @@ public class MonsterMgr : MonoBehaviour
         calculate_id = Game.Network.NetWork.monster_data[ID].get_calculate_id();
         animator = Game.Network.NetWork.monster_data[ID].get_animator();
         HP = Game.Network.NetWork.monster_data[ID].get_animator();
-        if(chase_id == Game.Network.NetWork.Client_id)
+        if (calculate_id == Game.Network.NetWork.Client_id)
         {
-            target_pos = Game.Network.NetWork.client_data[chase_id].get_pos();
-            float d = Vector3.Distance(spawnPosition, transform.position);
-            if(d > 100)   
-                nav.SetDestination(spawnPosition);
-            else
-            {
-                nav.SetDestination(target_pos);
-
-            }
-            if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.RUN)
-                nav.speed = 20;
-            else if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.WALK)
-                nav.speed = 10;
-            else nav.speed = 3;
-
-
-            // 플레이어가 몬스터 공격
-            if (isCollision)
-            {
-                if (Input.GetMouseButtonUp(0)) //0:좌 1:중 2:우
-                {
-                    is_KnockBack = true;
-                    KnockBack_Time = 0.1f;
-                    HP -= 20;
-                    if(HP<=0)
-                        Game.Network.NetWork.SendMonsterAttack(ID);
-                }
-            }
-
-
-
-            if (is_KnockBack)
-            {
-                transform.Translate((Vector3.back) * KnockBack_Time);
-                KnockBack_Time += Time.deltaTime;
-                if (KnockBack_Time > 0.3)
-                {
-                    is_KnockBack = false;
-                    is_Wait = true;
-                    Waiting_Time = 0.0f;
-                }
-            }
-
-            if (is_Wait)
-            {
-                Waiting_Time += Time.deltaTime;
-                if (Waiting_Time > 0.5) is_Wait = false;
-
-            }
-            position = transform.position;
-            rotation = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
-            Game.Network.NetWork.monster_data[ID].set_animator(HP);
-            Game.Network.NetWork.monster_data[ID].set_hp(HP);
-            Game.Network.NetWork.monster_data[ID].set_dirX(dirX);
-            Game.Network.NetWork.monster_data[ID].set_dirZ(dirZ);
-            Game.Network.NetWork.monster_data[ID].set_rot(rotation);
-            Game.Network.NetWork.monster_data[ID].set_pos(position);
-
-            Game.Network.NetWork.SendMonsterInfo(ID);
-        }
-        else if(chase_id == 0)
-        {
-            if (calculate_id == Game.Network.NetWork.Client_id)//쫓는아이디 != 클라아이디 && 계산아이디가 클라아이디일때
+            if (chase_id == 0)
             {
                 if (Vector3.Distance(Random_Position, spawnPosition) > 80)
                 {
@@ -199,21 +137,73 @@ public class MonsterMgr : MonoBehaviour
                 Game.Network.NetWork.monster_data[ID].set_pos(position);
 
                 Game.Network.NetWork.SendMonsterInfo(ID);
-
             }
-            else//쫓는아이디 != 클라 && 계산아이디 != 클라
+            else
             {
-                //받은 값 적용시키기
-                transform.position = position;
-                transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
+                target_pos = Game.Network.NetWork.client_data[chase_id].get_pos();
+                float d = Vector3.Distance(spawnPosition, transform.position);
+                if (d > 100)
+                    nav.SetDestination(spawnPosition);
+                else
+                {
+                    nav.SetDestination(target_pos);
+
+                }
+                if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.RUN)
+                    nav.speed = 20;
+                else if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.WALK)
+                    nav.speed = 10;
+                else nav.speed = 3;
+
+
+                position = transform.position;
+                rotation = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
+                Game.Network.NetWork.monster_data[ID].set_animator(HP);
+                Game.Network.NetWork.monster_data[ID].set_hp(HP);
+                Game.Network.NetWork.monster_data[ID].set_dirX(dirX);
+                Game.Network.NetWork.monster_data[ID].set_dirZ(dirZ);
+                Game.Network.NetWork.monster_data[ID].set_rot(rotation);
+                Game.Network.NetWork.monster_data[ID].set_pos(position);
+
+                Game.Network.NetWork.SendMonsterInfo(ID);
             }
         }
         else
         {
-                //받은 값 적용시키기
-                transform.position = position;
-                transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
-            
+            transform.position = position;
+            transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
+        }
+
+        // 플레이어가 몬스터 공격
+        if (isCollision)
+        {
+            if (Input.GetMouseButtonUp(0)) //0:좌 1:중 2:우
+            {
+                is_KnockBack = true;
+                KnockBack_Time = 0.1f;
+                Game.Network.NetWork.SendMonsterAttack(ID);
+            }
+        }
+
+
+
+        if (is_KnockBack)
+        {
+            transform.Translate((Vector3.back) * KnockBack_Time);
+            KnockBack_Time += Time.deltaTime;
+            if (KnockBack_Time > 0.3)
+            {
+                is_KnockBack = false;
+                is_Wait = true;
+                Waiting_Time = 0.0f;
+            }
+        }
+
+        if (is_Wait)
+        {
+            Waiting_Time += Time.deltaTime;
+            if (Waiting_Time > 0.5) is_Wait = false;
+
         }
     }
 
@@ -233,7 +223,7 @@ public class MonsterMgr : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        //Debug.Log(other.gameObject.name);
+        Debug.Log(other.gameObject.name);
         if (other.tag == "Player")
         {
             Transform other_tf = other.gameObject.transform;
@@ -242,7 +232,7 @@ public class MonsterMgr : MonoBehaviour
             if (Vector3.Distance(other_st.transform.position, transform.position)
                 <= Vector3.Distance(player_tf.transform.position, transform.position))
             {
-                //Debug.Log(player_tf.gameObject.name);
+                Debug.Log(player_tf.gameObject.name);
                 player_tf = other_tf;
                 player_st = other_st;
 
