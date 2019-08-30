@@ -1428,9 +1428,10 @@ void send_init_packet(int id)
 		int ic3 = clients[id].item_count[2];
 		int ic4 = clients[id].item_count[3];
 		clients[id].SetUnlock();
+
 		auto mydata = CreateLogin_my_DB(builder, i, name, &Vec3(pos.x, pos.y, pos.z), hp, mhp, i1, i2, i3, i4, t, ic1, ic2, ic3, ic4);
 
-		auto p = CreateInit_Collection_IM(builder, kind, full_items_data, full_monsters_data, mydata);
+		auto p = CreateInit_Collection_IM(builder, kind, full_items_data, full_monsters_data, mydata, product_complete[0], product_complete[1], product_complete[2], product_complete[3], product_complete[4]);
 		builder.Finish(p);
 		SendPacket(SC_ID, id, builder.GetBufferPointer(), builder.GetSize());
 	}
@@ -1456,7 +1457,7 @@ void send_init_packet(int id)
 		clients[id].SetUnlock();
 		auto mydata = CreateLogin_my_DB(builder, i, name, &Vec3(pos.x, pos.y, pos.z), hp, mhp, i1, i2, i3, i4, t, ic1, ic2, ic3, ic4);
 
-		auto p = CreateInit_Collection(builder, kind, full_items_data, full_monsters_data, full_clients_data, mydata);
+		auto p = CreateInit_Collection(builder, kind, full_items_data, full_monsters_data, full_clients_data, mydata, product_complete[0], product_complete[1], product_complete[2], product_complete[3], product_complete[4]);
 		builder.Finish(p);
 		SendPacket(SC_INIT_DATA, id, builder.GetBufferPointer(), builder.GetSize());
 	}

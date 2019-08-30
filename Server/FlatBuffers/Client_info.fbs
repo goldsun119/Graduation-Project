@@ -99,10 +99,20 @@ itemData:[Item_info];
 MonsterData:[Monster_info];
 clientData:[Client_info];
 myData:Login_my_DB;
+complete1:int;
+complete2:int;
+complete3:int;
+complete4:int;
+complete5:int;
 }
 table Init_Collection_IM{
 id:int;
 itemData:[Item_info];
 MonsterData:[Monster_info];
 myData:Login_my_DB;
+complete1:int;
+complete2:int;
+complete3:int;
+complete4:int;
+complete5:int;
 }

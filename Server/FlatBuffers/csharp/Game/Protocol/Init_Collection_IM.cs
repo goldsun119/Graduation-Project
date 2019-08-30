@@ -23,13 +23,28 @@ public struct Init_Collection_IM : IFlatbufferObject
   public Monster_info? MonsterData(int j) { int o = __p.__offset(8); return o != 0 ? (Monster_info?)(new Monster_info()).__assign(__p.__indirect(__p.__vector(o) + j * 4), __p.bb) : null; }
   public int MonsterDataLength { get { int o = __p.__offset(8); return o != 0 ? __p.__vector_len(o) : 0; } }
   public Login_my_DB? MyData { get { int o = __p.__offset(10); return o != 0 ? (Login_my_DB?)(new Login_my_DB()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
+  public int Complete1 { get { int o = __p.__offset(12); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+  public int Complete2 { get { int o = __p.__offset(14); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+  public int Complete3 { get { int o = __p.__offset(16); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+  public int Complete4 { get { int o = __p.__offset(18); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+  public int Complete5 { get { int o = __p.__offset(20); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
 
   public static Offset<Init_Collection_IM> CreateInit_Collection_IM(FlatBufferBuilder builder,
       int id = 0,
       VectorOffset itemDataOffset = default(VectorOffset),
       VectorOffset MonsterDataOffset = default(VectorOffset),
-      Offset<Login_my_DB> myDataOffset = default(Offset<Login_my_DB>)) {
-    builder.StartObject(4);
+      Offset<Login_my_DB> myDataOffset = default(Offset<Login_my_DB>),
+      int complete1 = 0,
+      int complete2 = 0,
+      int complete3 = 0,
+      int complete4 = 0,
+      int complete5 = 0) {
+    builder.StartObject(9);
+    Init_Collection_IM.AddComplete5(builder, complete5);
+    Init_Collection_IM.AddComplete4(builder, complete4);
+    Init_Collection_IM.AddComplete3(builder, complete3);
+    Init_Collection_IM.AddComplete2(builder, complete2);
+    Init_Collection_IM.AddComplete1(builder, complete1);
     Init_Collection_IM.AddMyData(builder, myDataOffset);
     Init_Collection_IM.AddMonsterData(builder, MonsterDataOffset);
     Init_Collection_IM.AddItemData(builder, itemDataOffset);
@@ -37,7 +52,7 @@ public struct Init_Collection_IM : IFlatbufferObject
     return Init_Collection_IM.EndInit_Collection_IM(builder);
   }
 
-  public static void StartInit_Collection_IM(FlatBufferBuilder builder) { builder.StartObject(4); }
+  public static void StartInit_Collection_IM(FlatBufferBuilder builder) { builder.StartObject(9); }
   public static void AddId(FlatBufferBuilder builder, int id) { builder.AddInt(0, id, 0); }
   public static void AddItemData(FlatBufferBuilder builder, VectorOffset itemDataOffset) { builder.AddOffset(1, itemDataOffset.Value, 0); }
   public static VectorOffset CreateItemDataVector(FlatBufferBuilder builder, Offset<Item_info>[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddOffset(data[i].Value); return builder.EndVector(); }
@@ -48,6 +63,11 @@ public struct Init_Collection_IM : IFlatbufferObject
   public static VectorOffset CreateMonsterDataVectorBlock(FlatBufferBuilder builder, Offset<Monster_info>[] data) { builder.StartVector(4, data.Length, 4); builder.Add(data); return builder.EndVector(); }
   public static void StartMonsterDataVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(4, numElems, 4); }
   public static void AddMyData(FlatBufferBuilder builder, Offset<Login_my_DB> myDataOffset) { builder.AddOffset(3, myDataOffset.Value, 0); }
+  public static void AddComplete1(FlatBufferBuilder builder, int complete1) { builder.AddInt(4, complete1, 0); }
+  public static void AddComplete2(FlatBufferBuilder builder, int complete2) { builder.AddInt(5, complete2, 0); }
+  public static void AddComplete3(FlatBufferBuilder builder, int complete3) { builder.AddInt(6, complete3, 0); }
+  public static void AddComplete4(FlatBufferBuilder builder, int complete4) { builder.AddInt(7, complete4, 0); }
+  public static void AddComplete5(FlatBufferBuilder builder, int complete5) { builder.AddInt(8, complete5, 0); }
   public static Offset<Init_Collection_IM> EndInit_Collection_IM(FlatBufferBuilder builder) {
     int o = builder.EndObject();
     return new Offset<Init_Collection_IM>(o);
