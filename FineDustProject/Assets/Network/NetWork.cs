@@ -69,8 +69,6 @@ namespace Game.Network
 
         public static int[] product_complete = new int[5] { 0, 0, 0, 0, 0 };
 
-        float deltaTime = 0.0f;     // FPS 측정
-
         private static bool serverConnect = false;  // 서버 연결을 했는지 체크
         private static ManualResetEvent connectDone = new ManualResetEvent(false);
         private string playerIP = "";   // 플레이어 아이피
@@ -153,7 +151,11 @@ namespace Game.Network
             {
                 ByteBuffer recv_buf = new ByteBuffer(recvPacket);
                 var get_all_data = Init_Collection_IM.GetRootAsInit_Collection_IM(recv_buf);
-
+                product_complete[0] = get_all_data.Complete1;
+                product_complete[1] = get_all_data.Complete2;
+                product_complete[2] = get_all_data.Complete3;
+                product_complete[3] = get_all_data.Complete4;
+                product_complete[4] = get_all_data.Complete5;
                 for (int i = 0; i < get_all_data.ItemDataLength; ++i)
                 {
                     //데이터 접근 get_all_data.Data(i).Value.변수
@@ -450,6 +452,11 @@ namespace Game.Network
             {
                 ByteBuffer recv_buf = new ByteBuffer(recvPacket);
                 var get_all_data = Init_Collection.GetRootAsInit_Collection(recv_buf);
+                product_complete[0] = get_all_data.Complete1;
+                product_complete[1] = get_all_data.Complete2;
+                product_complete[2] = get_all_data.Complete3;
+                product_complete[3] = get_all_data.Complete4;
+                product_complete[4] = get_all_data.Complete5;
                 for (int i = 0; i < get_all_data.ClientDataLength; ++i)
                 {
                     int c_id = get_all_data.ClientData(i).Value.Id;
