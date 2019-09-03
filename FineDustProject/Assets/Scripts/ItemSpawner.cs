@@ -6,8 +6,10 @@ public class ItemSpawner : MonoBehaviour
 {
     public GameObject itemObj0;
     public GameObject itemObj1;
+
     public int itemCnt = 0;
 
+    GameObject item;
     private int itemID = 0;
     private int itemMaxCnt = 100;
 
@@ -51,14 +53,13 @@ public class ItemSpawner : MonoBehaviour
 
         //spawnPos += Vector3.up * 0.6f;
 
-        GameObject item;
         switch (Game.Network.NetWork.item_data[itemCnt].get_type())
         {
             case 0:
                 item = Instantiate(itemObj0, spawnPos, Quaternion.identity);
                 break;
             case 1:
-                item = Instantiate(itemObj1, spawnPos, Quaternion.identity);
+                item = Instantiate(itemObj1, spawnPos, Quaternion.Euler(-90,0,0));
                 break;
             case 2:
                 item = Instantiate(itemObj0, spawnPos, Quaternion.identity);
@@ -67,6 +68,8 @@ public class ItemSpawner : MonoBehaviour
                 break;
 
         }
+
+        item.transform.parent = transform;
 
         Debug.Log("아이템 생성" + itemCnt + " " + spawnPos.x + ", " + spawnPos.y + ", " + spawnPos.z);
     }

@@ -14,6 +14,7 @@ TagManager:
   - wall
   - NPC
   - sharder_on
+  - Doom
   layers:
   - Default
   - TransparentFX

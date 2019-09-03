@@ -8,6 +8,7 @@ public class MonsterMgr : MonoBehaviour
     public Transform player_tf;
     public PlayerStatus player_st;
     NavMeshAgent nav;
+    Animator ani;
     //new Rigidbody rigidbody;
     //MonsterSpawner Monster_Spawner;
 
@@ -43,7 +44,8 @@ public class MonsterMgr : MonoBehaviour
     void Awake()
     {
         nav = GetComponent<NavMeshAgent>();
-
+        ani = GetComponent<Animator>();
+        animator = (int)ANI_TYPE.IDEL;
         //Monster_Spawner = GameObject.Find("MonsterSpawner").GetComponent<MonsterSpawner>();
 
         //rigidbody = GetComponent<Rigidbody>();
@@ -105,14 +107,19 @@ public class MonsterMgr : MonoBehaviour
             {
                 if (Vector3.Distance(Random_Position, spawnPosition) > 80)
                 {
+                    //animator = (int)ANI_TYPE.RUN;
+
                     Random_Position += (spawnPosition - Vector3.zero);
                 }
                 else
                 {
+                    //animator = (int)ANI_TYPE.WALK;
+
                     Random_Position.x += Random.Range(-0.5f, 0.5f);
                     Random_Position.z += Random.Range(-0.5f, 0.5f);
                 }
                 nav.SetDestination(Random_Position);
+
                 var spawn_distance = Vector3.Distance(spawnPosition, transform.position);   // 스폰 영역 밖으로 나갔는지 확인 할 거리
                 if (spawn_distance > 100)
                 {
@@ -120,6 +127,8 @@ public class MonsterMgr : MonoBehaviour
                 }
                 if (is_BackToSpawn)
                 {
+                    //animator = (int)ANI_TYPE.RUN;
+
                     nav.SetDestination(spawnPosition);
 
                     if (transform.position == spawnPosition)
@@ -175,17 +184,49 @@ public class MonsterMgr : MonoBehaviour
                 target_pos = Game.Network.NetWork.client_data[chase_id].get_pos();
                 float d = Vector3.Distance(spawnPosition, transform.position);
                 if (d > 100)
+                {
+                    //animator = (int)ANI_TYPE.RUN;
+
                     nav.SetDestination(spawnPosition);
-                else
+                }
+                else //if (d < 100 && d > 2)
                 {
                     nav.SetDestination(target_pos);
 
                 }
+                //else if (d > 2)
+                //{
+                //    nav.SetDestination(target_pos);
+                //    nav.speed = 3;
+                //    animator = (int)ANI_TYPE.WALK;
+                //    ani.SetInteger("animator", 0);
+                //}
+
                 if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.RUN)
+                {
                     nav.speed = 20;
+                    animator = (int)ANI_TYPE.RUN;
+                    ani.SetInteger("animator", 2);
+                }
                 else if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.WALK)
+                {
                     nav.speed = 10;
-                else nav.speed = 3;
+                    animator = (int)ANI_TYPE.RUN;
+                    ani.SetInteger("animator", 2);
+
+                }
+                else if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.IDEL)
+                {
+                    nav.speed = 0;
+                    animator = (int)ANI_TYPE.IDEL;
+                    ani.SetInteger("animator", 0);
+                }
+                else
+                {
+                    nav.speed = 3;
+                    animator = (int)ANI_TYPE.WALK;
+                    ani.SetInteger("animator", 1);
+                }
 
 
                 // 플레이어가 몬스터 공격
@@ -288,6 +329,21 @@ public class MonsterMgr : MonoBehaviour
         {
             isCollision = true;
         }
+
+        if (collision.gameObject.CompareTag("Doom"))
+        {
+            is_BackToSpawn = true;
+            Game.Network.NetWork.monster_data[ID].set_chase_id(0);
+        }
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Doom"))
+        {
+            is_BackToSpawn = true;
+            Game.Network.NetWork.monster_data[ID].set_chase_id(0);
+        }
     }
 
     void OnCollisionExit(Collision collision)
@@ -313,6 +369,12 @@ public class MonsterMgr : MonoBehaviour
 
             }
             is_Tracking = true;
+        }
+
+        if (other.tag == "Doom")
+        {
+            is_BackToSpawn = true;
+            Game.Network.NetWork.monster_data[ID].set_chase_id(0);
         }
     }
     //bool CheckDistance()

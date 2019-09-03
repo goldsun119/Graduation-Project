@@ -7,7 +7,7 @@ public class PlayerStatus : MonoBehaviour
     float Player_Max_Walk_Speed = 3f;
 
     public int ID;
-
+    public GameObject dead;
     //
     public int hp;
     //public int animator;
@@ -36,6 +36,7 @@ public class PlayerStatus : MonoBehaviour
     public bool isPick = false;
 
     // 상호작용
+    public bool isdie = false;
     public bool isItem = false;
     public bool isMon = false;
     public bool is_move = true;
@@ -79,6 +80,15 @@ public class PlayerStatus : MonoBehaviour
     {
         if (ID == Game.Network.NetWork.Client_id)
         {
+            if (hp <= 0)
+            {
+                GameObject.Find("Canvas/UI_outline/dead").SetActive(true);
+                //dead
+                is_move = false;
+                isdie = true;
+                // 사망 애니메이션
+            }
+
             if (is_move)
             {
                 MoveStatus();
@@ -101,7 +111,7 @@ public class PlayerStatus : MonoBehaviour
                 StopCoroutine(coroutine);
 
             Debug.Log("hp" + hp);
-            yield return new WaitForSeconds(2);//WaitForSeconds객체를 생성해서 반환
+            yield return new WaitForSeconds(3);//WaitForSeconds객체를 생성해서 반환
                                                //StartCoroutine(HPControl());
         }
     }
@@ -295,6 +305,9 @@ public class PlayerStatus : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P)) transform.position = new Vector3(0, 30, 360);
         if (Input.GetKeyDown(KeyCode.O)) transform.position = new Vector3(0, 30, 50);
         if (Input.GetKeyDown(KeyCode.L)) transform.position = new Vector3(0, 30, -5);
+        if (Input.GetKeyDown(KeyCode.H)) hp -= 10;
+        if (Input.GetKeyDown(KeyCode.B)) hp += 10;
+
         //if (Input.GetKeyDown(KeyCode.L)) transform.position = ;
         //if (Input.GetKeyDown(KeyCode.K)) transform.position = MonSpawner.Last_Spawn;
 

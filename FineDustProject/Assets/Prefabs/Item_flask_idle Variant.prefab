@@ -26,10 +26,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isCollision: 0
-  player: {fileID: 0}
   type: 1
-  DefaultImg: {fileID: 21300000, guid: 75ce3ecdb74d33348a31671526f870e2, type: 3}
-  MaxCount: 0
+  DefaultImg: {fileID: 21300000, guid: 27c8c6264637e2a47a08848516ec62e2, type: 3}
+  ID: 0
+  MaxCount: 10
 --- !u!1001 &7064229737221157689
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -40,7 +40,7 @@ PrefabInstance:
     - target: {fileID: -927199367670048503, guid: 59670abd55380bd44aba6d2fab60bea8,
         type: 3}
       propertyPath: m_Name
-      value: Item_flask_idle
+      value: Item_flask_idle Variant
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 59670abd55380bd44aba6d2fab60bea8,
         type: 3}
@@ -65,12 +65,12 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 59670abd55380bd44aba6d2fab60bea8,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 59670abd55380bd44aba6d2fab60bea8,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 59670abd55380bd44aba6d2fab60bea8,
         type: 3}
@@ -85,7 +85,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 59670abd55380bd44aba6d2fab60bea8,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 59670abd55380bd44aba6d2fab60bea8,
         type: 3}

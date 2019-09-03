@@ -106,6 +106,17 @@ public class Inventory : MonoBehaviour
     {
         Load();
 
+        if (Input.GetKey(KeyCode.Alpha0))
+        {
+            Game.Network.NetWork.SendEatItem(0, Game.Network.NetWork.Client_id);
+            AddItem(item1);
+        }
+
+        if (Input.GetKey(KeyCode.Alpha9))
+        {
+            Game.Network.NetWork.SendEatItem(0, Game.Network.NetWork.Client_id);
+            AddItem(item2);
+        }
 
         if (Input.GetKeyDown(KeyCode.I))
         {

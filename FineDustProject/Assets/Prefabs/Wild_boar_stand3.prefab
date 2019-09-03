@@ -291,6 +291,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2773897610953236572}
   - component: {fileID: 8701559254314573297}
+  - component: {fileID: 2994513547577254380}
   m_Layer: 0
   m_Name: Box001
   m_TagString: Untagged
@@ -337,6 +338,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -393,6 +395,25 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.39913726, y: 0.5500603, z: -0.00000011920929}
     m_Extent: {x: 1.1815884, y: 0.94029284, z: 0.85662085}
   m_DirtyAABB: 0
+--- !u!95 &2994513547577254380
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2550096458671074092}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: fd8eaf2f1999a714dba2d94c7f735add, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &2850102756750324620
 GameObject:
   m_ObjectHideFlags: 0
@@ -490,6 +511,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -905,7 +927,7 @@ Animator:
   m_GameObject: {fileID: 6504213039728254174}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 3647fe491463a7c4794ce014bfd6d98e, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: fd8eaf2f1999a714dba2d94c7f735add, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
