@@ -11,13 +11,14 @@ public class Creation : MonoBehaviour
     private Slot it0;
     private Slot it1;
     private Slot it2;
+    private Slot it3;
 
     public int select_list_num;
 
     private Slot[] item_slot;
 
-    public Button bb;
-    public Image img;
+    public Button bb1;
+    public Image img1;
     private bool b1;
 
     public Button bb2;
@@ -45,8 +46,6 @@ public class Creation : MonoBehaviour
     public Sprite item_img2;
     public Sprite item_img3;
     public Sprite item_clear;
-
-    private Text text1;
 
     public Button ending;
 
@@ -93,8 +92,8 @@ public class Creation : MonoBehaviour
 
         if (Game.Network.NetWork.product_complete[0] == 1)
         {
-            img.gameObject.SetActive(true);
-            bb.gameObject.SetActive(false);
+            img1.gameObject.SetActive(true);
+            bb1.gameObject.SetActive(false);
             b1 = true;
         }
         if (Game.Network.NetWork.product_complete[1] == 1)
@@ -143,10 +142,10 @@ public class Creation : MonoBehaviour
         detail_text3.gameObject.SetActive(false);
         detail_text4.gameObject.SetActive(false);
         if (it0.ItemReturn().type == Item.TYPE.Box)
-            detail_text1.text = it0.slot.Count.ToString() + "/1";
+            detail_text1.text = "수수께끼상자" + it0.slot.Count.ToString() + "/1";
    
         else
-            detail_text1.text = it1.slot.Count.ToString() + "/1";
+            detail_text1.text = "수수께끼상자" + it1.slot.Count.ToString() + "/1";
 
     }
 
@@ -163,11 +162,12 @@ public class Creation : MonoBehaviour
         detail_text2.gameObject.SetActive(false);
         detail_text3.gameObject.SetActive(false);
         detail_text4.gameObject.SetActive(false);
+
         if (it1.ItemReturn().type == Item.TYPE.Crystal)
-            detail_text1.text = it1.slot.Count.ToString() + "/1";
+            detail_text1.text = "삼각플라스크" + it1.slot.Count.ToString() + "/1";
 
         else
-            detail_text1.text = it0.slot.Count.ToString() + "/1";
+            detail_text1.text = "삼각플라스크" + it0.slot.Count.ToString() + "/1";
     }
 
     public void List3Button()
@@ -183,11 +183,16 @@ public class Creation : MonoBehaviour
         detail_text2.gameObject.SetActive(true);
         detail_text3.gameObject.SetActive(false);
         detail_text4.gameObject.SetActive(false);
-       if (it1.ItemReturn().type == Item.TYPE.Box)
-            detail_text1.text = it1.slot.Count.ToString() + "/1";
 
+       if (it1.ItemReturn().type == Item.TYPE.Box)
+            detail_text1.text = "수수께끼상자" + it1.slot.Count.ToString() + "/1";
         else
-            detail_text1.text = it0.slot.Count.ToString() + "/1";
+            detail_text1.text = "수수께끼상자" + it0.slot.Count.ToString() + "/1";
+
+        if (it1.ItemReturn().type == Item.TYPE.Crystal)
+            detail_text2.text = "삼각플라스크" + it1.slot.Count.ToString() + "/1";
+        else
+            detail_text2.text = "삼각플라스크" + it0.slot.Count.ToString() + "/1";
     }
 
     public void List4Button()
@@ -196,13 +201,23 @@ public class Creation : MonoBehaviour
         name_text.text = "강우 촉진기";
         item1.gameObject.SetActive(true);
         item2.gameObject.SetActive(true);
-        item3.gameObject.SetActive(true);
+        item3.gameObject.SetActive(false);
         item4.gameObject.SetActive(false);
-        if (it1.ItemReturn().type == Item.TYPE.Box)
-            detail_text1.text = it1.slot.Count.ToString() + "/1";
 
+        detail_text1.gameObject.SetActive(true);
+        detail_text2.gameObject.SetActive(true);
+        detail_text3.gameObject.SetActive(false);
+        detail_text4.gameObject.SetActive(false);
+
+        if (it1.ItemReturn().type == Item.TYPE.Box)
+            detail_text1.text = "수수께끼상자" + it1.slot.Count.ToString() + "/1";
         else
-            detail_text1.text = it0.slot.Count.ToString() + "/1";
+            detail_text1.text = "수수께끼상자" + it0.slot.Count.ToString() + "/1";
+
+        if (it1.ItemReturn().type == Item.TYPE.Crystal)
+            detail_text2.text = "삼각플라스크" + it1.slot.Count.ToString() + "/1";
+        else
+            detail_text2.text = "삼각플라스크" + it0.slot.Count.ToString() + "/1";
     }
 
     public void List5Button()
@@ -213,6 +228,11 @@ public class Creation : MonoBehaviour
         item2.gameObject.SetActive(true);
         item3.gameObject.SetActive(true);
         item4.gameObject.SetActive(true);
+
+        detail_text1.gameObject.SetActive(true);
+        detail_text2.gameObject.SetActive(true);
+        detail_text3.gameObject.SetActive(true);
+        detail_text4.gameObject.SetActive(true);
         // 1,2,3,4 아이템 다 있어야 해서 4칸까지 있어야 함.
         //text1 = transform.Find("Button").gameObject.transform.Find("Text").gameObject.GetComponent<Text>();
 
@@ -251,23 +271,24 @@ public class Creation : MonoBehaviour
                     // 요구하는 아이템 리스트 if문으로 다 걸으세요.
                     if (it0.ItemReturn().type == Item.TYPE.Box && it0.slot.Count >= 1)
                     {
-                        img.gameObject.SetActive(true);
+                        //img.gameObject.SetActive(true);
                         it0.ItemUse();
-                        text1.text = it0.slot.Count.ToString() + "/1";
-                        bb.gameObject.SetActive(false);
-                        b1 = true;
+                        detail_text1.text = "수수께끼상자" + it0.slot.Count.ToString() + "/1";
 
-                        Game.Network.NetWork.SendCompleteMaking(1);
+                        //bb.gameObject.SetActive(false);
+                        //b1 = true;
+
+                        Game.Network.NetWork.SendCompleteMaking(0);
                     }
 
                     if (it1.ItemReturn().type == Item.TYPE.Box && it1.slot.Count >= 1)
                     {
-                        img.gameObject.SetActive(true);
+                        //img.gameObject.SetActive(true);
                         it1.ItemUse();
-                        text1.text = it1.slot.Count.ToString() + "/1";
-                        bb.gameObject.SetActive(false);
-                        b1 = true;
-                        Game.Network.NetWork.SendCompleteMaking(1);
+                        detail_text1.text = "수수께끼상자" + it1.slot.Count.ToString() + "/1";
+                        //bb.gameObject.SetActive(false);
+                        //b1 = true;
+                        Game.Network.NetWork.SendCompleteMaking(0);
                     }
 
 
@@ -281,24 +302,24 @@ public class Creation : MonoBehaviour
                     //img2.gameObject.SetActive(true);
                     //bb2.gameObject.SetActive(false);
                     //b2 = true;
-                    if (it0.ItemReturn().type == Item.TYPE.Box && it0.slot.Count >= 1)
+                    if (it0.ItemReturn().type == Item.TYPE.Crystal && it0.slot.Count >= 1)
                     {
-                        img2.gameObject.SetActive(true);
+                        //img2.gameObject.SetActive(true);
                         it0.ItemUse();
-                        text1.text = it0.slot.Count.ToString() + "/1";
-                        bb2.gameObject.SetActive(false);
-                        b2 = true;
-                        Game.Network.NetWork.SendCompleteMaking(2);
+                        detail_text1.text = "삼각플라스크" + it0.slot.Count.ToString() + "/1";
+                        //bb2.gameObject.SetActive(false);
+                        //b2 = true;
+                        Game.Network.NetWork.SendCompleteMaking(1);
                     }
 
-                    if (it1.ItemReturn().type == Item.TYPE.Box && it1.slot.Count >= 1)
+                    if (it1.ItemReturn().type == Item.TYPE.Crystal && it1.slot.Count >= 1)
                     {
-                        img2.gameObject.SetActive(true);
+                        //img2.gameObject.SetActive(true);
                         it1.ItemUse();
-                        text1.text = it1.slot.Count.ToString() + "/1";
-                        bb2.gameObject.SetActive(false);
-                        b2 = true;
-                        Game.Network.NetWork.SendCompleteMaking(2);
+                        detail_text1.text = "삼각플라스크" + it1.slot.Count.ToString() + "/1";
+                        //bb2.gameObject.SetActive(false);
+                        //b2 = true;
+                        Game.Network.NetWork.SendCompleteMaking(1);
                     }
 
                 }
@@ -310,22 +331,42 @@ public class Creation : MonoBehaviour
                    //b2 = true;
                 if (it0.ItemReturn().type == Item.TYPE.Box && it0.slot.Count >= 1)
                 {
-                    img3.gameObject.SetActive(true);
+                    //img3.gameObject.SetActive(true);
                     it0.ItemUse();
-                    text1.text = it0.slot.Count.ToString() + "/1";
-                    bb3.gameObject.SetActive(false);
-                    b3 = true;
-                    Game.Network.NetWork.SendCompleteMaking(3);
+                    detail_text1.text = "수수께끼상자" + it0.slot.Count.ToString() + "/1";
+                   // bb3.gameObject.SetActive(false);
+                   // b3 = true;
+                    Game.Network.NetWork.SendCompleteMaking(2);
+                }
+
+                if (it0.ItemReturn().type == Item.TYPE.Crystal && it0.slot.Count >= 1)
+                {
+                    //img3.gameObject.SetActive(true);
+                    it0.ItemUse();
+                    detail_text1.text = "삼각플라스크" + it0.slot.Count.ToString() + "/1";
+                    //bb3.gameObject.SetActive(false);
+                   // b3 = true;
+                    Game.Network.NetWork.SendCompleteMaking(2);
                 }
 
                 if (it1.ItemReturn().type == Item.TYPE.Box && it1.slot.Count >= 1)
                 {
-                    img3.gameObject.SetActive(true);
+                    //img3.gameObject.SetActive(true);
                     it1.ItemUse();
-                    text1.text = it1.slot.Count.ToString() + "/1";
-                    bb3.gameObject.SetActive(false);
-                    b3 = true;
-                    Game.Network.NetWork.SendCompleteMaking(3);
+                    detail_text1.text = "수수께끼상자" + it1.slot.Count.ToString() + "/1";
+                  //  bb3.gameObject.SetActive(false);
+                   // b3 = true;
+                    Game.Network.NetWork.SendCompleteMaking(2);
+                }
+
+                if (it1.ItemReturn().type == Item.TYPE.Crystal && it1.slot.Count >= 1)
+                {
+                  //  img3.gameObject.SetActive(true);
+                    it1.ItemUse();
+                    detail_text1.text = "삼각플라스크" + it1.slot.Count.ToString() + "/1";
+                  //  bb3.gameObject.SetActive(false);
+                  //  b3 = true;
+                    Game.Network.NetWork.SendCompleteMaking(2);
                 }
                 break;
 
@@ -335,22 +376,39 @@ public class Creation : MonoBehaviour
                 //b2 = true;
                 if (it0.ItemReturn().type == Item.TYPE.Box && it0.slot.Count >= 1)
                 {
-                    img4.gameObject.SetActive(true);
+                    //img4.gameObject.SetActive(true);
                     it0.ItemUse();
-                    text1.text = it0.slot.Count.ToString() + "/1";
-                    bb4.gameObject.SetActive(false);
-                    b4 = true;
-                    Game.Network.NetWork.SendCompleteMaking(4);
+                    detail_text1.text = "수수께끼상자" + it0.slot.Count.ToString() + "/1";
+                   // bb4.gameObject.SetActive(false);
+                   // b4 = true;
+                    Game.Network.NetWork.SendCompleteMaking(3);
                 }
-
+                if (it0.ItemReturn().type == Item.TYPE.Crystal && it0.slot.Count >= 1)
+                {
+                    //img4.gameObject.SetActive(true);
+                    it0.ItemUse();
+                    detail_text1.text = "삼각플라스크" + it0.slot.Count.ToString() + "/1";
+                  //  bb4.gameObject.SetActive(false);
+                  //  b4 = true;
+                    Game.Network.NetWork.SendCompleteMaking(3);
+                }
+                if (it1.ItemReturn().type == Item.TYPE.Crystal && it1.slot.Count >= 1)
+                {
+                  //  img4.gameObject.SetActive(true);
+                    it1.ItemUse();
+                    detail_text1.text = "삼각플라스크" + it1.slot.Count.ToString() + "/1";
+                  //  bb4.gameObject.SetActive(false);
+                   // b4 = true;
+                    Game.Network.NetWork.SendCompleteMaking(3);
+                }
                 if (it1.ItemReturn().type == Item.TYPE.Box && it1.slot.Count >= 1)
                 {
-                    img4.gameObject.SetActive(true);
+                  //  img4.gameObject.SetActive(true);
                     it1.ItemUse();
-                    text1.text = it1.slot.Count.ToString() + "/1";
-                    bb4.gameObject.SetActive(false);
-                    b4 = true;
-                    Game.Network.NetWork.SendCompleteMaking(4);
+                    detail_text1.text = "수수께끼상자" + it1.slot.Count.ToString() + "/1";
+                  //  bb4.gameObject.SetActive(false);
+                  //  b4 = true;
+                    Game.Network.NetWork.SendCompleteMaking(3);
                 }
                 break;
             case 5:
@@ -360,11 +418,11 @@ public class Creation : MonoBehaviour
                 
                 if (b1 && b2 && b3 && b4)
                 {
-                    img5.gameObject.SetActive(true);
-                    text1.text = it1.slot.Count.ToString() + "/1";
-                    bb5.gameObject.SetActive(false);
-                    b5 = true;
-                    Game.Network.NetWork.SendCompleteMaking(5);
+                    //img5.gameObject.SetActive(true);
+                    //detail_text1.text = it1.slot.Count.ToString() + "/1";
+                    //bb5.gameObject.SetActive(false);
+                    //b5 = true;
+                    Game.Network.NetWork.SendCompleteMaking(4);
                 }
                     break;
             default:
