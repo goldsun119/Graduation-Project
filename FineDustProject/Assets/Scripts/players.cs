@@ -5,7 +5,8 @@ using UnityEngine;
 public class players : MonoBehaviour
 {
     int login = 0;
-    public GameObject playerPrefab;
+    public GameObject player1Prefab;
+    public GameObject player2Prefab;
     private GameObject playerObj;
 
     // Start is called before the first frame update
@@ -26,12 +27,28 @@ public class players : MonoBehaviour
             Transform tmp = transform.Find(a);
             if (tmp == null)
             {
-                GameObject player = Instantiate(playerPrefab,
+                GameObject player;
+                if (Game.Network.NetWork.client_data[i].get_char() == 1)
+                {
+                    player = Instantiate(player1Prefab,
                                                     Game.Network.NetWork.client_data[i].get_pos(),
                                                     Quaternion.identity);
-                player.name = a;
-                player.transform.parent = transform;
-                playerObj = transform.Find(a).gameObject;
+
+                    player.name = a;
+                    player.transform.parent = transform;
+                    playerObj = transform.Find(a).gameObject;
+                }
+
+                else if (Game.Network.NetWork.client_data[i].get_char() == 2)
+                {
+                    player = Instantiate(player2Prefab,
+                                                    Game.Network.NetWork.client_data[i].get_pos(),
+                                                    Quaternion.identity);
+
+                    player.name = a;
+                    player.transform.parent = transform;
+                    playerObj = transform.Find(a).gameObject;
+                }
             }
             else
             {
