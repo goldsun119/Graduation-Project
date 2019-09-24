@@ -54,6 +54,7 @@ public class players : MonoBehaviour
             {
                 playerObj = transform.Find(a).gameObject;
             }
+
                 PlayerStatus playerStatus = playerObj.GetComponent<PlayerStatus>();
                 if (Game.Network.NetWork.client_data.ContainsKey(i))
                 {
