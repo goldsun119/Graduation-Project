@@ -1012,7 +1012,7 @@ void process_packet(const int id, const int packet_size, const char * buf)
 		{
 			clients[id].SetType(2);
 		}
-		send_login_ok_packet(id);
+		//send_login_ok_packet(id);
 		send_init_packet(id);
 		send_put_player_packet(id);
 	}
@@ -1205,6 +1205,7 @@ void send_put_player_packet(int id)
 	builder.Clear();
 	clients[id].SetLock();
 	int i = clients[id].GetId();
+	int type = clients[id].GetType();
 	int hp = clients[id].GetHp();
 	int ani = clients[id].GetAnimator();
 	float x = clients[id].GetDirX();
@@ -1215,7 +1216,7 @@ void send_put_player_packet(int id)
 	auto pos = clients[id].GetPos();
 	auto rot = clients[id].GetRotation();
 	clients[id].SetUnlock();
-	auto data = CreateClient_info(builder, i, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
+	auto data = CreateClient_info(builder, i, type, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
 	builder.Finish(data);
 	for (int to = 1; to <= MAX_USER; ++to)
 	{
@@ -1278,6 +1279,7 @@ void send_my_status_to_all_packet(int id)
 	builder.Clear();
 	clients[id].SetLock();
 	int i = clients[id].GetId();
+	int type = clients[id].GetType();
 	int hp = clients[id].GetHp();
 	int ani = clients[id].GetAnimator();
 	float x = clients[i].GetDirX();
@@ -1288,7 +1290,7 @@ void send_my_status_to_all_packet(int id)
 	auto pos = clients[id].GetPos();
 	auto rot = clients[id].GetRotation();
 	clients[id].SetUnlock();
-	auto data = CreateClient_info(builder, i, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
+	auto data = CreateClient_info(builder, i, type, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
 	builder.Finish(data);
 	for (int to = 1; to <= MAX_USER; ++to)
 	{
@@ -1397,6 +1399,7 @@ void send_init_packet(int id)
 			continue;
 		}
 		int id = clients[i].GetId();
+		int type = clients[i].GetType();
 		int hp = clients[i].GetHp();
 		int ani = clients[i].GetAnimator();
 		float x = clients[i].GetDirX();
@@ -1409,7 +1412,7 @@ void send_init_packet(int id)
 
 		clients[i].SetUnlock();
 
-		auto data = CreateClient_info(builder, id, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
+		auto data = CreateClient_info(builder, id, type, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
 		clients_data.emplace_back(data);
 	}
 	if (clients_data.size() == 0)

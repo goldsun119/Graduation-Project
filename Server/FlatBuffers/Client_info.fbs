@@ -15,6 +15,7 @@ data:[Client_info];
 table Client_info
 {
 id:int;
+type:int;
 hp:int;
 animator:int;
 dirX:float;

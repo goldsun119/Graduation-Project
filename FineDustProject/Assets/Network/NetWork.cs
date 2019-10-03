@@ -264,6 +264,7 @@ namespace Game.Network
                 Client_info get_data = Client_info.GetRootAsClient_info(recv_buf);
                 new_player_id = get_data.Id;
                 int id = get_data.Id;
+                int character = get_data.Type;
                 int hp = get_data.Hp;
                 int ani = get_data.Animator;
                 float x = get_data.DirX;
@@ -277,6 +278,7 @@ namespace Game.Network
                 if (client_data.ContainsKey(id))
                 {
                     ClientClass iter = client_data[id];
+                    iter.set_char(character);
                     iter.set_hp(hp);
                     iter.set_pos(p);
                     iter.set_rot(r);
@@ -289,7 +291,7 @@ namespace Game.Network
                 }
                 else
                 {
-                    client_data.Add(id, new ClientClass(id, hp, ani, x, z, h, v, n, p, r));
+                    client_data.Add(id, new ClientClass(id, character, hp, ani, x, z, h, v, n, p, r));
                     client_data[id].set_draw(true);
                 }
                 Debug.Log("새로 접속한 아이디 : " + new_player_id);
@@ -303,6 +305,7 @@ namespace Game.Network
                 {
                     //데이터 접근 get_all_data.Data(i).Value.변수
                     int id = get_all_data.Data(i).Value.Id;
+                    int character = get_all_data.Data(i).Value.Type;
                     int hp = get_all_data.Data(i).Value.Hp;
                     int ani = get_all_data.Data(i).Value.Animator;
                     float x = get_all_data.Data(i).Value.DirX;
@@ -317,6 +320,7 @@ namespace Game.Network
                     {
                         ClientClass iter = client_data[id];
                         iter.set_hp(hp);
+                        iter.set_char(character);
                         iter.set_pos(p);
                         iter.set_rot(r);
                         iter.set_vertical(v);
@@ -328,7 +332,7 @@ namespace Game.Network
                     }
                     else
                     {
-                        client_data.Add(id, new ClientClass(id, hp, ani, x, z, h, v, n, p, r));
+                        client_data.Add(id, new ClientClass(id, character, hp, ani, x, z, h, v, n, p, r));
                         client_data[id].set_draw(true);
                     }
                 }
@@ -338,6 +342,7 @@ namespace Game.Network
                 ByteBuffer recv_buf = new ByteBuffer(recvPacket);
                 Client_info get_data = Client_info.GetRootAsClient_info(recv_buf);
                 int id = get_data.Id;
+                int character = get_data.Type;
                 int hp = get_data.Hp;
                 int ani = get_data.Animator;
                 float x = get_data.DirX;
@@ -351,6 +356,7 @@ namespace Game.Network
                 if (client_data.ContainsKey(id))
                 {
                     ClientClass iter = client_data[id];
+                    iter.set_char(character);
                     iter.set_hp(hp);
                     iter.set_pos(p);
                     iter.set_rot(r);
@@ -363,7 +369,7 @@ namespace Game.Network
                 }
                 else
                 {
-                    client_data.Add(id, new ClientClass(id, hp, ani, x, z, h, v, n, p, r));
+                    client_data.Add(id, new ClientClass(id, character, hp, ani, x, z, h, v, n, p, r));
                     client_data[id].set_draw(true);
                 }
             }
@@ -473,6 +479,7 @@ namespace Game.Network
                     if (client_data.ContainsKey(c_id))
                     {
                         ClientClass iter = client_data[c_id];
+                        iter.set_char(get_all_data.ClientData(i).Value.Type);
                         iter.set_hp(c_hp);
                         iter.set_pos(c_p);
                         iter.set_rot(c_r);
@@ -485,7 +492,7 @@ namespace Game.Network
                     }
                     else
                     {
-                        client_data.Add(c_id, new ClientClass(c_id, c_hp, c_ani, c_x, c_z, c_h, c_v, c_n, c_p, c_r));
+                        client_data.Add(c_id, new ClientClass(c_id, get_all_data.ClientData(i).Value.Type, c_hp, c_ani, c_x, c_z, c_h, c_v, c_n, c_p, c_r));
                         ClientClass iter = client_data[c_id];
                         client_data[c_id].set_draw(true);
                     }

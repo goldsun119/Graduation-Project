@@ -117,18 +117,22 @@ namespace Game {
 		struct Client_info FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
 			enum {
 				VT_ID = 4,
-				VT_HP = 6,
-				VT_ANIMATOR = 8,
-				VT_DIRX = 10,
-				VT_DIRZ = 12,
-				VT_HORIZONTAL = 14,
-				VT_VERTICAL = 16,
-				VT_NAME = 18,
-				VT_POSITION = 20,
-				VT_ROTATION = 22
+				VT_TYPE = 6,
+				VT_HP = 8,
+				VT_ANIMATOR = 10,
+				VT_DIRX = 12,
+				VT_DIRZ = 14,
+				VT_HORIZONTAL = 16,
+				VT_VERTICAL = 18,
+				VT_NAME = 20,
+				VT_POSITION = 22,
+				VT_ROTATION = 24
 			};
 			int32_t id() const {
 				return GetField<int32_t>(VT_ID, 0);
+			}
+			int32_t type() const {
+				return GetField<int32_t>(VT_TYPE, 0);
 			}
 			int32_t hp() const {
 				return GetField<int32_t>(VT_HP, 0);
@@ -160,6 +164,7 @@ namespace Game {
 			bool Verify(flatbuffers::Verifier &verifier) const {
 				return VerifyTableStart(verifier) &&
 					VerifyField<int32_t>(verifier, VT_ID) &&
+					VerifyField<int32_t>(verifier, VT_TYPE) &&
 					VerifyField<int32_t>(verifier, VT_HP) &&
 					VerifyField<int32_t>(verifier, VT_ANIMATOR) &&
 					VerifyField<float>(verifier, VT_DIRX) &&
@@ -179,6 +184,9 @@ namespace Game {
 			flatbuffers::uoffset_t start_;
 			void add_id(int32_t id) {
 				fbb_.AddElement<int32_t>(Client_info::VT_ID, id, 0);
+			}
+			void add_type(int32_t type) {
+				fbb_.AddElement<int32_t>(Client_info::VT_TYPE, type, 0);
 			}
 			void add_hp(int32_t hp) {
 				fbb_.AddElement<int32_t>(Client_info::VT_HP, hp, 0);
@@ -222,6 +230,7 @@ namespace Game {
 		inline flatbuffers::Offset<Client_info> CreateClient_info(
 			flatbuffers::FlatBufferBuilder &_fbb,
 			int32_t id = 0,
+			int32_t type = 0,
 			int32_t hp = 0,
 			int32_t animator = 0,
 			float dirX = 0.0f,
@@ -241,6 +250,7 @@ namespace Game {
 			builder_.add_dirX(dirX);
 			builder_.add_animator(animator);
 			builder_.add_hp(hp);
+			builder_.add_type(type);
 			builder_.add_id(id);
 			return builder_.Finish();
 		}
@@ -248,6 +258,7 @@ namespace Game {
 		inline flatbuffers::Offset<Client_info> CreateClient_infoDirect(
 			flatbuffers::FlatBufferBuilder &_fbb,
 			int32_t id = 0,
+			int32_t type = 0,
 			int32_t hp = 0,
 			int32_t animator = 0,
 			float dirX = 0.0f,
@@ -260,6 +271,7 @@ namespace Game {
 			return Game::Protocol::CreateClient_info(
 				_fbb,
 				id,
+				type,
 				hp,
 				animator,
 				dirX,

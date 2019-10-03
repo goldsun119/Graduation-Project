@@ -117,18 +117,22 @@ inline flatbuffers::Offset<Client_Collection> CreateClient_CollectionDirect(
 struct Client_info FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum {
     VT_ID = 4,
-    VT_HP = 6,
-    VT_ANIMATOR = 8,
-    VT_DIRX = 10,
-    VT_DIRZ = 12,
-    VT_HORIZONTAL = 14,
-    VT_VERTICAL = 16,
-    VT_NAME = 18,
-    VT_POSITION = 20,
-    VT_ROTATION = 22
+    VT_TYPE = 6,
+    VT_HP = 8,
+    VT_ANIMATOR = 10,
+    VT_DIRX = 12,
+    VT_DIRZ = 14,
+    VT_HORIZONTAL = 16,
+    VT_VERTICAL = 18,
+    VT_NAME = 20,
+    VT_POSITION = 22,
+    VT_ROTATION = 24
   };
   int32_t id() const {
     return GetField<int32_t>(VT_ID, 0);
+  }
+  int32_t type() const {
+    return GetField<int32_t>(VT_TYPE, 0);
   }
   int32_t hp() const {
     return GetField<int32_t>(VT_HP, 0);
@@ -160,6 +164,7 @@ struct Client_info FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int32_t>(verifier, VT_ID) &&
+           VerifyField<int32_t>(verifier, VT_TYPE) &&
            VerifyField<int32_t>(verifier, VT_HP) &&
            VerifyField<int32_t>(verifier, VT_ANIMATOR) &&
            VerifyField<float>(verifier, VT_DIRX) &&
@@ -179,6 +184,9 @@ struct Client_infoBuilder {
   flatbuffers::uoffset_t start_;
   void add_id(int32_t id) {
     fbb_.AddElement<int32_t>(Client_info::VT_ID, id, 0);
+  }
+  void add_type(int32_t type) {
+    fbb_.AddElement<int32_t>(Client_info::VT_TYPE, type, 0);
   }
   void add_hp(int32_t hp) {
     fbb_.AddElement<int32_t>(Client_info::VT_HP, hp, 0);
@@ -222,6 +230,7 @@ struct Client_infoBuilder {
 inline flatbuffers::Offset<Client_info> CreateClient_info(
     flatbuffers::FlatBufferBuilder &_fbb,
     int32_t id = 0,
+    int32_t type = 0,
     int32_t hp = 0,
     int32_t animator = 0,
     float dirX = 0.0f,
@@ -241,6 +250,7 @@ inline flatbuffers::Offset<Client_info> CreateClient_info(
   builder_.add_dirX(dirX);
   builder_.add_animator(animator);
   builder_.add_hp(hp);
+  builder_.add_type(type);
   builder_.add_id(id);
   return builder_.Finish();
 }
@@ -248,6 +258,7 @@ inline flatbuffers::Offset<Client_info> CreateClient_info(
 inline flatbuffers::Offset<Client_info> CreateClient_infoDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
     int32_t id = 0,
+    int32_t type = 0,
     int32_t hp = 0,
     int32_t animator = 0,
     float dirX = 0.0f,
@@ -260,6 +271,7 @@ inline flatbuffers::Offset<Client_info> CreateClient_infoDirect(
   return Game::Protocol::CreateClient_info(
       _fbb,
       id,
+      type,
       hp,
       animator,
       dirX,
@@ -1329,31 +1341,7 @@ inline flatbuffers::Offset<Init_Collection_IM> CreateInit_Collection_IMDirect(
       complete4,
       complete5);
 }
-inline const Game::Protocol::Client_info *GetClientView(const void *buf) {
-	return flatbuffers::GetRoot<Game::Protocol::Client_info>(buf);
-}
-inline const Game::Protocol::Monster_info *GetMonsterView(const void *buf) {
-	return flatbuffers::GetRoot<Game::Protocol::Monster_info>(buf);
-}
-inline const Game::Protocol::Item_info *GetItemView(const void *buf) {
-	return flatbuffers::GetRoot<Game::Protocol::Item_info>(buf);
-}
 
-inline const Game::Protocol::Eat_Item *GetEatView(const void *buf) {
-	return flatbuffers::GetRoot<Game::Protocol::Eat_Item>(buf);
-}
-
-inline const Game::Protocol::Login *GetLoginView(const void *buf) {
-	return flatbuffers::GetRoot<Game::Protocol::Login>(buf);
-}
-
-inline const Game::Protocol::Login_my_DB *GetDBdataView(const void *buf) {
-	return flatbuffers::GetRoot<Game::Protocol::Login_my_DB>(buf);
-}
-
-inline const Game::Protocol::DB_Monster *GetDBMonsterView(const void *buf) {
-	return flatbuffers::GetRoot<Game::Protocol::DB_Monster>(buf);
-}
 }  // namespace Protocol
 }  // namespace Game
 

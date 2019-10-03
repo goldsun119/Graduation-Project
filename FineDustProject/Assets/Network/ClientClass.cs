@@ -96,9 +96,10 @@ namespace Game.Class
             //this.activePlayer = true;
         }
 
-        public ClientClass(int id, int hp, int ani, float x, float z, float h, float v, string name, Vector3 pos, Vector3 rot)
+        public ClientClass(int id, int t, int hp, int ani, float x, float z, float h, float v, string name, Vector3 pos, Vector3 rot)
         {
             this.id = id;
+            this.character = t;
             this.hp = hp;
             this.animator = ani;
             this.dirX = x;
