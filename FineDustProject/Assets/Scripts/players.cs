@@ -49,6 +49,17 @@ public class players : MonoBehaviour
                     player.transform.parent = transform;
                     playerObj = transform.Find(a).gameObject;
                 }
+
+                else
+                {
+                    player = Instantiate(player1Prefab,
+                                                    Game.Network.NetWork.client_data[i].get_pos(),
+                                                    Quaternion.identity);
+
+                    player.name = a;
+                    player.transform.parent = transform;
+                    playerObj = transform.Find(a).gameObject;
+                }
             }
             else
             {
