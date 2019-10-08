@@ -1,26 +1,25 @@
 ﻿  main.cpp
-c:\users\kg\documents\github\graduation-project\server\server\main.cpp(255): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
-c:\users\kg\documents\github\graduation-project\server\server\main.cpp(910): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _itoa. See online help for details.
+d:\project\graduation-project\server\server\main.cpp(255): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+d:\project\graduation-project\server\server\main.cpp(910): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _itoa. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\stdlib.h(1323): note: 'itoa' 선언을 참조하십시오.
-c:\users\kg\documents\github\graduation-project\server\server\main.cpp(960): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+d:\project\graduation-project\server\server\main.cpp(960): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\string.h(133): note: 'strcpy' 선언을 참조하십시오.
-c:\users\kg\documents\github\graduation-project\server\server\main.cpp(961): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+d:\project\graduation-project\server\server\main.cpp(961): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\string.h(133): note: 'strcpy' 선언을 참조하십시오.
-c:\users\kg\documents\github\graduation-project\server\server\main.cpp(1455): warning C4996: 'swprintf': function has been changed to conform with the ISO C standard, adding an extra character count parameter. To use the traditional Microsoft version, set _CRT_NON_CONFORMING_SWPRINTFS.
+d:\project\graduation-project\server\server\main.cpp(1455): warning C4996: 'swprintf': function has been changed to conform with the ISO C standard, adding an extra character count parameter. To use the traditional Microsoft version, set _CRT_NON_CONFORMING_SWPRINTFS.
   c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\corecrt_wstdio.h(1822): note: 'swprintf' 선언을 참조하십시오.
-c:\users\kg\documents\github\graduation-project\server\server\main.cpp(1478): warning C4996: 'swprintf': function has been changed to conform with the ISO C standard, adding an extra character count parameter. To use the traditional Microsoft version, set _CRT_NON_CONFORMING_SWPRINTFS.
+d:\project\graduation-project\server\server\main.cpp(1478): warning C4996: 'swprintf': function has been changed to conform with the ISO C standard, adding an extra character count parameter. To use the traditional Microsoft version, set _CRT_NON_CONFORMING_SWPRINTFS.
   c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\corecrt_wstdio.h(1822): note: 'swprintf' 선언을 참조하십시오.
-c:\users\kg\documents\github\graduation-project\server\server\main.cpp(1610): warning C4996: 'swprintf': function has been changed to conform with the ISO C standard, adding an extra character count parameter. To use the traditional Microsoft version, set _CRT_NON_CONFORMING_SWPRINTFS.
+d:\project\graduation-project\server\server\main.cpp(1610): warning C4996: 'swprintf': function has been changed to conform with the ISO C standard, adding an extra character count parameter. To use the traditional Microsoft version, set _CRT_NON_CONFORMING_SWPRINTFS.
   c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\corecrt_wstdio.h(1822): note: 'swprintf' 선언을 참조하십시오.
-c:\users\kg\documents\github\graduation-project\server\server\main.cpp(1654): warning C4996: 'swprintf': function has been changed to conform with the ISO C standard, adding an extra character count parameter. To use the traditional Microsoft version, set _CRT_NON_CONFORMING_SWPRINTFS.
+d:\project\graduation-project\server\server\main.cpp(1654): warning C4996: 'swprintf': function has been changed to conform with the ISO C standard, adding an extra character count parameter. To use the traditional Microsoft version, set _CRT_NON_CONFORMING_SWPRINTFS.
   c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\corecrt_wstdio.h(1822): note: 'swprintf' 선언을 참조하십시오.
-c:\users\kg\documents\github\graduation-project\server\server\main.cpp(1678): warning C4996: 'swprintf': function has been changed to conform with the ISO C standard, adding an extra character count parameter. To use the traditional Microsoft version, set _CRT_NON_CONFORMING_SWPRINTFS.
+d:\project\graduation-project\server\server\main.cpp(1678): warning C4996: 'swprintf': function has been changed to conform with the ISO C standard, adding an extra character count parameter. To use the traditional Microsoft version, set _CRT_NON_CONFORMING_SWPRINTFS.
   c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\corecrt_wstdio.h(1822): note: 'swprintf' 선언을 참조하십시오.
-c:\users\kg\documents\github\graduation-project\server\server\main.cpp(1713): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\project\graduation-project\server\server\main.cpp(1713): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   코드를 생성하고 있습니다.
-c:\users\kg\documents\github\graduation-project\server\server\main.cpp(1549): warning C4715: 'check_login': 모든 제어 경로에서 값을 반환하지는 않습니다.
-  4 of 1164 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    64 functions had inline decision re-evaluated but remain unchanged
+  2 of 1157 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
-  Server.vcxproj -> C:\Users\KG\Documents\GitHub\Graduation-Project\Server\Server\x64\Release\Server.exe
+  Server.vcxproj -> D:\project\Graduation-Project\Server\Server\x64\Release\Server.exe

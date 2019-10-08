@@ -146,7 +146,7 @@ int main()
 	thread accept_thread{ do_accept };
 	thread timer_thread{ do_timer };
 	point = std::chrono::high_resolution_clock::now();
-	thread save_thread{ autosave_info_db };
+	//thread save_thread{ autosave_info_db };
 
 	accept_thread.join();
 	timer_thread.join();
@@ -1000,8 +1000,8 @@ void process_packet(const int id, const int packet_size, const char * buf)
 	case CS_INFO:
 	{
 
-		if (get_packet == "") break;
 		auto client_Check_info = Game::Protocol::GetClientView(get_packet);
+		if (sizeof(client_Check_info) == 0) break;
 
 		vec3 p = { client_Check_info->position()->x(), client_Check_info->position()->y(), client_Check_info->position()->z() };
 		vec3 r = { client_Check_info->rotation()->x(), client_Check_info->rotation()->y(), client_Check_info->rotation()->z() };
