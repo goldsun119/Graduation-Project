@@ -7,7 +7,7 @@ public class Dead_window : MonoBehaviour
 {
     public GameObject text;
     public GameObject button;
-    public float FadeTime = 2f; // Fade효과 재생시간
+    public float FadeTime = 5f; // Fade효과 재생시간
     Image fadeImg;
     float start;
     float end;

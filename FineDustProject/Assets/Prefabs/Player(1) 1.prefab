@@ -993,7 +993,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5332776959217880108}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 4b664c76012e1be48bce60d08d5954ec, type: 3}
+  m_Avatar: {fileID: 9000000, guid: f90dfbbc3f15139498f32e1171202703, type: 3}
   m_Controller: {fileID: 9100000, guid: c0f2a4036e035054492e0ef302e6ebc2, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
@@ -1032,7 +1032,7 @@ CapsuleCollider:
   m_Radius: 0.5
   m_Height: 1.75
   m_Direction: 1
-  m_Center: {x: 0, y: 0.75, z: 0}
+  m_Center: {x: 0, y: 0.85, z: 0}
 --- !u!195 &2333047044817554999
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1108,7 +1108,7 @@ MonoBehaviour:
   speedR: 1
   JumpP: 2
   key_on_num: 0
-  Ani_State_Walk_Run: 0
+  Ani_State: 0
   Ani_State_Jump: 0
   isPick: 0
   isdie: 0

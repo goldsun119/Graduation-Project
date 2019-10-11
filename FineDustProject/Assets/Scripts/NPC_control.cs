@@ -50,7 +50,7 @@ public class NPC_control : MonoBehaviour
             else if (Input.GetKeyUp(KeyCode.F) && NPC_ON == false)
             {
                 NPC_ON = true;
-                player.Ani_State_Walk_Run = PlayerStatus.ANI_TYPE.IDEL;
+                player.Ani_State = PlayerStatus.ANI_TYPE.IDEL;
                 UI_conversation.SetActive(true);
                 //player.is_move = true;
             }

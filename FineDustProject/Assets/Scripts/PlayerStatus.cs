@@ -28,9 +28,9 @@ public class PlayerStatus : MonoBehaviour
     public float JumpP;
 
     public int key_on_num = 0;
-    public enum ANI_TYPE { IDEL, WALK, RUN, JUMP };
+    public enum ANI_TYPE { IDEL, WALK, RUN, JUMP, DIE };
     
-    public ANI_TYPE Ani_State_Walk_Run = ANI_TYPE.IDEL;
+    public ANI_TYPE Ani_State = ANI_TYPE.IDEL;
     public ANI_TYPE Ani_State_Jump = ANI_TYPE.IDEL;
 
     public bool isPick = false;
@@ -87,6 +87,7 @@ public class PlayerStatus : MonoBehaviour
                 is_move = false;
                 isdie = true;
                 // 사망 애니메이션
+                Ani_State = ANI_TYPE.DIE;
             }
 
             if (is_move)
@@ -111,7 +112,7 @@ public class PlayerStatus : MonoBehaviour
                 StopCoroutine(coroutine);
 
             Debug.Log("hp" + hp);
-            yield return new WaitForSeconds(3);//WaitForSeconds객체를 생성해서 반환
+            yield return new WaitForSeconds(2);//WaitForSeconds객체를 생성해서 반환
                                                //StartCoroutine(HPControl());
         }
     }
@@ -143,7 +144,7 @@ public class PlayerStatus : MonoBehaviour
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.E))
         {
             // idle 상태일때 키를 누르면 walk 상태로 전환
-            if (Ani_State_Walk_Run == ANI_TYPE.IDEL) Ani_State_Walk_Run = ANI_TYPE.WALK;
+            if (Ani_State == ANI_TYPE.IDEL) Ani_State = ANI_TYPE.WALK;
 
 
             if (Input.GetKey(KeyCode.W))
@@ -175,42 +176,42 @@ public class PlayerStatus : MonoBehaviour
             // 반대 방향키를 같이 누르고 있으면 제자리 서기
             if ((Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.S)) || (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D)) || (Input.GetKey(KeyCode.Q) && Input.GetKey(KeyCode.E)))
             {
-                Ani_State_Walk_Run = ANI_TYPE.IDEL;
+                Ani_State = ANI_TYPE.IDEL;
                 Direction_X = 0;
                 Direction_Z = 0;
             }
 
             // walk인지 run인지에 따라 속도 변화
-            if ((Ani_State_Walk_Run == ANI_TYPE.WALK) && speedT < Player_Max_Walk_Speed)
+            if ((Ani_State == ANI_TYPE.WALK) && speedT < Player_Max_Walk_Speed)
                 speedT += 0.2f;
-            else if (Ani_State_Walk_Run == ANI_TYPE.RUN)
+            else if (Ani_State == ANI_TYPE.RUN)
                 speedT = 8f;
             else speedT = Player_Max_Walk_Speed;
         }
         else
         {
-            Ani_State_Walk_Run = ANI_TYPE.IDEL;
+            Ani_State = ANI_TYPE.IDEL;
             Direction_X = 0;
             Direction_Z = 0;
             speedT = 0;
         }
 
-        if ((Input.GetKeyDown(KeyCode.LeftShift)) && (Ani_State_Walk_Run <= ANI_TYPE.WALK))
+        if ((Input.GetKeyDown(KeyCode.LeftShift)) && (Ani_State <= ANI_TYPE.WALK))
         {
-            Ani_State_Walk_Run = ANI_TYPE.RUN;
+            Ani_State = ANI_TYPE.RUN;
         }
-        if ((Input.GetKey(KeyCode.LeftShift)) && (Ani_State_Walk_Run <= ANI_TYPE.WALK))
+        if ((Input.GetKey(KeyCode.LeftShift)) && (Ani_State <= ANI_TYPE.WALK))
         {
-            Ani_State_Walk_Run = ANI_TYPE.RUN;
+            Ani_State = ANI_TYPE.RUN;
         }
-        if ((Input.GetKeyUp(KeyCode.LeftShift)) && (Ani_State_Walk_Run == ANI_TYPE.RUN))
+        if ((Input.GetKeyUp(KeyCode.LeftShift)) && (Ani_State == ANI_TYPE.RUN))
         {
-            Ani_State_Walk_Run = ANI_TYPE.WALK;
+            Ani_State = ANI_TYPE.WALK;
         }
 
         // Shift 키를 누르고 있는데 방향키는 안누른 상태 --> 달리기 멈추기
         if (Input.GetKey(KeyCode.LeftShift) && Direction_X == 0 && Direction_Z == 0)
-            Ani_State_Walk_Run = ANI_TYPE.IDEL;
+            Ani_State = ANI_TYPE.IDEL;
 
         // 점프
         if ((Input.GetKeyDown(KeyCode.Space)) && (Ani_State_Jump == ANI_TYPE.IDEL))

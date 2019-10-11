@@ -32,7 +32,7 @@ public class PlayerMove : MonoBehaviour
     void Move()
     {
 
-        if (player.Ani_State_Walk_Run >= PlayerStatus.ANI_TYPE.WALK)
+        if (player.Ani_State >= PlayerStatus.ANI_TYPE.WALK)
         {
             //if (CMgr.Camera_Num == 2)
             //{

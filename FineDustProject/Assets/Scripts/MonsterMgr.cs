@@ -202,20 +202,20 @@ public class MonsterMgr : MonoBehaviour
                 //    ani.SetInteger("animator", 0);
                 //}
 
-                if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.RUN)
+                if (player_st.Ani_State == PlayerStatus.ANI_TYPE.RUN)
                 {
                     nav.speed = 20;
                     animator = (int)ANI_TYPE.RUN;
                     ani.SetInteger("animator", 2);
                 }
-                else if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.WALK)
+                else if (player_st.Ani_State == PlayerStatus.ANI_TYPE.WALK)
                 {
                     nav.speed = 10;
                     animator = (int)ANI_TYPE.RUN;
                     ani.SetInteger("animator", 2);
 
                 }
-                else if (player_st.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.IDEL)
+                else if (player_st.Ani_State == PlayerStatus.ANI_TYPE.IDEL)
                 {
                     nav.speed = 0;
                     animator = (int)ANI_TYPE.IDEL;

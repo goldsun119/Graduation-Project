@@ -30,9 +30,10 @@ public class PlayerAnimation : MonoBehaviour
         if (player.ID == Game.Network.NetWork.Client_id)
         {
 
-            if (player.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.IDEL) player.anitype = (int)PlayerStatus.ANI_TYPE.IDEL;
-            else if (player.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.WALK) player.anitype = (int)PlayerStatus.ANI_TYPE.WALK;
-            else if (player.Ani_State_Walk_Run == PlayerStatus.ANI_TYPE.RUN) player.anitype = (int)PlayerStatus.ANI_TYPE.RUN;
+            if (player.Ani_State == PlayerStatus.ANI_TYPE.IDEL) player.anitype = (int)PlayerStatus.ANI_TYPE.IDEL;
+            else if (player.Ani_State == PlayerStatus.ANI_TYPE.WALK) player.anitype = (int)PlayerStatus.ANI_TYPE.WALK;
+            else if (player.Ani_State == PlayerStatus.ANI_TYPE.RUN) player.anitype = (int)PlayerStatus.ANI_TYPE.RUN;
+            else if (player.Ani_State == PlayerStatus.ANI_TYPE.DIE) player.anitype = (int)PlayerStatus.ANI_TYPE.DIE;
             else animator.SetInteger("Ani_type", 0);
 
             //if (CMgr.Camera_Num == 2 && player.anitype != 0)
