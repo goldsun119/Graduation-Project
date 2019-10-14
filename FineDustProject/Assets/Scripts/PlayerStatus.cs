@@ -80,7 +80,7 @@ public class PlayerStatus : MonoBehaviour
     {
         if (ID == Game.Network.NetWork.Client_id)
         {
-            if (hp <= 0)
+            if (hp <= 1)
             {
                 GameObject.Find("Canvas/UI_outline/dead").SetActive(true);
                 //dead
