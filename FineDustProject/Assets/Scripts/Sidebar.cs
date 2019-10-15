@@ -6,7 +6,7 @@ public class Sidebar : MonoBehaviour
 {
     private bool OnOff;
     private bool show;
-    private int target_show = 95 ; // -420
+    private int target_show = 155 ; // -420
     private int target_hide = -95; // -230
 
     // Start is called before the first frame update
@@ -59,7 +59,7 @@ public class Sidebar : MonoBehaviour
 
     public void HideSideBar()
     {
-        transform.position = new Vector3(-100, transform.position.y, transform.position.z);
+        transform.position = new Vector3(-180, transform.position.y, transform.position.z);
         show = false;
         OnOff = false;
     }
