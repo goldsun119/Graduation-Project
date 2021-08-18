@@ -31,7 +31,7 @@ Server::Server()
 	thread accept_thread{ &Server::do_accept, this };
 	thread timer_thread{ &Server::do_timer, this };
 	point = std::chrono::high_resolution_clock::now();
-	//thread save_thread{ autosave_info_db };
+	thread save_thread{ &autosave_info_db, this };
 
 	accept_thread.join();
 	timer_thread.join();
@@ -77,6 +77,8 @@ void Server::make_items()
 {
 	// 좌표범위
 	srand(unsigned(time(NULL)));
+	//시연용 아이템 돔 가깝게 30개만 위치 지정 나머지 랜덤
+
 	int item_id = 0;
 	items[item_id].SetDraw(true);
 	items[item_id].SetId(item_id);
@@ -293,6 +295,7 @@ void Server::make_items()
 void Server::make_monster()
 {
 	int monster_id = 1;
+	//시연용 몬스터 돔 가깝게 4개만 위치 지정 나머지 랜덤
 
 	srand(unsigned(time(NULL)));
 
@@ -467,7 +470,7 @@ void Server::worker_thread()
 			disconnect(static_cast<int>(key));
 			continue;
 		}
-		if (lpover_ex->event == EV_RECV) {
+		if (EV_RECV == lpover_ex->event) {
 			int rest_size = io_byte;
 			char *ptr = lpover_ex->messageBuffer;
 			int packet_size = 0;
@@ -477,7 +480,7 @@ void Server::worker_thread()
 				int Ipos = 0;
 				for (Ipos = 0; Ipos < 8; ++Ipos)
 				{
-					if (clients[key].sock.packet_buf[Ipos] != 124)
+					if (124 != clients[key].sock.packet_buf[Ipos])
 						packet_data[Ipos] = clients[key].sock.packet_buf[Ipos];
 					else
 					{
@@ -520,26 +523,25 @@ void Server::worker_thread()
 			}
 			do_recv(static_cast<int>(key));
 		}
-
-		else if (lpover_ex->event == EV_SEND)
+		else if (EV_SEND == lpover_ex->event)
 		{
 			delete lpover_ex;
 		}
-		else if (lpover_ex->event == EV_MONSTER_POS)
+		else if (EV_MONSTER_POS == lpover_ex->event)
 		{
 			T_EVENT ev;
 			ev.do_object = static_cast<int>(key);
 			ev.event_type = EV_MONSTER_POS;
 			process_event(ev);
 		}
-		else if (lpover_ex->event == EV_MONSTER_DEAD)
+		else if (EV_MONSTER_DEAD == lpover_ex->event )
 		{
 			T_EVENT ev;
 			ev.do_object = static_cast<int>(key);
 			ev.event_type = EV_MONSTER_DEAD;
 			process_event(ev);
 		}
-		else if (lpover_ex->event == EV_MONSTER_REVIVE)
+		else if (EV_MONSTER_REVIVE == lpover_ex->event)
 		{
 			T_EVENT ev;
 			ev.do_object = static_cast<int>(key);
@@ -600,11 +602,6 @@ void Server::process_event(T_EVENT &ev)
 				}
 			}
 		}
-
-	}
-	break;
-	case EV_MONSTER_DEAD:
-	{
 
 	}
 	break;
@@ -1045,10 +1042,10 @@ void Server::send_my_status_to_all_packet(int id)
 	auto name = builder.CreateString(clients[id].GetName());
 	float h = clients[id].GetHorizontal();
 	float v = clients[id].GetVertical();
-	auto pos = clients[id].GetPos();
-	auto rot = clients[id].GetRotation();
+	Vec3 pos = Vec3(clients[id].GetPos().x, clients[id].GetPos().y, clients[id].GetPos().z);
+	Vec3 rot = Vec3(clients[id].GetRotation().x, clients[id].GetRotation().y, clients[id].GetRotation().z);
 	clients[id].SetUnlock();
-	auto data = CreateClient_info(builder, i, type, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
+	auto data = CreateClient_info(builder, i, type, hp, ani, x, z, h, v, name, &pos,  &rot);
 	builder.Finish(data);
 	for (int to = 1; to <= MAX_USER; ++to)
 	{
@@ -1083,10 +1080,10 @@ void Server::send_init_packet(int id)	// 아이템, 몬스터, 유저 데이터를 다른 접속
 		items[item_id].SetLock();
 		int i = items[item_id].GetId();
 		int t = items[item_id].GetType();
-		auto pos = items[item_id].GetPos();
+		Vec3 pos = Vec3(items[item_id].GetPos().x, items[item_id].GetPos().y, items[item_id].GetPos().z);
 		int d = items[item_id].GetDraw();
 		items[item_id].SetUnlock();
-		auto data = CreateItem_info(builder, i, t, &Vec3(pos.x, pos.y, pos.z), d);
+		auto data = CreateItem_info(builder, i, t, &pos, d);
 		items_data.emplace_back(data);
 	}
 	auto full_items_data = builder.CreateVector(items_data);
@@ -1104,11 +1101,11 @@ void Server::send_init_packet(int id)	// 아이템, 몬스터, 유저 데이터를 다른 접속
 		float x = monsters[monster_id].GetDirX();
 		float z = monsters[monster_id].GetDirZ();
 		int hp = monsters[monster_id].GetHp();
-		auto pos = monsters[monster_id].GetPos();
-		auto rot = monsters[monster_id].GetRotation();
+		Vec3 pos =Vec3( monsters[monster_id].GetPos().x, monsters[monster_id].GetPos().y, monsters[monster_id].GetPos().z);
+		Vec3 rot = Vec3(monsters[monster_id].GetRotation().x, monsters[monster_id].GetRotation().y, monsters[monster_id].GetRotation().z);
 		int target = monsters[monster_id].GetTarget();
 		monsters[monster_id].SetUnlock();
-		auto data = CreateMonster_info(builder, monster_id, hp, ani, x, z, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z), target, cal);
+		auto data = CreateMonster_info(builder, monster_id, hp, ani, x, z, &pos, &rot);
 		monsters_data.emplace_back(data);
 	}
 	auto full_monsters_data = builder.CreateVector(monsters_data);
@@ -1134,12 +1131,12 @@ void Server::send_init_packet(int id)	// 아이템, 몬스터, 유저 데이터를 다른 접속
 		auto name = builder.CreateString(clients[i].GetName());
 		float h = clients[i].GetHorizontal();
 		float v = clients[i].GetVertical();
-		auto pos = clients[i].GetPos();
-		auto rot = clients[i].GetRotation();
+		auto pos = Vec3(clients[i].GetPos().x, clients[i].GetPos().y, clients[i].GetPos().z);
+		auto rot = Vec3(clients[i].GetRotation().x, clients[i].GetRotation().y, clients[i].GetRotation().z);
 
 		clients[i].SetUnlock();
 
-		auto data = CreateClient_info(builder, id, type, hp, ani, x, z, h, v, name, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z));
+		auto data = CreateClient_info(builder, id, type, hp, ani, x, z, h, v, name, &pos, &rot);
 		clients_data.emplace_back(data);
 	}
 	if (clients_data.size() == 0)
@@ -1148,7 +1145,7 @@ void Server::send_init_packet(int id)	// 아이템, 몬스터, 유저 데이터를 다른 접속
 		clients[id].SetLock();
 		int i = clients[id].GetId();
 		auto name = builder.CreateString(clients[id].GetName());
-		auto pos = clients[id].GetPos();
+		auto pos = Vec3(clients[id].GetPos().x, clients[id].GetPos().y, clients[id].GetPos().z);
 		int hp = clients[id].GetHp();
 		int mhp = clients[id].GetMaxhp();
 		int i1 = clients[id].GetItem(0);
@@ -1162,7 +1159,7 @@ void Server::send_init_packet(int id)	// 아이템, 몬스터, 유저 데이터를 다른 접속
 		int ic4 = clients[id].item_count[3];
 		clients[id].SetUnlock();
 
-		auto mydata = CreateLogin_my_DB(builder, i, name, &Vec3(pos.x, pos.y, pos.z), hp, mhp, i1, i2, i3, i4, t, ic1, ic2, ic3, ic4);
+		auto mydata = CreateLogin_my_DB(builder, i, name, &pos, hp, mhp, i1, i2, i3, i4, t, ic1, ic2, ic3, ic4);
 
 		auto p = CreateInit_Collection_IM(builder, kind, full_items_data, full_monsters_data, mydata, product_complete[0], product_complete[1], product_complete[2], product_complete[3], product_complete[4]);
 		builder.Finish(p);
@@ -1175,7 +1172,7 @@ void Server::send_init_packet(int id)	// 아이템, 몬스터, 유저 데이터를 다른 접속
 		clients[id].SetLock();
 		int i = clients[id].GetId();
 		auto name = builder.CreateString(clients[id].GetName());
-		auto pos = clients[id].GetPos();
+		auto pos = Vec3(clients[id].GetPos().x, clients[id].GetPos().y, clients[id].GetPos().z);
 		int hp = clients[id].GetHp();
 		int mhp = clients[id].GetMaxhp();
 		int i1 = clients[id].GetItem(0);
@@ -1188,7 +1185,7 @@ void Server::send_init_packet(int id)	// 아이템, 몬스터, 유저 데이터를 다른 접속
 		int ic3 = clients[id].item_count[2];
 		int ic4 = clients[id].item_count[3];
 		clients[id].SetUnlock();
-		auto mydata = CreateLogin_my_DB(builder, i, name, &Vec3(pos.x, pos.y, pos.z), hp, mhp, i1, i2, i3, i4, t, ic1, ic2, ic3, ic4);
+		auto mydata = CreateLogin_my_DB(builder, i, name, &pos, hp, mhp, i1, i2, i3, i4, t, ic1, ic2, ic3, ic4);
 
 		auto p = CreateInit_Collection(builder, kind, full_items_data, full_monsters_data, full_clients_data, mydata, product_complete[0], product_complete[1], product_complete[2], product_complete[3], product_complete[4]);
 		builder.Finish(p);
@@ -1215,12 +1212,12 @@ void Server::send_monster_revive_packet(int to, int monster)
 	int ani = monsters[monster].GetAnimator();
 	float x = monsters[monster].GetDirX();
 	float z = monsters[monster].GetDirZ();
-	auto pos = monsters[monster].GetPos();
-	auto rot = monsters[monster].GetRotation();
+	auto pos = Vec3(monsters[monster].GetPos().x, monsters[monster].GetPos().y, monsters[monster].GetPos().z);
+	auto rot = Vec3(monsters[monster].GetRotation().x, monsters[monster].GetRotation().y, monsters[monster].GetRotation().z);
 	int target = monsters[monster].GetTarget();
 	int calculate = monsters[monster].GetCalculate();
 	monsters[monster].SetUnlock();
-	auto data = CreateMonster_info(builder, monster, hp, ani, x, z, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z), target, calculate);
+	auto data = CreateMonster_info(builder, monster, hp, ani, x, z, &pos, &rot, target, calculate);
 	builder.Finish(data);
 	SendPacket(SC_REVIVE_MONSTER, to, builder.GetBufferPointer(), builder.GetSize());
 
@@ -1259,13 +1256,13 @@ void Server::send_monster_pos_packet(int to, int monster)
 	float x = monsters[monster].GetDirX();
 	float z = monsters[monster].GetDirZ();
 	int hp = monsters[monster].GetHp();
-	vec3 pos = monsters[monster].GetPos();
-	vec3 rot = monsters[monster].GetRotation();
+	Vec3 pos = Vec3(monsters[monster].GetPos().x, monsters[monster].GetPos().y, monsters[monster].GetPos().z);
+	Vec3 rot = Vec3(monsters[monster].GetRotation().x, monsters[monster].GetRotation().y, monsters[monster].GetRotation().z);
 	int target = monsters[monster].GetTarget();
 	int calculate = monsters[monster].GetCalculate();
 	monsters[monster].SetUnlock();
 
-	auto data = CreateMonster_info(builder, monster, hp, ani, x, z, &Vec3(pos.x, pos.y, pos.z), &Vec3(rot.x, rot.y, rot.z), target, calculate);
+	auto data = CreateMonster_info(builder, monster, hp, ani, x, z, &pos, &rot, target, calculate);
 	builder.Finish(data);
 
 	SendPacket(SC_MONSTER_INFO, to, builder.GetBufferPointer(), builder.GetSize());
@@ -1318,7 +1315,6 @@ void Server::init_DB()
 			}
 		}
 	}
-
 }
 
 void Server::set_login_off(int ci)
@@ -1330,18 +1326,13 @@ void Server::set_login_off(int ci)
 
 	query_lock.lock();
 	swprintf((LPWSTR)Query, L"EXEC dbo.user_logout %s, %f, %f, %f, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", game_id, clients[ci].GetXPos(), clients[ci].GetYPos(), clients[ci].GetZPos(), clients[ci].GetHp(), clients[ci].GetItem(0), clients[ci].GetItem(1), clients[ci].GetItem(2), clients[ci].GetItem(3), clients[ci].GetType(), clients[ci].item_count[0], clients[ci].item_count[1], clients[ci].item_count[2], clients[ci].item_count[3]);
-	//sprintf(buf, "EXEC dbo.user_get_info %s, %s", clients[ci].GetGameId(), clients[ci].GetGamePassword());
-	//MultiByteToWideChar(CP_UTF8, 0, buf, strlen(buf), sql_data, sizeof sql_data / sizeof *sql_data);
-	//sql_data[strlen(buf)] = '\0';
 
 	retcode = SQLExecDirect(hstmt, (SQLWCHAR*)Query, SQL_NTS);
 	query_lock.unlock();
-	//retcode = SQLExecDirect(hstmt, sql_data, SQL_NTS);
 	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
 	{
 	}
 }
-
 
 int Server::check_login(string a, string b, int id)
 {
@@ -1364,7 +1355,7 @@ int Server::check_login(string a, string b, int id)
 		int db_hp, db_maxhp, db_item[4], db_connect, db_character, db_icount[4];
 		SQLLEN cb_id = 0, cb_password = 0, cb_nickname = 0, cb_x = 0, cb_y = 0, cb_z = 0, cb_hp = 0, cb_maxhp = 0, cb_item[4]{ 0 }, cb_connect = 0, cb_character = 0, cb_ic[4]{ 0 };
 
-		// Bind columns 1, 2, and 3  
+		// Bind columns
 		retcode = SQLBindCol(hstmt, 1, SQL_WCHAR, sz_id, MAX_STR_LEN, &cb_id);
 		retcode = SQLBindCol(hstmt, 2, SQL_WCHAR, sz_password, MAX_STR_LEN, &cb_password);
 		retcode = SQLBindCol(hstmt, 3, SQL_WCHAR, sz_nickname, MAX_STR_LEN, &cb_nickname);
@@ -1483,22 +1474,19 @@ void Server::insert_item_db(int id, int type, float x, float y, float z, int dra
 	retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
 	WCHAR Query[MAX_BUFFER];
 
-	query_lock.lock();
 	swprintf((LPWSTR)Query, L"EXEC dbo.insert_item %d, %d, %f, %f, %f, %d", id, type, x, y, z, draw);
 
 	retcode = SQLExecDirect(hstmt, (SQLWCHAR *)Query, SQL_NTS);
-	query_lock.unlock();
 	if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
 	{
 
 	}
-	if (retcode == SQL_ERROR || retcode == SQL_SUCCESS_WITH_INFO)
+	if (retcode == SQL_ERROR)
 	{
 		HandleDiagnosticRecord(hstmt, SQL_HANDLE_STMT, retcode);
 
 	}
 }
-
 
 void Server::HandleDiagnosticRecord(SQLHANDLE hHandle, SQLSMALLINT hType, RETCODE RetCode)
 {
@@ -1542,7 +1530,6 @@ void Server::db_set_pos(int id)
 
 	}
 }
-
 
 void Server::db_set_character(int id)
 {
